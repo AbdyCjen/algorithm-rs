@@ -2,9 +2,7 @@ use rand::prelude::*;
 use std::cmp::Ordering;
 
 fn qsort<T>(iv: &mut [T])
-where
-    T: std::cmp::Ord + Copy,
-{
+where T: std::cmp::Ord + Copy{
     if iv.len() <= 1 {
         return;
     }
