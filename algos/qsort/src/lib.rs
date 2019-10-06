@@ -1,7 +1,6 @@
-use rand::prelude::*;
 use std::cmp::Ordering;
 
-fn qsort<T>(iv: &mut [T])
+pub fn qsort<T>(iv: &mut [T])
 where T: std::cmp::Ord + Copy{
     if iv.len() <= 1 {
         return;
@@ -27,12 +26,16 @@ where T: std::cmp::Ord + Copy{
     return;
 }
 
-fn main() {
-    let mut nums: Vec<i32> = (1..100).collect();
-    nums.shuffle(&mut rand::thread_rng());
-    qsort(&mut nums);
-    for i in &nums {
-        print!("{},", i);
+#[cfg(test)]
+mod test {
+    use rand::prelude::*;
+    #[test]
+    fn it_works() {
+        let mut nums: Vec<i32> = (1..100).collect();
+        nums.shuffle(&mut rand::thread_rng());
+        super::qsort(&mut nums);
+        for (i, j) in nums.iter().zip(1..100) {
+            assert_eq!(*i, j as i32);
+        }
     }
-    println!("");
 }
