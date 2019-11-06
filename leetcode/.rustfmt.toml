@@ -1,0 +1,11 @@
+edition="2018"
+hard_tabs=true
+binop_separator="Front"
+brace_style="SameLineWhere"
+color="Auto"
+comment_width=80
+control_brace_style="AlwaysSameLine"
+empty_item_single_line=true
+merge_imports=true
+fn_single_line=true
+condense_wildcard_suffixes=true
