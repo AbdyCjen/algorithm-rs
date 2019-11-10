@@ -31,16 +31,14 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
-		let mut pro = 0;
-		let mut cur_low = std::i32::MAX;
-		for &pric in prices.iter() {
-			if pric > cur_low {
-				pro = std::cmp::max(pric - cur_low, pro);
-			} else {
-				cur_low = pric;
-			}
+		let mut min_price = std::i32::MAX;
+		let mut max_profit = 0;
+
+		for &price in prices.iter() {
+			min_price = std::cmp::min(min_price, price);
+			max_profit = std::cmp::max(max_profit, price - min_price);
 		}
-		pro
+		max_profit
 	}
 }
 

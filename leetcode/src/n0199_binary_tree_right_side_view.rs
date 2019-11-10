@@ -50,7 +50,7 @@ impl Solution {
 				let rv = Solution::right_side_view(tn.borrow().right.clone());
 				let mut res = Vec::<i32>::new();
 				res.push(tn.borrow().val);
-				rv.iter().for_each(|i| res.push(*i));
+				rv.iter().for_each(|&i| res.push(i));
 				if lv.len() > rv.len() {
 					&lv[rv.len()..].iter().for_each(|&i| res.push(i));
 				}
