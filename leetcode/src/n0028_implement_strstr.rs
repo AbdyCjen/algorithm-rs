@@ -30,6 +30,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn str_str(haystack: String, needle: String) -> i32 {
 		let kmp = Solution::gen_kmp(needle.as_bytes());
