@@ -22,45 +22,41 @@ pub struct Solution {}
 
 // submission codes start here
 
-// 太丑了
+// 太丑了, 我看见一个题解是维护了一个counter变量保存t里的待匹配字符数量, 等于零就可以匹配了;
 impl Solution {
 	pub fn min_window(s: String, t: String) -> String {
 		if s.len() == 0 || s.len() < t.len() {
 			return Default::default();
 		}
-		let mut res = String::new();
-		let mut cmap = vec![0; 128];
-		let mut imap = vec![false; 128];
+		let (mut res, mut cmap, mut counter) = (String::new(), vec![0; 128], t.len() as i32);
 		for c in t.bytes().map(|c| c as usize) {
-			cmap[c] = cmap[c] + 1;
-			imap[c] = true;
+			cmap[c] += 1;
 		}
 
-		let mut i = 0;
-		let mut start = 0;
-		let mut minl = std::usize::MAX;
+		let (mut i, mut start, mut minl) = (0, 0, std::usize::MAX);
 		for (j, c) in s.bytes().enumerate() {
 			let c = c as usize;
-			if imap[c] {
-				cmap[c] = cmap[c] - 1;
+			if cmap[c] > 0 {
+				counter -= 1;
 			}
-			while (!imap[s.as_bytes()[i] as usize] || cmap[s.as_bytes()[i] as usize] < 0) && i < j {
-				if imap[s.as_bytes()[i] as usize] {
-					cmap[s.as_bytes()[i] as usize] = cmap[s.as_bytes()[i] as usize] + 1;
-				}
-				i = i + 1;
-			}
-			if cmap.iter().fold(true, |acc, x| acc && *x <= 0) {
-				if j - i < minl {
+			cmap[c] = cmap[c] - 1;
+			while counter == 0 {
+				if j - i + 1 < minl {
 					start = i;
 					minl = j - i + 1;
 				}
+				if cmap[s.as_bytes()[i] as usize] == 0 {
+					counter += 1;
+				}
+				cmap[s.as_bytes()[i] as usize] += 1;
+				i += 1;
 			}
 		}
 		if minl > s.len() {
-			return Default::default();
+			Default::default()
+		} else {
+			s[start..start + minl].to_owned()
 		}
-		s[start..start + minl].to_owned()
 	}
 }
 

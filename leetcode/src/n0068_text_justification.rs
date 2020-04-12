@@ -86,7 +86,6 @@ impl Solution {
 				cache.push(word);
 			}
 		}
-		//TODO: last line
 		res.push(Solution::last_line_compact(&mut cache, wlen, max_width));
 		res
 	}
