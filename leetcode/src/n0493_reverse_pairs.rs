@@ -29,7 +29,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-
 // 杀妈了, 写完发现不是单纯的逆序对
 impl Solution {
 	pub fn reverse_pairs(nums: Vec<i32>) -> i32 {
@@ -62,7 +61,7 @@ impl Solution {
 				st.push((i, last_cnt, 0));
 			}
 		}
-        res += st.iter().rev().skip(1).fold(0, |c, &(_, lcnt, _)| c + lcnt);
+		res += st.iter().rev().skip(1).fold(0, |c, &(_, lcnt, _)| c + lcnt);
 		res
 	}
 }
