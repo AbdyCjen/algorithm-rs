@@ -23,8 +23,8 @@
  * Follow up:
  *
  *
- * 	This is a follow up problem to <a href="/problems/search-in-rotated-sorted-array/description/">Search in Rotated Sorted Array</a>, where nums may contain duplicates.
- * 	Would this affect the run-time complexity? How and why?
+ * This is a follow up problem to <a href="/problems/search-in-rotated-sorted-array/description/">Search in Rotated Sorted Array</a>, where nums may contain duplicates.
+ * Would this affect the run-time complexity? How and why?
  *
  *
  */
@@ -33,6 +33,7 @@ pub struct Solution {}
 // submission codes start here
 
 // 没有log(n)的算法, 因为最坏的情况下, 必须遍历全部数组才能判断不存在(全是dup)
+#[allow(dead_code)]
 impl Solution {
 	pub fn search(nums: Vec<i32>, target: i32) -> bool {
 		let (mut i, mut j): (isize, isize) = (0, nums.len() as isize - 1);
@@ -42,20 +43,18 @@ impl Solution {
 			if nums[mid] == target {
 				return true;
 			} else if nums[mid] == nums[i as usize] && nums[mid] == nums[j as usize] {
-				j = j - 1;
-				i = i + 1;
+				j -= 1;
+				i += 1;
 			} else if nums[mid] >= nums[i as usize] {
 				if target < nums[mid] && target >= nums[i as usize] {
 					j = mid as isize - 1;
 				} else {
 					i = mid as isize + 1;
 				}
+			} else if target > nums[mid] && target <= nums[j as usize] {
+				i = mid as isize + 1;
 			} else {
-				if target > nums[mid] && target <= nums[j as usize] {
-					i = mid as isize + 1;
-				} else {
-					j = mid as isize - 1;
-				}
+				j = mid as isize - 1;
 			}
 		}
 		false

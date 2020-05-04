@@ -5,16 +5,15 @@ extern crate serde_json;
 
 mod problem;
 
-use std::{env, fs, io, io::Write, path::Path};
+use std::{fs, io, io::Write, path::Path};
 
 /// main() helps to generate the submission template .rs
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
 	println!("Welcome to leetcode-rust system.");
 	let mut solved_ids = get_solved_ids();
 	loop {
 		println!("Please enter a problem id, or enter \"random\" to generate a random problem.");
-		let mut is_random = false;
-		let mut id: u32 = 0;
+		let id: u32;
 		let mut id_arg = String::new();
 		io::stdin()
 			.read_line(&mut id_arg)
@@ -24,13 +23,12 @@ fn main() {
 			"random" => {
 				println!("You select random mode.");
 				id = generate_random_id(&solved_ids);
-				is_random = true;
 				println!("Generate random problem: {}", &id);
 			}
 			_ => {
 				id = id_arg
 					.parse::<u32>()
-					.expect(&format!("not a number: {}", id_arg));
+					.unwrap_or_else(|_| panic!("not a number: {}", id_arg));
 				if solved_ids.contains(&id) {
 					println!(
 						"The problem you chose is invalid (the problem may have been solved \
@@ -41,16 +39,14 @@ fn main() {
 			}
 		}
 
-		let problem = problem::get_problem(id).expect(&format!(
-			"Error: failed to get problem #{} \
-			 (The problem may be paid-only or may not be exist).",
-			id
-		));
-		let code = problem
-			.code_definition
-			.iter()
-			.filter(|&d| d.value == "rust")
-			.next();
+		let problem = problem::get_problem(id).unwrap_or_else(|| {
+			panic!(
+				"Error: failed to get problem #{} \
+43 |              (The problem may be paid-only or may not be exist).",
+				id
+			)
+		});
+		let code = problem.code_definition.iter().find(|&d| d.value == "rust");
 		if code.is_none() {
 			println!("Problem {} has no rust version.", &id);
 			solved_ids.push(id);
@@ -87,14 +83,14 @@ fn main() {
 			.append(true)
 			.open("./src/lib.rs")
 			.unwrap();
-		writeln!(lib_file, "mod {};", file_name);
+		writeln!(lib_file, "mod {};", file_name)?;
 		break;
 	}
+	Ok(())
 }
 
-fn generate_random_id(except_ids: &Vec<u32>) -> u32 {
+fn generate_random_id(except_ids: &[u32]) -> u32 {
 	use rand::Rng;
-	use std::fs;
 	let mut rng = rand::thread_rng();
 	loop {
 		let res: u32 = rng.gen_range(1, 1106);
@@ -116,7 +112,7 @@ fn get_solved_ids() -> Vec<u32> {
 	for path in paths {
 		let path = path.unwrap().path();
 		let s = path.to_str().unwrap();
-		if s.chars().next().unwrap() != 'n' {
+		if !s.starts_with('n') {
 			continue;
 		}
 		let id = &s[7..11];

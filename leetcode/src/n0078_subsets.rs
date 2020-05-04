@@ -26,6 +26,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn subsets(nums: Vec<i32>) -> Vec<Vec<i32>> {
 		let mut res = Vec::new();
@@ -34,7 +35,7 @@ impl Solution {
 		res
 	}
 
-	fn subsets_rec(start: usize, mut st: Vec<i32>, res: &mut Vec<Vec<i32>>, nums: &Vec<i32>) {
+	fn subsets_rec(start: usize, mut st: Vec<i32>, res: &mut Vec<Vec<i32>>, nums: &[i32]) {
 		if start >= nums.len() {
 			res.push(st);
 			return;

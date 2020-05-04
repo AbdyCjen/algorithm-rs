@@ -22,13 +22,13 @@
  *
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
-	pub fn single_number(mut nums: Vec<i32>) -> i32 { nums.iter().fold(0, |acc, n| acc ^ n) }
+	pub fn single_number(nums: Vec<i32>) -> i32 { nums.iter().fold(0, |acc, n| acc ^ n) }
 }
 
 // submission codes end

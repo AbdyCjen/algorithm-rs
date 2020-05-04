@@ -33,9 +33,10 @@ pub struct Solution {}
   从左向右扫描输入, 维护一个栈st表示扫描到当前位置i时,
   TODO: 完成
 */
+#[allow(dead_code)]
 impl Solution {
 	pub fn largest_rectangle_area(mut heights: Vec<i32>) -> i32 {
-		if heights.len() == 0 {
+		if heights.is_empty() {
 			return 0;
 		}
 		let mut st = vec![(0, heights[0])];
@@ -43,7 +44,7 @@ impl Solution {
 		heights.push(0);
 		for (i, &h) in heights.iter().enumerate().skip(1) {
 			while let Some(&(_, th)) = st.iter().rev().next() {
-				if !(th >= h) {
+				if th < h {
 					break;
 				}
 				st.pop();

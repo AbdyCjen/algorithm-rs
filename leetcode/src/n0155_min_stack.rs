@@ -4,10 +4,10 @@
  * Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
  *
  *
- * 	push(x) -- Push element x onto stack.
- * 	pop() -- Removes the element on top of the stack.
- * 	top() -- Get the top element.
- * 	getMin() -- Retrieve the minimum element in the stack.
+ * push(x) -- Push element x onto stack.
+ * pop() -- Removes the element on top of the stack.
+ * top() -- Get the top element.
+ * getMin() -- Retrieve the minimum element in the stack.
  *
  *
  *  
@@ -28,11 +28,7 @@
  *  
  *
  */
-#[allow(dead_code)]
-pub struct Solution {}
-
 // submission codes start here
-
 use std::{collections::BTreeMap, default::Default};
 #[derive(Default)]
 struct MinStack {
@@ -44,6 +40,7 @@ struct MinStack {
  * `&self` means the method takes an immutable reference.
  * If you need a mutable reference, change it to `&mut self` instead.
  */
+#[allow(dead_code)]
 impl MinStack {
 	/** initialize your data structure here. */
 	fn new() -> Self { Default::default() }
@@ -55,7 +52,7 @@ impl MinStack {
 
 	fn pop(&mut self) {
 		if let Some(x) = self.q.pop() {
-			let mut ent = self.s.entry(x).or_insert(0);
+			let ent = self.s.entry(x).or_insert(0);
 			*ent -= 1;
 			if *ent == 0 {
 				self.s.remove(&x);
@@ -85,13 +82,13 @@ mod tests {
 
 	#[test]
 	fn test_155() {
-		let mut minStack = MinStack::new();
-		minStack.push(-2);
-		minStack.push(0);
-		minStack.push(-3);
-		assert_eq!(minStack.get_min(), -3);
-		minStack.pop();
-		assert_eq!(minStack.top(), 0);
-		assert_eq!(minStack.get_min(), -2);
+		let mut min_stack = MinStack::new();
+		min_stack.push(-2);
+		min_stack.push(0);
+		min_stack.push(-3);
+		assert_eq!(min_stack.get_min(), -3);
+		min_stack.pop();
+		assert_eq!(min_stack.top(), 0);
+		assert_eq!(min_stack.get_min(), -2);
 	}
 }

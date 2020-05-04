@@ -15,11 +15,11 @@
  * 1^2 + 0^2 + 0^2 = 1
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn is_happy(mut n: i32) -> bool {
 		// i32 最大(2e10 - 1).happy_number() == 730 , 699.happy_number() = 198, 所以最多两百个循环

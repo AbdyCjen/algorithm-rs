@@ -38,6 +38,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
 		let mut pro_sum = 0;
@@ -47,7 +48,7 @@ impl Solution {
 			if price - cur_lo > cur_pro {
 				cur_pro = price - cur_lo;
 			} else {
-				pro_sum = pro_sum + cur_pro;
+				pro_sum += cur_pro;
 				cur_pro = 0;
 				cur_lo = price;
 			}

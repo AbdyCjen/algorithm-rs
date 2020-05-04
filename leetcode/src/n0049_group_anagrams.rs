@@ -17,26 +17,26 @@
  * Note:
  *
  *
- * 	All inputs will be in lowercase.
- * 	The order of your output does not matter.
+ * All inputs will be in lowercase.
+ * The order of your output does not matter.
  *
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
 use std::collections::HashMap;
+#[allow(dead_code)]
 impl Solution {
 	pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
 		let mut m: HashMap<_, Vec<String>> = HashMap::new();
 		for s in strs.into_iter() {
 			let mut k = s.clone().into_bytes();
 			k.sort();
-			m.entry(k).or_insert(Vec::new()).push(s);
+			m.entry(k).or_insert_with(Vec::new).push(s);
 		}
-		m.into_iter().map(|(k, v)| v).collect()
+		m.into_iter().map(|(_, v)| v).collect()
 	}
 }
 
@@ -48,13 +48,16 @@ mod tests {
 
 	#[test]
 	fn test_49() {
-		return;
+		// lc输出不要求有序, 本地要修饰一下测试用例
+		let mut res =
+			Solution::group_anagrams(vec_string!["eat", "tea", "tan", "ate", "nat", "bat"]);
+		res.sort_by(|a, b| a.len().cmp(&b.len()));
 		assert_eq!(
-			Solution::group_anagrams(vec_string!["eat", "tea", "tan", "ate", "nat", "bat"]),
+			res,
 			vec![
-				vec_string!["ate", "eat", "tea"],
-				vec_string!["nat", "tan"],
-				vec_string!["bat"]
+				vec_string!["bat"],
+				vec_string!["tan", "nat"],
+				vec_string!["eat", "tea", "ate"]
 			]
 		);
 	}

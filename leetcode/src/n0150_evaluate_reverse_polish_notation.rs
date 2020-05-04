@@ -8,8 +8,8 @@
  * Note:
  *
  *
- * 	Division between two integers should truncate toward zero.
- * 	The given RPN expression is always valid. That means the expression would always evaluate to a result and there won't be any divide by zero operation.
+ * Division between two integers should truncate toward zero.
+ * The given RPN expression is always valid. That means the expression would always evaluate to a result and there won't be any divide by zero operation.
  *
  *
  * Example 1:
@@ -48,6 +48,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn eval_rpn(tokens: Vec<String>) -> i32 {
 		let mut st: Vec<i32> = vec![];

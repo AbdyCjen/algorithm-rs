@@ -32,15 +32,14 @@
  * Note:
  *
  *
- * 	The number of nodes in the given list will be between 1 and 100.
+ * The number of nodes in the given list will be between 1 and 100.
  *
  * </div>
  * </div>
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
-use super::util::linked_list::{to_list, ListNode};
+use super::util::linked_list::ListNode;
 
 // submission codes start here
 
@@ -60,6 +59,7 @@ use super::util::linked_list::{to_list, ListNode};
 //     }
 //   }
 // }
+#[allow(dead_code)]
 impl Solution {
 	pub fn middle_node(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
 		let mut cnt_bf_mid = 0;
@@ -80,7 +80,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::linked_list::to_list, *};
 
 	#[test]
 	fn test_908() {

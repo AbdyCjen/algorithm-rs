@@ -6,9 +6,9 @@
  * You have the following 3 operations permitted on a word:
  *
  * <ol>
- * 	Insert a character
- * 	Delete a character
- * 	Replace a character
+ * Insert a character
+ * Delete a character
+ * Replace a character
  * </ol>
  *
  * Example 1:
@@ -44,9 +44,10 @@ pub struct Solution {}
  * 显然地, 有mat[i][0] = i, mat[0][j] = j, 目标的返回值是mat[word1.len()][word2.len()]
  * 如果已知mat[i-1][j-1], mat[i-1][j], mat[i][j-1],
  * */
+#[allow(dead_code)]
 impl Solution {
 	pub fn min_distance(word1: String, word2: String) -> i32 {
-		if word1.len() == 0 || word2.len() == 0 {
+		if word1.is_empty() || word2.is_empty() {
 			return (word1.len() + word2.len()) as i32;
 		}
 

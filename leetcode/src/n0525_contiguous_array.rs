@@ -24,12 +24,12 @@
  * The length of the given binary array will not exceed 50,000.
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::HashMap;
+#[allow(dead_code)]
 impl Solution {
 	pub fn find_max_length(nums: Vec<i32>) -> i32 {
 		let mut m: HashMap<_, _> = HashMap::new();

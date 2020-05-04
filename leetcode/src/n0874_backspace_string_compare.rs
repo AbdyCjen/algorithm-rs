@@ -42,15 +42,15 @@
  * <span>Note:</span>
  *
  * <ol>
- * 	<span>1 <= S.length <= 200</span>
- * 	<span>1 <= T.length <= 200</span>
- * 	<span>S and T only contain lowercase letters and '#' characters.</span>
+ * <span>1 <= S.length <= 200</span>
+ * <span>1 <= T.length <= 200</span>
+ * <span>S and T only contain lowercase letters and '#' characters.</span>
  * </ol>
  *
  * Follow up:
  *
  *
- * 	Can you solve it in O(N) time and O(1) space?
+ * Can you solve it in O(N) time and O(1) space?
  *
  * </div>
  * </div>
@@ -58,11 +58,11 @@
  * </div>
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn backspace_compare(s: String, t: String) -> bool {
 		fn filter_bs() -> impl FnMut(&u8) -> bool {
@@ -79,8 +79,8 @@ impl Solution {
 				_ => true,
 			}
 		}
-		let mut s = s.bytes().into_iter().rev().filter(filter_bs());
-		let mut t = t.bytes().into_iter().rev().filter(filter_bs());
+		let mut s = s.bytes().rev().filter(filter_bs());
+		let mut t = t.bytes().rev().filter(filter_bs());
 		loop {
 			match (s.next(), t.next()) {
 				(Some(c1), Some(c2)) => {

@@ -24,9 +24,8 @@
  * The length of path between two nodes is represented by the number of edges between them.
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -49,20 +48,20 @@ use super::util::tree::{to_tree, TreeNode};
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
+#[allow(dead_code)]
 impl Solution {
 	pub fn diameter_of_binary_tree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
 		Self::height_and_diameter(root).1
 	}
 
 	fn height_and_diameter(root: Option<Rc<RefCell<TreeNode>>>) -> (i32, i32) {
-		let (mut h, mut d) = (0_i32, 0_i32);
 		match root {
 			Some(root) => {
 				let (hl, dl) = Self::height_and_diameter(root.borrow().left.clone());
 				let (hr, dr) = Self::height_and_diameter(root.borrow().right.clone());
 				(
 					std::cmp::max(hl, hr) + 1,
-					*[dl, dr, hl + hr].into_iter().max().unwrap(),
+					*[dl, dr, hl + hr].iter().max().unwrap(),
 				)
 			}
 			None => (0, 0),
@@ -74,7 +73,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_543() {

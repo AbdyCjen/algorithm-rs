@@ -32,10 +32,11 @@ pub struct Solution {}
 
 // 纯丢人题解, 快过7%的提交,TODO: 重写
 use std::collections::BTreeMap;
+#[allow(dead_code)]
 impl Solution {
 	pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
 		let mut res = Vec::new();
-		if nums.len() == 0 {
+		if nums.is_empty() {
 			return res;
 		}
 		let mut bmap = BTreeMap::new();

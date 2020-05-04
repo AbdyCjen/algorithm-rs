@@ -12,15 +12,15 @@
  * Note:
  *
  * <ol>
- * 	You must do this in-place without making a copy of the array.
- * 	Minimize the total number of operations.
+ * You must do this in-place without making a copy of the array.
+ * Minimize the total number of operations.
  * </ol>
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn move_zeroes(nums: &mut Vec<i32>) {
 		let mut i = 0;

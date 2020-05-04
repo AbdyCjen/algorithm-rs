@@ -49,9 +49,10 @@ pub struct Solution {}
  *      price[i] + max(f[k-i, j] - price[j]) { j in (0..i)}
  *  }
 */
+#[allow(dead_code)]
 impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
-		if prices.len() < 1 {
+		if prices.is_empty() {
 			return 0;
 		}
 		let mut cache = vec![0; prices.len()];

@@ -32,16 +32,18 @@
  * Note:
  *
  * <ol>
- * 	The width sum of bricks in different rows are the same and won't exceed INT_MAX.
- * 	The number of bricks in each row is in range [1,10,000]. The height of wall is in range [1,10,000]. Total number of bricks of the wall won't exceed 20,000.
+ * The width sum of bricks in different rows are the same and won't exceed INT_MAX.
+ * The number of bricks in each row is in range [1,10,000]. The height of wall is in range [1,10,000]. Total number of bricks of the wall won't exceed 20,000.
  * </ol>
  *
  */
+#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
 use std::collections::HashMap;
+#[allow(dead_code)]
 impl Solution {
 	pub fn least_bricks(wall: Vec<Vec<i32>>) -> i32 {
 		let mut cmap = HashMap::<i32, i32>::new();
