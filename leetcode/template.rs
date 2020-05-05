@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /**
  * [__PROBLEM_ID__] __PROBLEM_TITLE__
  *
@@ -14,7 +15,7 @@ __PROBLEM_DEFAULT_CODE__
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    __EXTRA_TEST_USE__
 
     #[test]
     fn test___PROBLEM_ID__() {

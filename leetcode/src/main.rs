@@ -66,7 +66,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 			.replace("__PROBLEM_DESC__", &build_desc(&problem.content))
 			.replace("__PROBLEM_DEFAULT_CODE__", &code.default_code)
 			.replace("__PROBLEM_ID__", &format!("{}", id))
-			.replace("__EXTRA_USE__", &parse_extra_use(&code.default_code));
+			.replace("__EXTRA_USE__", &parse_extra_use(&code.default_code))
+			.replace("__EXTRA_TEST_USE__", &parse_extra_test_use(&code.default_code));
 
 		let mut file = fs::OpenOptions::new()
 			.write(true)
@@ -125,16 +126,31 @@ fn get_solved_ids() -> Vec<u32> {
 fn parse_extra_use(code: &str) -> String {
 	let mut extra_use_line = String::new();
 	// a linked-list problem
+        // put to_tree, to_list in test block instead, or clippy will warn unused use;
 	if code.contains("pub struct ListNode") {
-		extra_use_line.push_str("\nuse super::util::linked_list::{ListNode, to_list};")
+		extra_use_line.push_str("\nuse super::util::linked_list::ListNode;")
 	}
 	if code.contains("pub struct TreeNode") {
-		extra_use_line.push_str("\nuse super::util::tree::{TreeNode, to_tree};")
+		extra_use_line.push_str("\nuse super::util::tree::TreeNode;")
 	}
 	if code.contains("pub struct Point") {
 		extra_use_line.push_str("\nuse super::util::point::Point;")
 	}
 	extra_use_line
+}
+
+fn parse_extra_test_use(code: &str) -> String {
+	let mut extra_test_use_line = String::new();
+	// a linked-list problem
+	if code.contains("pub struct ListNode") {
+		extra_test_use_line.push_str("use super::{super::util::linked_list::to_list,*};")
+	}
+	if code.contains("pub struct TreeNode") {
+		extra_test_use_line.push_str("use super::{super::util::tree::to_tree, *};")
+	} else {
+		extra_test_use_line.push_str("use super::*;")
+        }
+	extra_test_use_line
 }
 
 fn build_desc(content: &str) -> String {
@@ -170,4 +186,5 @@ fn build_desc(content: &str) -> String {
 		.replace("&#39;", "'")
 		.replace("\n\n", "\n")
 		.replace("\n", "\n * ")
+		.replace("\r\n", "\n")
 }
