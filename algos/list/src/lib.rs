@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct LinkList<T: Eq> {
 	head: Option<Box<ListNode<T>>>,
 }
@@ -10,15 +10,20 @@ pub struct ListNode<T: Eq> {
 }
 
 impl<T: Eq> ListNode<T> {
-	fn new(v: T) -> ListNode<T> { ListNode { value: v, next: None } }
+	fn new(v: T) -> ListNode<T> {
+		ListNode { value: v,
+		           next: None }
+	}
 }
 
 impl<T: Eq> LinkList<T> {
 	// TODO: 有safe的办法直接在头保存&mut 尾节点吗? ==> 原则上不行, 下回写个用RefCell的版本吧
-	pub fn new() -> LinkList<T> { LinkList { head: None } }
-	pub fn iter<'a>(&'a self) -> Iter<'a, T> { Iter { node: self.head.as_ref() } }
+	// FIXME: 把iter和iter_mut重定向到&Self 和 &mut Self的IntoIterator实现
+	pub fn iter(&self) -> Iter<T> { Iter { node: self.head.as_ref().map(AsRef::as_ref) } }
+	pub fn iter_mut(&mut self) -> IterMut<T> {
+		IterMut { node: self.head.as_mut().map(AsMut::as_mut) }
+	}
 
-	pub fn iter_mut<'a>(&'a mut self) -> IterMut<'a, T> { IterMut { node: self.head.as_mut() } }
 	pub fn add(&mut self, v: T) {
 		let mut new_node = Box::new(ListNode::new(v));
 		new_node.next = self.head.take();
@@ -42,7 +47,7 @@ impl<T: Eq> LinkList<T> {
 pub struct Iter<'a, T>
 	where T: 'a + Eq
 {
-	node: Option<&'a Box<ListNode<T>>>,
+	node: Option<&'a ListNode<T>>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> where T: Eq
@@ -50,7 +55,7 @@ impl<'a, T> Iterator for Iter<'a, T> where T: Eq
 	type Item = &'a T;
 	fn next(&mut self) -> Option<Self::Item> {
 		self.node.take().map(|no| {
-			                self.node = no.next.as_ref();
+			                self.node = no.next.as_ref().map(|o| o.as_ref());
 			                &no.value
 		                })
 	}
@@ -59,7 +64,7 @@ impl<'a, T> Iterator for Iter<'a, T> where T: Eq
 pub struct IterMut<'a, T>
 	where T: Eq
 {
-	node: Option<&'a mut Box<ListNode<T>>>,
+	node: Option<&'a mut ListNode<T>>,
 }
 
 impl<'a, T> Iterator for IterMut<'a, T> where T: Eq + 'static
@@ -67,7 +72,7 @@ impl<'a, T> Iterator for IterMut<'a, T> where T: Eq + 'static
 	type Item = &'a mut T;
 	fn next(&mut self) -> Option<Self::Item> {
 		self.node.take().map(|no| {
-			                self.node = no.next.as_mut();
+			                self.node = no.next.as_mut().map(AsMut::as_mut);
 			                &mut no.value
 		                })
 	}
@@ -78,19 +83,19 @@ mod tests {
 	use super::*;
 	#[test]
 	fn it_works() {
-		let mut list = LinkList::new();
+		let mut list = LinkList::default();
 		let plist = |list: &LinkList<i32>| {
 			for i in list.iter() {
 				print!("{},", i);
 			}
-			println!("");
+			println!();
 		};
 		let pmut = |list: &mut LinkList<i32>| {
 			for i in list.iter_mut() {
 				*i += 1;
 				print!("{},", i);
 			}
-			println!("");
+			println!();
 		};
 
 		for i in (0..30_i32).rev() {
