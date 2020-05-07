@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 /**
  * [__PROBLEM_ID__] __PROBLEM_TITLE__
  *

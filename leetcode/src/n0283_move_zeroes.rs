@@ -25,8 +25,8 @@ impl Solution {
 	pub fn move_zeroes(nums: &mut Vec<i32>) {
 		let mut i = 0;
 		for j in 0..nums.len() {
-			match nums[j] {
-				0 => {}
+			match nums.get(j) {
+				Some(0) => {}
 				_ => {
 					nums.swap(i, j);
 					i += 1;

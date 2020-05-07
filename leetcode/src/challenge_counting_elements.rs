@@ -6,7 +6,7 @@ use std::collections::HashSet;
 impl Solution {
 	pub fn count_elements(arr: Vec<i32>) -> i32 {
 		let mut hs = HashSet::new();
-		for n in arr.iter() {
+		for n in &arr {
 			hs.insert(n);
 		}
 		arr.iter()

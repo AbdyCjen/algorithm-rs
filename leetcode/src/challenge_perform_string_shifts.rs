@@ -5,9 +5,9 @@ pub struct Solution {}
 use std::iter::FromIterator;
 impl Solution {
 	pub fn string_shift(s: String, shift: Vec<Vec<i32>>) -> String {
-		let sum = shift.into_iter().fold(0_i32, |d, ds| match ds[0] {
-			0 => (d - ds[1]) % (s.len() as i32),
-			1 => (d + ds[1]) % (s.len() as i32),
+		let sum = shift.into_iter().fold(0_i32, |d, ds| match ds.get(0) {
+			Some(0) => (d - ds[1]) % (s.len() as i32),
+			Some(1) => (d + ds[1]) % (s.len() as i32),
 			_ => unreachable!(),
 		});
 		// UGLY

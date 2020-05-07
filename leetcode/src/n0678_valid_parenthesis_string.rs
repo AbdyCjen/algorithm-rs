@@ -81,7 +81,5 @@ mod tests {
 		assert_eq!(Solution::check_valid_string("***".to_owned()), true);
 		assert_eq!(Solution::check_valid_string("*((**".to_owned()), true);
 		assert_eq!(Solution::check_valid_string("*((*".to_owned()), false);
-		// TLE
-		//assert_eq!(Solution::check_valid_string("(((((*(()((((*((**(((()()*)()()()*((((**)())*)*)))))))(())(()))())((*()()(((()((()*(())*(()**)()(())".to_owned()), false);
 	}
 }

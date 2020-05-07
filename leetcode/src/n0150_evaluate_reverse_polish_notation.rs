@@ -53,7 +53,7 @@ impl Solution {
 	pub fn eval_rpn(tokens: Vec<String>) -> i32 {
 		let mut st: Vec<i32> = vec![];
 
-		for tok in tokens.iter() {
+		for tok in &tokens {
 			if tok == "+" {
 				let ro = st.pop().unwrap();
 				let lo = st.pop().unwrap();
