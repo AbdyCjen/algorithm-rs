@@ -1,5 +1,5 @@
 [package]
-name = "qsort"
+name = "sort"
 version = "0.1.0"
 authors = ["ajen <ajen@yeahka.com>"]
 edition = "2018"
