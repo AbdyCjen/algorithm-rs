@@ -1,4 +1,4 @@
-//#![feature(test)]
+#![feature(test)]
 use std::cmp::Ordering;
 
 fn merge_into<T>(nums: &mut [T], nums_lower: Vec<T>)
@@ -30,6 +30,22 @@ pub fn merge_sort<T>(nums: &mut [T])
 	}
 }
 
+pub fn insert_sort<T>(nums: &mut [T])
+	where T: std::cmp::Ord
+{
+	for i in 1..nums.len() {
+		let (l, r) = nums[..i + 1].split_at_mut(i);
+		let mut prev = &mut r[0];
+		for b in l.into_iter().rev() {
+			if b < prev {
+				break;
+			}
+			std::mem::swap(prev, b);
+			prev = b;
+		}
+	}
+}
+
 pub fn select_sort<T>(nums: &mut [T])
 	where T: std::cmp::Ord
 {
@@ -39,10 +55,12 @@ pub fn select_sort<T>(nums: &mut [T])
 	for i in 0..(nums.len() - 1) {
 		let (l, r) = nums[i..].split_at_mut(1);
 		r.into_iter()
-		 .min()
-		 .map(|min| if *min < l[0] {
-			 std::mem::swap(&mut l[0], min)
-		 });
+			.min()
+			.map(|min| {
+				if *min < l[0] {
+					std::mem::swap(&mut l[0], min)
+				}
+			});
 	}
 }
 
@@ -77,15 +95,15 @@ pub fn qsort<T>(iv: &mut [T])
 
 #[cfg(test)]
 mod test {
-	use rand::prelude::*;
 	use super::*;
+	use rand::prelude::*;
 	#[test]
 	fn it_works() {
-        check_sort(<[i32]>::sort);
-        println!("std sort test ok!");
+		check_sort(<[i32]>::sort);
+		println!("std sort test ok!");
 
-        check_sort(<[i32]>::sort_unstable);
-        println!("std sort_unstable test ok!");
+		check_sort(<[i32]>::sort_unstable);
+		println!("std sort_unstable test ok!");
 
 		check_sort(qsort::<i32>);
 		println!("quick sort test ok!");
@@ -95,39 +113,41 @@ mod test {
 
 		check_sort(select_sort::<i32>);
 		println!("select sort test ok!");
+
+		check_sort(insert_sort::<i32>);
+		println!("insert sort test ok!");
 	}
+
 	fn check_sort(sort_fn: fn(&mut [i32])) {
 		let mut nums: Vec<i32> = (1..10000).collect();
 		(1..100).for_each(|n| nums.push(n));
 		nums.shuffle(&mut rand::thread_rng());
+		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
+			it.next()
+			  .map(|mut prev| {
+				  it.all(move |mut o| {
+					    std::mem::swap(&mut o, &mut prev);
+					    o <= prev
+				    })
+			  })
+			  .unwrap_or(true)
+		}
 		//nums.iter().for_each(|n| print!("{},", n)); println!("");
 		sort_fn(&mut nums);
 		//nums.iter().for_each(|n| print!("{},", n)); println!("");
-		assert!(
-		        nums.iter()
-		            .fold((true, &std::i32::MIN), |(sorted, prev), n| {
-			            (sorted && prev <= n, n)
-		            })
-		            .0
-		);
+		assert!(is_sorted(nums.iter()));
 		let mut nums = vec![0; 100];
 		nums[0] = 1;
 		sort_fn(&mut nums);
-		assert!(
-		        nums.iter()
-		            .fold((true, &std::i32::MIN), |(sorted, prev), n| {
-			            (sorted && prev <= n, n)
-		            })
-		            .0
-		);
+		assert!(is_sorted(nums.iter()));
 		println!("OK");
 	}
 
 	#[cfg(nightly)]
 	mod bench {
 		extern crate test;
-		use test::Bencher;
 		use super::*;
+		use test::Bencher;
 		#[bench]
 		fn bench_std_sort(b: &mut Bencher) {
 			b.iter(|| check_sort(<[i32]>::sort))
@@ -151,6 +171,11 @@ mod test {
 		#[bench]
 		fn bench_select_sort(b: &mut Bencher) {
 			b.iter(|| check_sort(select_sort::<i32>))
+		}
+
+		#[bench]
+		fn bench_insert_sort(b: &mut Bencher) {
+			b.iter(|| check_sort(insert_sort::<i32>))
 		}
 	}
 }
