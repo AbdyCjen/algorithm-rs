@@ -13,9 +13,12 @@ pub enum TreapError {
 	DupEntryError,
 }
 
-#[derive(Default)]
 pub struct Treap<T: std::cmp::Ord> {
 	root: Option<Box<TreapNode<T>>>,
+}
+
+impl<T: std::cmp::Ord> Default for Treap<T> {
+	fn default() -> Treap<T> { Treap { root: None } }
 }
 
 impl<T: std::cmp::Ord> Treap<T> {
@@ -52,7 +55,7 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		let mut k = mem::replace(&mut self.child[d ^ 1], None).unwrap();
 		self.child[d ^ 1] = mem::replace(&mut k.child[d], None);
 		mem::swap(self, &mut k);
-		mem::replace(&mut self.child[d], Some(k));
+		self.child[d] = Some(k);
 	}
 
 	fn find(self: &Self, k: &T) -> Option<()> {
@@ -115,26 +118,36 @@ mod test_treap {
 	#[test]
 	fn it_works() {
 		let mut tr = Treap::default();
-		for i in 0..1000_000 {
+		for i in 0..1_000_000 {
 			tr.ins(i).unwrap()
 		}
 		check_treap(&tr.root.as_ref().unwrap()).unwrap();
 		println!();
 		tr.ins(3).unwrap_err();
+
+		let mut iv = Vec::new();
+		let mut tr: Treap<_> = Default::default();
+		for i in 0..1_000_000 {
+			iv.push(i);
+		}
+		for i in &iv {
+			tr.ins(i).unwrap();
+		}
+		check_treap(&tr.root.as_ref().unwrap()).unwrap();
 	}
 
-	fn check_treap<T>(t: &Box<TreapNode<T>>) -> Result<(), T>
+	fn check_treap<T>(t: &TreapNode<T>) -> Result<(), T>
 		where T: Ord + std::fmt::Display + Copy
 	{
 		if let Some(l) = t.child[0].as_ref() {
 			if l.k > t.k || l.r > t.r {
-				Err(t.k)?;
+				return Err(t.k);
 			}
 			check_treap(l)?;
 		}
 		if let Some(r) = t.child[1].as_ref() {
 			if r.k < t.k || r.r > t.r {
-				Err(t.k)?;
+				return Err(t.k);
 			}
 			check_treap(r)?;
 		}
