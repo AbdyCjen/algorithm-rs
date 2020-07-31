@@ -44,28 +44,15 @@ use super::util::tree::TreeNode;
 use std::{cell::RefCell, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
-	fn tree_new(val: i32) -> TreeNode {
-		TreeNode {
-			val,
-			left: None,
-			right: None,
-		}
-	}
 	fn bst_from_slc(slc: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
-		let mut root = Self::tree_new(*slc.get(0)?);
+		let root_val = *slc.first()?;
 		let slc = &slc[1..];
-		let mut i = 0;
-		// shit, use iterator
-		for v in slc {
-			if *v < root.val {
-				i += 1;
-			} else {
-				break;
-			}
-		}
-		root.left = Self::bst_from_slc(&slc[..i]);
-		root.right = Self::bst_from_slc(&slc[i..]);
-		Some(Rc::new(RefCell::new(root)))
+		let pos = slc.iter().position(|&x| x > root_val).unwrap_or(slc.len());
+		Some(Rc::new(RefCell::new(TreeNode {
+			val: root_val,
+			left: Self::bst_from_slc(&slc[..pos]),
+			right: Self::bst_from_slc(&slc[pos..]),
+		})))
 	}
 	pub fn bst_from_preorder(preorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
 		Self::bst_from_slc(&preorder)

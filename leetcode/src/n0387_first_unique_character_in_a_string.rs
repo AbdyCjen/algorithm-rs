@@ -31,9 +31,8 @@ impl Solution {
 			cnt[(c - b'a') as usize] += 1;
 		}
 		s.iter()
-			.enumerate()
-			.find(|(_, &c)| cnt[(c - b'a') as usize] == 1)
-			.map(|(i, _)| i as i32)
+			.position(|&c| cnt[(c - b'a') as usize] == 1)
+			.map(|i| i as i32)
 			.unwrap_or(-1)
 	}
 }
