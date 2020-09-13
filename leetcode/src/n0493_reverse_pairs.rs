@@ -24,13 +24,12 @@
  * </ol>
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
-
 // 杀妈了, 写完发现不是单纯的逆序对
+#[allow(dead_code)]
 impl Solution {
 	pub fn reverse_pairs(nums: Vec<i32>) -> i32 {
 		// vec[(val, lcnt, rcnt)]
@@ -57,12 +56,12 @@ impl Solution {
 					last_cnt = t.1 + t.2 + 1;
 				}
 			}
-			if st.len() == 0 {
+			if st.is_empty() {
 				res += last_cnt;
 				st.push((i, last_cnt, 0));
 			}
 		}
-        res += st.iter().rev().skip(1).fold(0, |c, &(_, lcnt, _)| c + lcnt);
+		res += st.iter().rev().skip(1).fold(0, |c, &(_, lcnt, _)| c + lcnt);
 		res
 	}
 }

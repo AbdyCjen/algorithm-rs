@@ -23,7 +23,7 @@
  *
  */
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -46,6 +46,7 @@ use super::util::tree::{to_tree, TreeNode};
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
+#[allow(dead_code)]
 impl Solution {
 	pub fn has_path_sum(root: Option<Rc<RefCell<TreeNode>>>, sum: i32) -> bool {
 		let root = match root {
@@ -56,8 +57,8 @@ impl Solution {
 		if let (None, None) = (&root.left, &root.right) {
 			return sum == root.val;
 		}
-		return Solution::has_path_sum(root.left.clone(), sum - root.val)
-			|| Solution::has_path_sum(root.right.clone(), sum - root.val);
+		Solution::has_path_sum(root.left.clone(), sum - root.val)
+			|| Solution::has_path_sum(root.right.clone(), sum - root.val)
 	}
 }
 
@@ -65,7 +66,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_112() {

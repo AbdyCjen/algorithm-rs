@@ -24,8 +24,8 @@
  * Note:
  *
  *
- * 	This is a follow up problem to <a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/">Find Minimum in Rotated Sorted Array</a>.
- * 	Would allow duplicates affect the run-time complexity? How and why?
+ * This is a follow up problem to <a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/">Find Minimum in Rotated Sorted Array</a>.
+ * Would allow duplicates affect the run-time complexity? How and why?
  *
  *
  */
@@ -33,6 +33,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn find_min(nums: Vec<i32>) -> i32 {
 		let (mut i, mut j): (isize, isize) = (0, nums.len() as isize - 1);
@@ -43,7 +44,7 @@ impl Solution {
 			}
 			let mid = (i + j) as usize / 2;
 			if nums[i as usize] == nums[j as usize] {
-				i = i + 1;
+				i += 1;
 			} else if nums[mid] <= nums[j as usize] {
 				j = mid as isize;
 			} else {

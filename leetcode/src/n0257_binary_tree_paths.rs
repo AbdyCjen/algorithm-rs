@@ -22,7 +22,7 @@
  *
  */
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -45,6 +45,7 @@ use super::util::tree::{to_tree, TreeNode};
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
+#[allow(dead_code)]
 impl Solution {
 	pub fn binary_tree_paths(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<String> {
 		let mut res = Vec::new();
@@ -52,7 +53,7 @@ impl Solution {
 		res
 	}
 
-	fn helper(node: Option<Rc<RefCell<TreeNode>>>, mut path: String, res: &mut Vec<String>) {
+	fn helper(node: Option<Rc<RefCell<TreeNode>>>, path: String, res: &mut Vec<String>) {
 		if let Some(node) = node {
 			let node = node.borrow();
 			if node.left.is_none() && node.right.is_none() {
@@ -70,7 +71,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_257() {

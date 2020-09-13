@@ -3,18 +3,18 @@
  *
  * __PROBLEM_DESC__
  */
-#[allow(dead_code)]
 pub struct Solution {}__EXTRA_USE__
 
 // submission codes start here
 
+#[allow(dead_code)]
 __PROBLEM_DEFAULT_CODE__
 
 // submission codes end
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    __EXTRA_TEST_USE__
 
     #[test]
     fn test___PROBLEM_ID__() {

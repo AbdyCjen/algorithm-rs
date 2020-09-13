@@ -35,6 +35,7 @@ pub struct Solution {}
 // submission codes start here
 
 // 只要有递增区间就一定有peak
+#[allow(dead_code)]
 impl Solution {
 	pub fn find_peak_element(nums: Vec<i32>) -> i32 {
 		let (mut lo, mut hi) = (0_usize, nums.len() - 1);

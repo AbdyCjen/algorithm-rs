@@ -118,6 +118,7 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 	/*fn remove_old(no: &mut Option<Box<Self>>, k: &T) -> Option<T> {
 		let o = no.as_mut()?;
 		match k.cmp(&o.k) {
+<<<<<<< HEAD
 			Ordering::Equal => match (&o.left, &o.right) {
 				(None, _) => {
 					let tmp = o.right.take();

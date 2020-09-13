@@ -29,12 +29,13 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
 		let mut min_price = std::i32::MAX;
 		let mut max_profit = 0;
 
-		for &price in prices.iter() {
+		for &price in &prices {
 			min_price = std::cmp::min(min_price, price);
 			max_profit = std::cmp::max(max_profit, price - min_price);
 		}

@@ -25,9 +25,10 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn minimum_total(triangle: Vec<Vec<i32>>) -> i32 {
-		if triangle.len() == 0 {
+		if triangle.is_empty() {
 			return 0;
 		}
 		let mut cache = vec![0; triangle.len()];

@@ -30,7 +30,7 @@
  *
  */
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -54,6 +54,7 @@ use super::util::tree::{to_tree, TreeNode};
 // }
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 // 太感人了, 快过33%的提交
+#[allow(dead_code)]
 impl Solution {
 	pub fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, sum: i32) -> Vec<Vec<i32>> {
 		let mut res = Vec::new();
@@ -65,7 +66,7 @@ impl Solution {
 		while let Some((mut acc, mut vec, node)) = dq.pop_front() {
 			let node = node.borrow();
 			vec.push(node.val);
-			acc = acc + node.val;
+			acc += node.val;
 			if node.left.is_none() && node.right.is_none() {
 				if acc == sum {
 					res.push(vec);
@@ -88,7 +89,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_113() {

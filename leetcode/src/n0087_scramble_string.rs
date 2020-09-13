@@ -65,8 +65,9 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
-	pub fn is_scramble(s1: String, s2: String) -> bool { true }
+	pub fn is_scramble(_s1: String, _s2: String) -> bool { true }
 }
 
 // submission codes end

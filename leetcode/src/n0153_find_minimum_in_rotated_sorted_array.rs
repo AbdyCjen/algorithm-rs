@@ -28,6 +28,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn find_min(nums: Vec<i32>) -> i32 {
 		let (mut i, mut j): (isize, isize) = (0, nums.len() as isize - 1);

@@ -19,7 +19,7 @@ const QUESTION_QUERY_OPERATION: &str = "questionData";
 
 pub fn get_problem(id: u32) -> Option<Problem> {
 	let problems = get_problems().unwrap();
-	for problem in problems.stat_status_pairs.iter() {
+	for problem in &problems.stat_status_pairs {
 		if problem.stat.question_id == id {
 			if problem.paid_only {
 				return None;

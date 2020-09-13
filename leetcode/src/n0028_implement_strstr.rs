@@ -58,15 +58,15 @@ impl Solution {
 		}
 
 		move |s: &[T]| {
-			if p.len() == 0 {
+			if p.is_empty() {
 				return Some(0);
 			}
 			let mut j: usize = 0;
-			for i in 0..s.len() {
-				while j > 0 && p[j] != s[i] {
+			for (i, cur) in s.iter().enumerate() {
+				while j > 0 && !p[j].eq(cur) {
 					j = v[j]
 				}
-				if p[j] == s[i] {
+				if p[j].eq(cur) {
 					j += 1
 				}
 				if j == p.len() {

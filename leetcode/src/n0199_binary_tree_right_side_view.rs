@@ -18,7 +18,7 @@
  *
  */
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -41,6 +41,7 @@ use super::util::tree::{to_tree, TreeNode};
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
+#[allow(dead_code)]
 impl Solution {
 	pub fn right_side_view(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
 		match root {
@@ -52,7 +53,7 @@ impl Solution {
 				res.push(tn.borrow().val);
 				rv.iter().for_each(|&i| res.push(i));
 				if lv.len() > rv.len() {
-					&lv[rv.len()..].iter().for_each(|&i| res.push(i));
+					lv[rv.len()..].iter().for_each(|&i| res.push(i));
 				}
 				res
 			}
@@ -64,7 +65,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_199() {

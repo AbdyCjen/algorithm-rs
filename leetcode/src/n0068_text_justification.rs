@@ -12,9 +12,9 @@
  * Note:
  *
  *
- * 	A word is defined as a character sequence consisting of non-space characters only.
- * 	Each word's length is guaranteed to be greater than 0 and not exceed maxWidth.
- * 	The input array words contains at least one word.
+ *     A word is defined as a character sequence consisting of non-space characters only.
+ *     Each word's length is guaranteed to be greater than 0 and not exceed maxWidth.
+ *     The input array words contains at least one word.
  *
  *
  * Example 1:
@@ -71,6 +71,7 @@ pub struct Solution {}
 
 // submission codes start here
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn full_justify(words: Vec<String>, max_width: i32) -> Vec<String> {
 		let mut res = Vec::new();
@@ -82,11 +83,10 @@ impl Solution {
 				wlen = word.len();
 				cache.push(word);
 			} else {
-				wlen = wlen + word.len();
+				wlen += word.len();
 				cache.push(word);
 			}
 		}
-		//TODO: last line
 		res.push(Solution::last_line_compact(&mut cache, wlen, max_width));
 		res
 	}

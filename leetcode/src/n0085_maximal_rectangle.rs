@@ -24,9 +24,10 @@ pub struct Solution {}
   把每行扫成一个柱状图, 然后用84里的算法求解就好;
 */
 
+#[allow(dead_code)]
 impl Solution {
 	pub fn maximal_rectangle(matrix: Vec<Vec<char>>) -> i32 {
-		if matrix.len() == 0 {
+		if matrix.is_empty() {
 			return 0;
 		}
 		let mut max_area = 0;
@@ -41,7 +42,7 @@ impl Solution {
 	}
 
 	fn largest_rectangle_area(heights: &mut Vec<i32>) -> i32 {
-		if heights.len() == 0 {
+		if heights.is_empty() {
 			return 0;
 		}
 		let mut st = vec![(0, heights[0])];
@@ -49,7 +50,7 @@ impl Solution {
 		heights.push(0);
 		for (i, &h) in heights.iter().enumerate().skip(1) {
 			while let Some(&(_, th)) = st.iter().rev().next() {
-				if !(th >= h) {
+				if th < h {
 					break;
 				}
 				st.pop();
