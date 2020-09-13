@@ -18,11 +18,8 @@ impl<T: Eq> ListNode<T> {
 
 impl<T: Eq> LinkList<T> {
 	// TODO: 有safe的办法直接在头保存&mut 尾节点吗? ==> 原则上不行, 下回写个用RefCell的版本吧
-	// FIXME: 把iter和iter_mut重定向到&Self 和 &mut Self的IntoIterator实现
-	pub fn iter(&self) -> Iter<T> { Iter { node: self.head.as_ref().map(AsRef::as_ref) } }
-	pub fn iter_mut(&mut self) -> IterMut<T> {
-		IterMut { node: self.head.as_mut().map(AsMut::as_mut) }
-	}
+	pub fn iter(&self) -> Iter<T> { self.into_iter() }
+	pub fn iter_mut(&mut self) -> IterMut<T> { self.into_iter() }
 
 	pub fn add(&mut self, v: T) {
 		let mut new_node = Box::new(ListNode::new(v));
@@ -55,7 +52,7 @@ impl<'a, T> Iterator for Iter<'a, T> where T: Eq
 	type Item = &'a T;
 	fn next(&mut self) -> Option<Self::Item> {
 		self.node.take().map(|no| {
-			                self.node = no.next.as_ref().map(|o| o.as_ref());
+			                self.node = no.next.as_ref().map(AsRef::as_ref);
 			                &no.value
 		                })
 	}
@@ -67,7 +64,7 @@ pub struct IterMut<'a, T>
 	node: Option<&'a mut ListNode<T>>,
 }
 
-impl<'a, T> Iterator for IterMut<'a, T> where T: Eq + 'static
+impl<'a, T> Iterator for IterMut<'a, T> where T: Eq
 {
 	type Item = &'a mut T;
 	fn next(&mut self) -> Option<Self::Item> {
@@ -78,35 +75,71 @@ impl<'a, T> Iterator for IterMut<'a, T> where T: Eq + 'static
 	}
 }
 
+pub struct IntoIter<T:std::cmp::Eq> {
+	node: Option<ListNode<T>>,
+}
+
+impl<T> Iterator for IntoIter<T> where T: Eq
+{
+	type Item = T;
+	fn next(&mut self) -> Option<T> {
+		self.node.take().map(|mut no| {
+			self.node = no.next.take().map(|a| *a);
+			no.value
+		})
+	}
+}
+
+impl<'a, T: std::cmp::Eq> IntoIterator for &'a LinkList<T> {
+	type Item = &'a T;
+	type IntoIter = Iter<'a, T>;
+	fn into_iter(self) -> Iter<'a, T> { Iter { node: self.head.as_ref().map(AsRef::as_ref) } }
+}
+
+impl<'a, T: std::cmp::Eq> IntoIterator for &'a mut LinkList<T> {
+	type Item = &'a mut T;
+	type IntoIter = IterMut<'a, T>;
+	fn into_iter(self) -> IterMut<'a, T> { IterMut { node: self.head.as_mut().map(AsMut::as_mut) } }
+}
+
+impl<T: std::cmp::Eq> IntoIterator for LinkList<T> {
+	type Item = T;
+	type IntoIter = IntoIter<T>;
+	fn into_iter(self) -> IntoIter<T> {
+		IntoIter { node : self.head.map(|o| *o) }
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
 	#[test]
 	fn it_works() {
 		let mut list = LinkList::default();
-		let plist = |list: &LinkList<i32>| {
-			for i in list.iter() {
+		fn plist<T: std::fmt::Display, I: IntoIterator<Item=T>>(list: I) {
+			for i in list {
 				print!("{},", i);
 			}
 			println!();
-		};
-		let pmut = |list: &mut LinkList<i32>| {
-			for i in list.iter_mut() {
+		}
+		fn pmut<'a, I: IntoIterator<Item=&'a mut i32>>(list: I) {
+			for i in list {
 				*i += 1;
 				print!("{},", i);
 			}
 			println!();
-		};
+		}
 
 		for i in (0..30_i32).rev() {
 			list.add(i);
 		}
-		plist(&mut list);
+		plist(&list);
 		pmut(&mut list);
-		plist(&mut list);
+		plist(&list);
 
 		for i in 0..20 {
 			list.remove(&i);
 		}
+		plist(list);
 	}
 }

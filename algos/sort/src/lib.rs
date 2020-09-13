@@ -1,4 +1,4 @@
-//#![feature(test)]
+#![feature(test)]
 use std::cmp::Ordering;
 
 pub fn merge_sort<T>(nums: &mut [T])
@@ -52,10 +52,12 @@ pub fn select_sort<T>(nums: &mut [T])
 	for i in 0..(nums.len() - 1) {
 		let (l, r) = nums[i..].split_at_mut(1);
 		r.into_iter()
-		 .min()
-		 .map(|min| if *min < l[0] {
-			 std::mem::swap(&mut l[0], min)
-		 });
+			.min()
+			.map(|min| {
+				if *min < l[0] {
+					std::mem::swap(&mut l[0], min)
+				}
+			});
 	}
 }
 
@@ -151,15 +153,15 @@ mod test {
 		let mut nums: Vec<i32> = (1..10000).collect();
 		(1..100).for_each(|n| nums.push(n));
 		nums.shuffle(&mut rand::thread_rng());
-		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item=T>>(mut it: I) -> bool {
-			if let Some(first) = it.next() {
-				it.fold((true, first), |(sorted, prev), n| {
-					(sorted && prev <= n, n)
-				})
-				.0
-			} else {
-				true
-			}
+		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
+			it.next()
+			  .map(|mut prev| {
+				  it.all(move |mut o| {
+					    std::mem::swap(&mut o, &mut prev);
+					    o <= prev
+				    })
+			  })
+			  .unwrap_or(true)
 		}
 		//nums.iter().for_each(|n| print!("{},", n)); println!("");
 		sort_fn(&mut nums);
@@ -171,7 +173,7 @@ mod test {
 		assert!(is_sorted(nums.iter()));
 	}
 
-	#[cfg(nightly)]
+	//#[cfg(nightly)]
 	mod bench {
 		extern crate test;
 		use super::*;
