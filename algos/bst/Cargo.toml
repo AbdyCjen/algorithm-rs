@@ -1,0 +1,10 @@
+[package]
+name = "bst"
+version = "0.1.0"
+authors = ["ajen <ajen@yeahka.com>"]
+edition = "2018"
+description = "Generic binary search tree abstraction"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
