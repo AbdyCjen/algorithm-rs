@@ -33,6 +33,42 @@ impl<T: Ord> IntoIterator for RBTree<T> {
 	}
 }
 
+pub struct Iter<'a, T: Ord> {
+	st: Vec<(&'a RbTreeNode<T>, Ordering)>,
+}
+
+impl<'a, T: Ord> Iterator for Iter<'a, T> {
+	type Item = &'a T;
+
+	fn next(&mut self) -> Option<Self::Item> {
+		let (mut no, ord) = self.st.pop()?;
+		if Ordering::Less == ord {
+			while let Some(lnext) = &no.left {
+				self.st.push((no, Ordering::Equal));
+				no = lnext;
+			}
+		}
+
+		if let Some(r) = &no.right {
+			self.st.push((r, Ordering::Less));
+		}
+		Some(&no.k)
+	}
+}
+
+impl<'a, T: Ord> IntoIterator for &'a RBTree<T> {
+	type Item = &'a T;
+	type IntoIter = Iter<'a, T>;
+
+	fn into_iter(self) -> Self::IntoIter {
+		if let Some(o) = &self.root {
+			Iter { st: vec![(o, Ordering::Less)] }
+		} else {
+			Iter { st: Vec::new() }
+		}
+	}
+}
+
 #[cfg(test)]
 mod test{
 	use super::*;
