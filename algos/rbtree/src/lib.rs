@@ -1,4 +1,6 @@
 use std::cmp::{Ord, Ordering};
+use ::bst::{BSTNodeInner, BSTNode};
+mod bst;
 mod iterator;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -20,11 +22,7 @@ pub struct RBTree<T: Ord> {
 }
 
 impl<T: Ord> RBTree<T> {
-	pub fn find(&self, k: &T) -> Option<()> {
-		self.root.as_ref()?.find(k)
-	}
-
-	pub fn insert(&mut self, k: T) -> Option<()> {
+	fn insert(&mut self, k: T) -> Option<()> {
 		match &mut self.root {
 			Some(root) => {
 				let res = root.insert(k);
@@ -35,30 +33,12 @@ impl<T: Ord> RBTree<T> {
 		}
 	}
 
-	pub fn remove(&mut self, _k: &T) -> Option<()> {
+	fn remove(&mut self, _k: &T) -> Option<()> {
 		unimplemented!()
 	}
 }
 
 impl<T: Ord> RbTreeNode<T> {
-	#[inline]
-	fn by_ord(&self, ord: Ordering) -> Option<&Self> {
-		match ord {
-			Ordering::Less => self.left.as_ref().map(AsRef::as_ref),
-			Ordering::Greater => self.right.as_ref().map(AsRef::as_ref),
-			_ => unreachable!(),
-		}
-	}
-
-	#[inline]
-	fn by_ord_mut(&mut self, ord: Ordering) -> &mut Option<Box<Self>> {
-		match ord {
-			Ordering::Less => &mut self.left,
-			Ordering::Greater => &mut self.right,
-			_ => unreachable!(),
-		}
-	}
-
 	#[inline]
 	fn by_ord_mut_all(&mut self,
 	                  ord: Ordering)
@@ -72,16 +52,11 @@ impl<T: Ord> RbTreeNode<T> {
 
 	#[inline]
 	fn new(k: T) -> RbTreeNode<T> {
-		RbTreeNode { left: None,
-		             right: None,
-		             k,
-		             color: Red }
-	}
-
-	fn find(&self, k: &T) -> Option<()> {
-		match k.cmp(&self.k) {
-			Ordering::Equal => Some(()),
-			ord => self.by_ord(ord)?.find(k),
+		RbTreeNode {
+			left: None,
+			right: None,
+			k,
+			color: Red 
 		}
 	}
 
@@ -90,36 +65,6 @@ impl<T: Ord> RbTreeNode<T> {
 		self.color = Red;
 		self.left.as_mut().unwrap().color = Black;
 		self.right.as_mut().unwrap().color = Black;
-	}
-
-	#[inline]
-	fn rotate_left(&mut self) {
-		let mut right = self.right.take().unwrap();
-		self.right = right.left.take();
-		right.color = self.color;
-		self.color = Red;
-		std::mem::swap(self, &mut right);
-		self.left = Some(right);
-	}
-
-	#[inline]
-	fn rotate_right(&mut self) {
-		let mut left = self.left.take().unwrap();
-		self.left = left.right.take();
-		left.color = self.color;
-		self.color = Red;
-		std::mem::swap(self, &mut left);
-		self.right = Some(left);
-	}
-
-	// make targeted child be the new root
-	#[inline]
-	fn rotate_by_ord(&mut self, ord: Ordering) {
-		match ord {
-			Ordering::Less => self.rotate_right(),
-			Ordering::Greater => self.rotate_left(),
-			_ => unreachable!(),
-		}
 	}
 
 	fn insert(&mut self, k: T) -> Option<()> {
@@ -156,7 +101,6 @@ impl<T: Ord> RbTreeNode<T> {
 		}
 	}
 }
-
 
 #[cfg(test)]
 mod tests {
