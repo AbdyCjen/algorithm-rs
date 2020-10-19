@@ -1,8 +1,7 @@
 use std::cmp::Ordering;
 
 pub fn merge_sort<T>(nums: &mut [T])
-	where T: std::cmp::Ord + Clone
-{
+where T: std::cmp::Ord + Clone {
 	if nums.len() > 1 {
 		let (lower, upper) = nums.split_at_mut(nums.len() / 2);
 		merge_sort(lower);
@@ -28,8 +27,7 @@ pub fn merge_sort<T>(nums: &mut [T])
 }
 
 pub fn insert_sort<T>(nums: &mut [T])
-	where T: std::cmp::Ord
-{
+where T: std::cmp::Ord {
 	for i in 1..nums.len() {
 		let (l, r) = nums[..i + 1].split_at_mut(i);
 		let mut prev = &mut r[0];
@@ -44,8 +42,7 @@ pub fn insert_sort<T>(nums: &mut [T])
 }
 
 pub fn select_sort<T>(nums: &mut [T])
-	where T: std::cmp::Ord
-{
+where T: std::cmp::Ord {
 	if nums.len() <= 1 {
 		return;
 	}
@@ -60,8 +57,7 @@ pub fn select_sort<T>(nums: &mut [T])
 }
 
 pub fn quick_sort<T>(iv: &mut [T])
-	where T: std::cmp::Ord
-{
+where T: std::cmp::Ord {
 	if iv.len() <= 1 {
 		return;
 	}
@@ -89,8 +85,7 @@ pub fn quick_sort<T>(iv: &mut [T])
 }
 
 pub fn heap_sort<T>(nums: &mut [T])
-	where T: std::cmp::Ord
-{
+where T: std::cmp::Ord {
 	fn shift_down<T: std::cmp::Ord>(tree: &mut [T], mut i: usize) {
 		let child_idxs = |i: usize| (i * 2 + 1, i * 2 + 2);
 		while i < tree.len() {
@@ -144,13 +139,13 @@ mod test {
 	fn check_sort(sort_fn: fn(&mut [i32])) {
 		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
 			it.next()
-			  .map(|mut prev| {
-				  it.all(move |mut o| {
-					    std::mem::swap(&mut o, &mut prev);
-					    o <= prev
-				    })
-			  })
-			  .unwrap_or(true)
+				.map(|mut prev| {
+					it.all(move |mut o| {
+						std::mem::swap(&mut o, &mut prev);
+						o <= prev
+					})
+				})
+				.unwrap_or(true)
 		}
 
 		let mut nums: Vec<i32> = (1..10000).collect();
