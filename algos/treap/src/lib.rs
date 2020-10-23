@@ -14,28 +14,26 @@ pub struct Treap<T: std::cmp::Ord> {
 }
 
 impl<T: std::cmp::Ord> Treap<T> {
-	pub fn find(self: &Self, k: &T) -> Option<()> {
-		self.root.as_ref()?.find(k)
-	}
+	pub fn find(&self, k: &T) -> Option<()> { self.root.as_ref()?.find(k) }
 
-	pub fn ins(self: &mut Self, k: T) -> Option<()> {
+	pub fn ins(&mut self, k: T) -> Option<()> {
 		match &mut self.root {
 			Some(root) => root.ins(k),
 			root => root.replace(Box::new(TreapNode::new(k))).map(|_| ()),
 		}
 	}
 
-	pub fn remove(self: &mut Self, _k: &T) -> Option<T> {
-		unimplemented!()
-	}
+	pub fn remove(&mut self, k: &T) -> Option<()> { TreapNode::<_>::remove(&mut self.root, k) }
 }
 
 impl<T: std::cmp::Ord> TreapNode<T> {
 	fn new(k: T) -> TreapNode<T> {
-		TreapNode { left: None,
-		            right: None,
-		            r: rand::random(),
-		            k }
+		TreapNode {
+			left: None,
+			right: None,
+			r: rand::random(),
+			k,
+		}
 	}
 
 	fn by_ord(&self, ord: Ordering) -> &Option<Box<Self>> {
@@ -75,7 +73,7 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		}
 	}
 
-	fn find(self: &Self, k: &T) -> Option<()> {
+	fn find(&self, k: &T) -> Option<()> {
 		match k.cmp(&self.k) {
 			Ordering::Equal => Some(()),
 			ord => self.by_ord(ord).as_ref()?.find(k),
@@ -99,178 +97,59 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		}
 	}
 
-	/*fn remove(&mut self, k: &T) -> Option<T> {
-		match self.k.cmp(&k) {
+	#[rustfmt::skip]
+	fn remove(node: &mut Option<Box<Self>>, k: &T) -> Option<()> {
+		let node_inner = node.as_mut()?;
+		match k.cmp(&node_inner.k) {
 			Ordering::Equal => {
-				match (&self.left, &self.right) {
-					(None, _) => todo!(),
-					(_, None) => todo!(),
-					(Some(l), Some(r)) if r.r > l.r => todo!(),
-					_ => todo!(),
-				}
+				match (&node_inner.left, &node_inner.right) {
+					(None, _) => *node = node_inner.right.take(),
+					(_, None) => *node = node_inner.left.take(),
+					(Some(l), Some(r)) => if r.r > l.r {
+						node_inner.rotate_left();
+						return Self::remove(&mut node_inner.left, k);
+					} else {
+						node_inner.rotate_right();
+						return Self::remove(&mut node_inner.right, k);
+					}
+				};
+				Some(())
 			}
-			ord => self.by_ord_mut(ord).as_mut()
-				.map(|o| o.remove(k))
-				.flatten(),
+			ord => Self::remove(node_inner.by_ord_mut(ord), k),
 		}
-	}*/
-
-	/*fn remove_old(no: &mut Option<Box<Self>>, k: &T) -> Option<T> {
-		let o = no.as_mut()?;
-		match k.cmp(&o.k) {
-<<<<<<< HEAD
-			Ordering::Equal => match (&o.left, &o.right) {
-				(None, _) => {
-					let tmp = o.right.take();
-					mem::replace(no, tmp).map(|t| t.k)
-				}
-				(_, None) => {
-					let tmp = o.left.take();
-					mem::replace(no, tmp).map(|t| t.k)
-				}
-				(Some(l), Some(r)) if r.r > l.r => {
-					o.rotate_left();
-					TreapNode::remove_old(&mut o.left, k)
-				}
-				_ => {
-					o.rotate_right();
-					TreapNode::remove_old(&mut o.right, k)
-				}
-			},
-			ord => TreapNode::remove_old(o.by_ord_mut(ord), k),
-		}
-	}*/
-}
-
-// TODO: implement iterator for treap
-pub struct IntoIter<T: Ord> {
-	st: Vec<Box<TreapNode<T>>>,
-}
-
-impl<T: Ord> Iterator for IntoIter<T> {
-	type Item = T;
-
-	fn next(&mut self) -> Option<Self::Item> {
-		let mut l = self.st.pop()?;
-		while let Some(lnext) = l.left.take() {
-			self.st.push(l);
-			l = lnext;
-		}
-
-		let mut no = l;
-		if let Some(r) = no.right.take() {
-			self.st.push(r);
-		}
-		Some(no.k)
-	}
-}
-
-impl<T: Ord> IntoIterator for Treap<T> {
-	type Item = T;
-	type IntoIter = IntoIter<T>;
-
-	fn into_iter(self) -> Self::IntoIter {
-		if let Some(o) = self.root {
-			IntoIter { st: vec![o] }
-		} else {
-			IntoIter { st: Vec::new() }
-		}
-	}
-}
-
-pub struct Iter<'a, T: Ord> {
-	st: Vec<(&'a TreapNode<T>, Ordering)>,
-}
-
-impl<'a, T: Ord> Iterator for Iter<'a, T> {
-	type Item = &'a T;
-
-	fn next(&mut self) -> Option<Self::Item> {
-		let (mut no, ord) = self.st.pop()?;
-		if Ordering::Less == ord {
-			while let Some(lnext) = &no.left {
-				self.st.push((no, Ordering::Equal));
-				no = lnext;
-			}
-		}
-
-		if let Some(r) = &no.right {
-			self.st.push((r, Ordering::Less));
-		}
-		Some(&no.k)
-	}
-}
-
-impl<'a, T: Ord> IntoIterator for &'a Treap<T> {
-	type Item = &'a T;
-	type IntoIter = Iter<'a, T>;
-
-	fn into_iter(self) -> Self::IntoIter {
-		if let Some(o) = &self.root {
-			Iter { st: vec![(o, Ordering::Less)] }
-		} else {
-			Iter { st: Vec::new() }
-		}
-	}
-}
-
-pub struct IterMut<'a, T: Ord> {
-	st: Vec<(&'a mut TreapNode<T>, Ordering)>,
-}
-
-impl<'a, T: Ord> Iterator for IterMut<'a, T> {
-	type Item = &'a mut T;
-
-	fn next(&mut self) -> Option<Self::Item> {
-		self.st.pop()?;
-		todo!()
-	}
-}
-
-impl<'a, T: Ord> IntoIterator for &'a mut Treap<T> {
-	type Item = &'a mut T;
-	type IntoIter = IterMut<'a, T>;
-
-	fn into_iter(self) -> Self::IntoIter {
-		if let Some(o) = &mut self.root {
-			IterMut { st: vec![(o, Ordering::Less)] }
-		} else {
-			IterMut { st: Vec::new() }
-		}
-	}
-}
-impl<T: Ord> Treap<T> {
-	pub fn iter(&self) -> Iter<'_,T> {
-		self.into_iter()
-	}
-
-	pub fn iter_mut(&mut self) -> IterMut<'_, T> {
-		self.into_iter()
 	}
 }
 
 #[cfg(test)]
 mod test_treap {
 	use super::*;
-	impl<T> std::fmt::Debug for TreapNode<T> where T: std::fmt::Display + Ord
+	impl<T> std::fmt::Debug for TreapNode<T>
+	where T: std::fmt::Display + Ord
 	{
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-			write!(f, "{{")?;
-			if let Some(l) = &self.left {
-				write!(f, " \"l\" : {:?},", l)?;
+			return inner_fmt(Some(self), f, 0);
+
+			fn inner_fmt<T: Ord + std::fmt::Display>(
+				no: Option<&TreapNode<T>>,
+				f: &mut std::fmt::Formatter<'_>,
+				idt_lv: usize,
+			) -> std::fmt::Result
+			{
+				if let Some(no) = no {
+					inner_fmt(no.left.as_deref(), f, idt_lv + 1)?;
+
+					write!(f, "{}", "	".repeat(idt_lv))?;
+					writeln!(f, "{}: {}", no.k, no.r)?;
+
+					inner_fmt(no.right.as_deref(), f, idt_lv + 1)?;
+				}
+				Ok(())
 			}
-			write!(f, " \"{}\": {}", self.k, self.r)?;
-			if let Some(r) = &self.right {
-				write!(f, ",\"r\" : {:?}", r)?;
-			}
-			write!(f, "}}")?;
-			Ok(())
 		}
 	}
 
 	fn check_treap<T>(t: &TreapNode<T>) -> Result<(), T>
-		where T: Ord + std::fmt::Display + Copy
-	{
+	where T: Ord + std::fmt::Display + Copy {
 		if let Some(l) = t.left.as_ref() {
 			if l.k >= t.k || l.r > t.r {
 				return Err(t.k);
@@ -285,42 +164,28 @@ mod test_treap {
 		}
 		Ok(())
 	}
-	fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
-		if let Some(first) = it.next() {
-			let mut prev = first;
-			it.all(move |cur| {
-				  let sorted = cur > prev;
-				  prev = cur;
-				  sorted
-			  })
-		} else {
-			true
-		}
-	}
-
-	#[test]
-	fn test_iter() {
-		const TEST_RANGE: std::ops::Range<i32> = 0..1000_000;
-		let mut tr = Treap::default();
-		for i in TEST_RANGE {
-			tr.ins(i);
-		}
-		assert!(TEST_RANGE.into_iter().eq((&tr).into_iter().copied()));
-		assert!(TEST_RANGE.into_iter().eq(tr.into_iter()));
-	}
 
 	#[test]
 	fn it_works() {
-		const TEST_RANGE: i32 = 100;
+		const TEST_RANGE: std::ops::Range<i32> = 0..1000;
 		let mut tr = Treap::default();
-		for _ in 0..TEST_RANGE {
-			let i = rand::random::<i32>();
+		let mut input_seq = std::collections::HashSet::new();
+		for _ in TEST_RANGE {
+			let i = rand::random::<i32>() % 10000;
 			tr.ins(i);
-			assert_eq!(tr.find(&i), Some(()));
+			input_seq.insert(i);
 		}
 
-		//dbg!(tr.root.as_ref().unwrap());
+		for i in &input_seq {
+			assert!(tr.find(i).is_some());
+		}
+
 		check_treap(&tr.root.as_ref().unwrap()).unwrap();
-		assert!(is_sorted(tr.into_iter()));
+		//dbg!(tr.root.as_mut().unwrap());
+
+		for i in &input_seq {
+			assert!(tr.remove(i).is_some());
+			assert!(tr.find(i).is_none());
+		}
 	}
 }
