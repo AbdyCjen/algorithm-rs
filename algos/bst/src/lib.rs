@@ -3,6 +3,7 @@ use std::cmp::{Ord, Ordering};
 pub trait BSTNodeInner: std::marker::Sized {
 	fn rotate_left(&mut self);
 	fn rotate_right(&mut self);
+	// make child in search path root
 	#[inline]
 	fn rotate_by_ord(&mut self, ord: Ordering) {
 		match ord {
@@ -38,6 +39,16 @@ pub trait BSTNode: BSTNodeInner {
 			_ => unreachable!(),
 		}
 	}
+
+	#[inline]
+	fn by_ord_all(&self, ord: Ordering) -> (Option<&Self>, Option<&Self>) {
+		match ord {
+			Ordering::Less => (self.left_ref(), self.right_ref()),
+			Ordering::Greater => (self.right_ref(), self.left_ref()),
+			_ => unreachable!(),
+		}
+	}
+
 
 	// XXX: maybe return Option<&Self>?
 	fn find(&self, k: &Self::Item) -> Option<()> {
