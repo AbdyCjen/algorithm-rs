@@ -70,3 +70,27 @@ impl<T: Ord> BSTree for AvlTree<T> {
 	#[inline]
 	fn insert(&mut self, k: Self::Item) -> Option<()> { self.insert(k) }
 }
+
+#[cfg(test)]
+mod test{
+	use super::*;
+	use bst_util::bst_tests::*;
+	#[test]
+	fn bst_basic() {
+		let mut tr : AvlTree<_> = Default::default();
+		let mut test_case = Vec::new();
+		const TEST_RANGE: std::ops::Range<i32> = 0..1_000_000;
+		for _ in TEST_RANGE {
+			test_case.push(rand::random::<i32>());
+		}
+		
+		for i in test_case.iter().copied() {
+			tr.insert(i);
+		}
+		bst_valid(&tr);
+
+		for i in &test_case {
+			assert!(tr.find(i).is_some());
+		}
+	}
+}

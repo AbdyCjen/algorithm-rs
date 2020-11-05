@@ -11,8 +11,8 @@ bst = {path = "../bst"}
 
 [dev-dependencies]
 criterion = "0.3.3"
-bst_util = { path = "../bst_util" }
-rand = "0.7.3"
+bst_util = { path = "../bst_util" , features = ["bst_bench"]}
+rand = "0.7"
 
 [[bench]]
 name = "iter_bench"

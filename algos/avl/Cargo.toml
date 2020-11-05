@@ -10,9 +10,9 @@ edition = "2018"
 bst = { path = "../bst" }
 
 [dev-dependencies]
-rand = "0.7.3"
+rand = "0.7"
 criterion = "0.3.3"
-bst_util = { path = "../bst_util" }
+bst_util = { path = "../bst_util", features=["bst_bench"] }
 
 [[bench]]
 name = "iter_bench"

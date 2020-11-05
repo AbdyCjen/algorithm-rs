@@ -199,15 +199,11 @@ mod tests {
 		println!("tr height {}, cnt: {}", th, hs.len());
 		for i in hs.iter() {
 			if rand::random::<i32>() % 100000 == 1 {
-				let snap_shot = format!("{:?}", tr.root.as_deref().unwrap());
 				if tr.remove(i).is_none()
 					|| !tr.root.as_deref().map(|o| check_avl(o).1).unwrap_or(true)
 				{
-					println!("{} \n{}", i, snap_shot);
-					println!("after:\n{:?}", tr.root.as_deref().unwrap());
 					panic!();
 				}
-				println!("random check OK");
 			} else {
 				assert!(tr.remove(i).is_some());
 			}

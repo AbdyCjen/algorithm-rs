@@ -72,9 +72,10 @@ impl<T: Ord> BSTree for RBTree<T> {
 #[cfg(test)]
 mod test {
 	use super::*;
+	use bst_util::bst_tests::bst_valid;
 	const TEST_RANGE: std::ops::Range<i32> = 0..1_000_000;
 	#[test]
-	fn it_works() {
+	fn bst_test() {
 		let mut rbt: RBTree<_> = Default::default();
 		let mut test_case = Vec::new();
 		for _ in TEST_RANGE {
@@ -83,6 +84,8 @@ mod test {
 		for i in test_case.iter().copied() {
 			rbt.insert(i);
 		}
+
+		bst_valid(&rbt);
 		for i in &test_case {
 			assert!(rbt.find(i).is_some());
 		}
