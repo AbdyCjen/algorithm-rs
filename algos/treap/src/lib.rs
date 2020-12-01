@@ -1,7 +1,9 @@
 extern crate rand;
+use ::bst::BSTNodeInner;
 use std::cmp::Ordering;
+mod bst;
 
-struct TreapNode<T: std::cmp::Ord> {
+pub struct TreapNode<T: std::cmp::Ord> {
 	left: Option<Box<TreapNode<T>>>,
 	right: Option<Box<TreapNode<T>>>,
 	r: u32,
@@ -16,9 +18,9 @@ pub struct Treap<T: std::cmp::Ord> {
 impl<T: std::cmp::Ord> Treap<T> {
 	pub fn find(&self, k: &T) -> Option<()> { self.root.as_ref()?.find(k) }
 
-	pub fn ins(&mut self, k: T) -> Option<()> {
+	pub fn insert(&mut self, k: T) -> Option<()> {
 		match &mut self.root {
-			Some(root) => root.ins(k),
+			Some(root) => root.insert(k),
 			root => root.replace(Box::new(TreapNode::new(k))).map(|_| ()),
 		}
 	}
@@ -52,27 +54,6 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		}
 	}
 
-	fn rotate_left(&mut self) {
-		let mut right = self.right.take().unwrap();
-		self.right = right.left.take();
-		std::mem::swap(self, &mut right);
-		self.left = Some(right);
-	}
-
-	fn rotate_right(&mut self) {
-		let mut left = self.left.take().unwrap();
-		self.left = left.right.take();
-		std::mem::swap(self, &mut left);
-		self.right = Some(left);
-	}
-	fn rotate_by_ord(&mut self, ord: Ordering) {
-		match ord {
-			Ordering::Less => self.rotate_right(),
-			Ordering::Greater => self.rotate_left(),
-			Ordering::Equal => unreachable!(),
-		}
-	}
-
 	fn find(&self, k: &T) -> Option<()> {
 		match k.cmp(&self.k) {
 			Ordering::Equal => Some(()),
@@ -80,12 +61,12 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		}
 	}
 
-	fn ins(&mut self, k: T) -> Option<()> {
+	fn insert(&mut self, k: T) -> Option<()> {
 		match k.cmp(&self.k) {
 			Ordering::Equal => Some(()),
 			ord => {
 				let ret_val = match self.by_ord_mut(ord) {
-					Some(ch) => ch.ins(k),
+					Some(ch) => ch.insert(k),
 					ch => ch.replace(Box::new(Self::new(k))).map(|_| ()),
 				};
 				// FIXME
@@ -172,7 +153,7 @@ mod test_treap {
 		let mut input_seq = std::collections::HashSet::new();
 		for _ in TEST_RANGE {
 			let i = rand::random::<i32>() % 10000;
-			tr.ins(i);
+			tr.insert(i);
 			input_seq.insert(i);
 		}
 
