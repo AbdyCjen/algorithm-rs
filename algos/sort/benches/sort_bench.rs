@@ -56,6 +56,7 @@ fn bench_all(c: &mut Criterion) {
 	c.bench_function("std::sort_unstable" , |b| bench_sort(b , <[i32]>::sort_unstable) );
 	c.bench_function("std::binary_heap"   , bench_std_heap);
 	c.bench_function("merge_sort"         , |b| bench_sort(b , merge_sort::<i32>));
+	c.bench_function("bottomup_sort"      , |b| bench_sort(b , bottomup_sort::<i32>));
 	c.bench_function("quick_sort"         , |b| bench_sort(b , quick_sort::<i32>));
 	c.bench_function("heap_sort"          , |b| bench_sort(b , heap_sort::<i32>));
 	c.bench_function("select_sort"        , |b| bench_sort(b , select_sort::<i32>));

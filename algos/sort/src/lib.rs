@@ -2,26 +2,47 @@ use std::cmp::Ordering;
 
 pub fn merge_sort<T>(nums: &mut [T])
 where T: std::cmp::Ord + Clone {
-	if nums.len() > 1 {
+	if nums.len() > 32 {
 		let (lower, upper) = nums.split_at_mut(nums.len() / 2);
 		merge_sort(lower);
 		merge_sort(upper);
 		let lower: Vec<_> = lower.to_vec();
-		merge_into(nums, lower);
+		merge_into(nums, lower.into_iter());
+	} else {
+		insert_sort(nums)
 	}
+}
 
-	fn merge_into<T: std::cmp::Ord>(nums: &mut [T], nums_lower: Vec<T>) {
-		let mut i = nums_lower.len();
-		let mut nums_lower = nums_lower.into_iter().peekable();
-		for k in 0..nums.len() {
-			match (nums.get(i), nums_lower.peek()) {
-				(_, None) => {}
-				(Some(n), Some(p)) if n < p => {
-					nums.swap(i, k);
-					i += 1;
-				}
-				(_, Some(_)) => nums[k] = nums_lower.next().unwrap(),
+pub fn bottomup_sort<T>(nums: &mut [T])
+where T: std::cmp::Ord + Clone {
+	if nums.len() <= 1 {
+		return;
+	}
+	let l = nums.len();
+	let mut tmp_vec = Vec::with_capacity(l / 2);
+	for blk in (0..).map(|i| 1 << i).take_while(|&i| i < l) {
+		for chunk in nums
+			.chunks_mut(blk * 2)
+			.take_while(|chunk| chunk.len() > blk)
+		{
+			tmp_vec.extend(chunk[..blk].iter().cloned());
+			merge_into(chunk, tmp_vec.drain(..));
+		}
+	}
+}
+
+fn merge_into<T: std::cmp::Ord, I>(nums: &mut [T], nums_lower: I)
+where I: ExactSizeIterator<Item = T> {
+	let mut i = nums_lower.len();
+	let mut nums_lower = nums_lower.peekable();
+	for k in 0..nums.len() {
+		match (nums.get(i), nums_lower.peek()) {
+			(_, None) => break,
+			(Some(n), Some(p)) if n < p => {
+				nums.swap(i, k);
+				i += 1;
 			}
+			(_, Some(_)) => nums[k] = nums_lower.next().unwrap(),
 		}
 	}
 }
@@ -125,6 +146,9 @@ mod test {
 
 		check_sort(merge_sort::<i32>);
 		println!("merge sort test ok!");
+
+		check_sort(bottomup_sort::<i32>);
+		println!("bottomup sort test ok!");
 
 		check_sort(select_sort::<i32>);
 		println!("select sort test ok!");
