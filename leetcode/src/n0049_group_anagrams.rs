@@ -33,7 +33,7 @@ impl Solution {
 		let mut m: HashMap<_, Vec<String>> = HashMap::new();
 		for s in strs.into_iter() {
 			let mut k = s.clone().into_bytes();
-			k.sort();
+			k.sort_unstable();
 			m.entry(k).or_insert_with(Vec::new).push(s);
 		}
 		m.into_iter().map(|(_, v)| v).collect()

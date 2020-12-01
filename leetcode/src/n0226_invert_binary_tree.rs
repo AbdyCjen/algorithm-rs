@@ -56,12 +56,10 @@ use std::{cell::RefCell, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
-		if let Some(root) = root {
+		root.map(|root| {
 			Self::invert(&mut *root.borrow_mut());
-			Some(root)
-		} else {
 			root
-		}
+		})
 	}
 	fn invert(root: &mut TreeNode) {
 		std::mem::swap(&mut root.left, &mut root.right);

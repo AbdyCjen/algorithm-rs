@@ -30,12 +30,12 @@
  *  
  * Constraints:
  *
- * 	k == lists.length
- * 	0 <= k <= 10^4
- * 	0 <= lists[i].length <= 500
- * 	-10^4 <= lists[i][j] <= 10^4
- * 	lists[i] is sorted in ascending order.
- * 	The sum of lists[i].length won't exceed 10^4.
+ *  k == lists.length
+ *  0 <= k <= 10^4
+ *  0 <= lists[i].length <= 500
+ *  -10^4 <= lists[i][j] <= 10^4
+ *  lists[i] is sorted in ascending order.
+ *  The sum of lists[i].length won't exceed 10^4.
  *
  */
 // submission codes start here
@@ -77,7 +77,9 @@ impl Solution {
 		while let Some(next_no) = bh.pop() {
 			cur_ptr.next = Some(next_no);
 			cur_ptr = cur_ptr.next.as_mut()?;
-			cur_ptr.next.take().map(|no| bh.push(no));
+			if let Some(no) = cur_ptr.next.take() {
+				bh.push(no);
+			}
 		}
 		dummy.next
 	}

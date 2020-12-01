@@ -47,7 +47,7 @@ impl Solution {
 				ind_5 += 1;
 			}
 		}
-		dbg!(&ugly_nums);
+		//dbg!(&ugly_nums);
 		ugly_nums.pop().unwrap()
 	}
 }

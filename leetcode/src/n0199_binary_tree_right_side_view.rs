@@ -44,20 +44,18 @@ use std::{cell::RefCell, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn right_side_view(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-		match root {
-			None => Default::default(),
-			Some(tn) => {
-				let lv = Solution::right_side_view(tn.borrow().left.clone());
-				let rv = Solution::right_side_view(tn.borrow().right.clone());
-				let mut res = Vec::<i32>::new();
-				res.push(tn.borrow().val);
-				rv.iter().for_each(|&i| res.push(i));
-				if lv.len() > rv.len() {
-					lv[rv.len()..].iter().for_each(|&i| res.push(i));
-				}
-				res
-			}
-		}
+		root.map(|root| {
+			let mut root = root.borrow_mut();
+			let mut res = vec![root.val];
+			res.extend(Self::right_side_view(root.right.take()).into_iter());
+			res.extend(
+				Self::right_side_view(root.left.take())
+					.into_iter()
+					.skip(res.len() - 1),
+			);
+			res
+		})
+		.unwrap_or_else(Default::default)
 	}
 }
 

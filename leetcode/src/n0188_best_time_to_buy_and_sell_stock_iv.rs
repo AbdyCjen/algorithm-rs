@@ -36,8 +36,8 @@ impl Solution {
 			let mut max_pre_prof_price = std::i32::MIN;
 			let mut max_profit = std::i32::MIN;
 			for (profit, &price) in cache.iter_mut().zip(prices.iter()) {
-				max_pre_prof_price = std::cmp::max(max_pre_prof_price, *profit - price);
-				max_profit = std::cmp::max(max_profit, price + max_pre_prof_price);
+				max_pre_prof_price = max_pre_prof_price.max(*profit - price);
+				max_profit = max_profit.max(price + max_pre_prof_price);
 				*profit = max_profit;
 			}
 		}
