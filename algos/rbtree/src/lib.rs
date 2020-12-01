@@ -18,7 +18,7 @@ pub struct RbTreeNode<T: Ord> {
 
 #[derive(Default)]
 pub struct RBTree<T: Ord> {
-	root: Option<RbTreeNode<T>>,
+	root: Option<Box<RbTreeNode<T>>>,
 }
 
 impl<T: Ord> RBTree<T> {
@@ -29,7 +29,7 @@ impl<T: Ord> RBTree<T> {
 				root.color = Black;
 				res
 			}
-			root => root.replace(RbTreeNode::new(k)).map(|_| ()), // FIXME: root.color == Red
+			root => root.replace(Box::new(RbTreeNode::new(k))).map(|_| ()), // FIXME: root.color == Red
 		}
 	}
 
@@ -39,7 +39,11 @@ impl<T: Ord> RBTree<T> {
 
 impl<T: Ord> RbTreeNode<T> {
 	#[inline]
-	fn by_ord_mut_all(&mut self, ord: Ordering) -> (&mut Option<Box<Self>>, &mut Option<Box<Self>>) {
+	fn by_ord_mut_all(
+		&mut self,
+		ord: Ordering,
+	) -> (&mut Option<Box<Self>>, &mut Option<Box<Self>>)
+	{
 		match ord {
 			Ordering::Less => (&mut self.left, &mut self.right),
 			Ordering::Greater => (&mut self.right, &mut self.left),
@@ -120,7 +124,12 @@ mod tests {
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 			return inner_fmt(Some(self), f, 0);
 
-			fn inner_fmt<T: Ord + std::fmt::Display>(no: Option<&RbTreeNode<T>>, f: &mut std::fmt::Formatter<'_>, idt_lv: usize) -> std::fmt::Result {
+			fn inner_fmt<T: Ord + std::fmt::Display>(
+				no: Option<&RbTreeNode<T>>,
+				f: &mut std::fmt::Formatter<'_>,
+				idt_lv: usize,
+			) -> std::fmt::Result
+			{
 				if let Some(no) = no {
 					inner_fmt(no.left.as_deref(), f, idt_lv + 1)?;
 
@@ -172,7 +181,10 @@ mod tests {
 			test_seq.push(num);
 			rbt.insert(num);
 		}
-		println!("tree (black height, height) is: {:?}", check_rbtree(rbt.root_ref().unwrap()).unwrap());
+		println!(
+			"tree (black height, height) is: {:?}",
+			check_rbtree(rbt.root_ref().unwrap()).unwrap()
+		);
 
 		// Removal test
 		/*println!("{:?}", &rbt.root.as_ref().unwrap());

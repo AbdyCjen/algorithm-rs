@@ -1,5 +1,9 @@
 use std::cmp::{Ord, Ordering};
 
+#[cfg(feature = "bst_derive")]
+#[macro_use]
+pub mod bst_derive;
+
 pub trait BSTNodeInner: std::marker::Sized {
 	fn rotate_left(&mut self);
 	fn rotate_right(&mut self);
@@ -18,7 +22,7 @@ pub trait BSTNodeInner: std::marker::Sized {
 	fn right_mut(&mut self) -> &mut Self::ChildRaw;
 	fn by_ord_mut(&mut self, ord: Ordering) -> &mut Self::ChildRaw {
 		match ord {
-			Ordering:: Less => self.left_mut(),
+			Ordering::Less => self.left_mut(),
 			Ordering::Greater => self.right_mut(),
 			_ => unreachable!(),
 		}
@@ -49,7 +53,6 @@ pub trait BSTNode: BSTNodeInner {
 		}
 	}
 
-
 	// XXX: maybe return Option<&Self>?
 	fn find(&self, k: &Self::Item) -> Option<()> {
 		match k.cmp(self.key_ref()) {
@@ -76,16 +79,15 @@ pub trait BSTree {
 	fn insert(&mut self, k: Self::Item) -> Option<()>;
 	fn remove(&mut self, k: &Self::Item) -> Option<()>;
 
-	fn find(&self, k: &Self::Item) -> Option<()> {
-		self.root_ref()?.find(k)
-	}
+	fn find(&self, k: &Self::Item) -> Option<()> { self.root_ref()?.find(k) }
 }
 
 pub struct Iter<'a, Tree: BSTree> {
 	st: Vec<(&'a Tree::Node, Ordering)>,
 }
 
-impl<'a, Tree: BSTree> Iterator for Iter<'a, Tree> where <Tree as BSTree>::Item: 'a
+impl<'a, Tree: BSTree> Iterator for Iter<'a, Tree>
+where <Tree as BSTree>::Item: 'a
 {
 	type Item = &'a <Tree as BSTree>::Item;
 
