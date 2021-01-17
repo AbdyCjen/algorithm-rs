@@ -1,150 +1,187 @@
-#![allow(dead_code)]
-extern crate rand;
-use std::cell::{Cell, UnsafeCell};
+use arrayvec::ArrayVec;
+use std::ptr::NonNull;
+mod iter;
 
 const MAX_HEIGHT: usize = 32;
-#[derive(Debug)]
-struct Node<T: std::cmp::Ord + 'static> {
-	key : T,
-	nexts: Vec<Cell<Option<&'static Node<T>>>>,
-	next: UnsafeCell<Option<Box<Node<T>>>>,
+struct Node<T: std::cmp::Ord> {
+	key: T,
+	nexts: Box<[Option<NonNull<Node<T>>>]>,
 }
 
-// 1. 结构体引用里的生命周期是啥?
-// 2. 函数参数里的生命周期是啥?
-// 3. 函数返回值里的生命周期是啥?
-
-// 4. 结构成员在调用成员类型的fun(&self) 的时候,
-// self的生命周期为啥是结构在代码里出现的位置而不是'static => 因为这个引用是要回收的
-
-impl<T: std::cmp::Ord> Node<T> {
+impl<'a, T: std::cmp::Ord + 'a> Node<T> {
 	fn new(key: T) -> Node<T> {
-		let mut next_len = 1;
-		while rand::random() && next_len < MAX_HEIGHT {
-			next_len += 1;
-		}
+		let height = (rand::random::<i32>().trailing_ones() as usize + 1).min(MAX_HEIGHT);
 		Node {
 			key,
-			nexts: vec![Cell::new(None);next_len],
-			next: UnsafeCell::new(None),
+			nexts: vec![None; height].into_boxed_slice(),
 		}
 	}
 
-	fn find_prev_lev(&self, key: &'_ T, lev: usize) -> &Node<T> {
-		let mut o = self;
-		while let Some(no) = o.nexts[lev].get() {
-			if &no.key < key {
-				o = no;
-			} else {
-				break;
-			}
-		}
-		o 
-	}
-
-	fn find_prev(&self, key: &'_ T, lev: usize) -> &Node<T> {
-		let mut o = self;
-		for lev in (0..=lev).rev() {
-			o = o.find_prev_lev(key, lev);
-		}
-		o
-	}
-
-	fn remove(&'static self, key: &'_ T) -> Option<T> {
-		let mut no = self;
-		for lev in (0..self.nexts.len()).rev() {
-			no = no.find_prev_lev(key, lev);
-			if let Some(target_node) = no.nexts[lev].get()
-				.filter(|o| o.key.eq(key)) {
-				no.nexts[lev].set(target_node.nexts[lev].take());
-				if lev == 0 {
-					unsafe {
-						let target_node = (*no.next.get()).take()?;
-						(*no.next.get()) = (*target_node.next.get()).take();
-						return Some(target_node.key);
+	fn find_greater_or_equal<'b: 'a>(&'b self, key: &'_ T, mut lev: usize) -> Option<&'b Node<T>> {
+		unsafe {
+			let mut co = self;
+			loop {
+				while let Some(no) = co.nexts[lev] {
+					if no.as_ref().key >= *key {
+						break;
 					}
+					co = &*no.as_ptr();
+				}
+
+				if lev == 0 {
+					break co.nexts[0].map(|co| &*co.as_ptr());
+				} else {
+					lev -= 1;
 				}
 			}
 		}
-		None
 	}
 
-	// 因为ins虽然会破坏结构, 但是不会导致悬挂的引用等状态,
-	// 所以函数不用unsafe
-	// new_node.nexts.len() <= lev 的话返回None
-	fn ins(&'static self, new_node: Box<Node<T>>, lev: usize) -> Option<&Node<T>> {
-		if lev > 0 {
-			let new_node = self.find_prev_lev(&new_node.key, lev - 1)
-				.ins(new_node, lev - 1)?;
-			new_node.nexts.get(lev)?.set(self.nexts[lev].take());
-			self.nexts[lev].set(Some(&new_node));
-			Some(new_node)
-		} else {
-			new_node.nexts[lev].set(self.nexts[lev].take());
-			unsafe {
-				*new_node.next.get() = (*self.next.get()).take();
-				*self.next.get() = Some(new_node);
-				self.nexts[lev].set((*self.next.get())
-								   .as_ref().map(|o| o.as_ref()));
+	fn find_greater_or_equal_mut<'b: 'a>(
+		&'b mut self,
+		key: &'_ T,
+		mut lev: usize,
+		prev: &mut [NonNull<Node<T>>],
+	) -> Option<&'b mut Node<T>> {
+		unsafe {
+			let mut co = self;
+			loop {
+				while let Some(no) = co.nexts[lev] {
+					if no.as_ref().key >= *key {
+						break;
+					}
+					co = &mut *no.as_ptr();
+				}
+
+				prev[lev] = NonNull::new_unchecked(co as *mut Node<T>);
+
+				if lev == 0 {
+					break co.nexts[0].map(|co| &mut *co.as_ptr());
+				} else {
+					lev -= 1;
+				}
 			}
-			self.nexts[lev].get()
 		}
 	}
 }
 
-#[derive(Debug)]
-pub struct SkipList<T: std::cmp::Ord + 'static> {
-	head_: UnsafeCell<Box<Node<T>>>,
-	// point to self.head_
-	head: Option<&'static Node<T>>,
+pub struct SkipList<T: std::cmp::Ord> {
+	head: Node<T>,
 	max_height: usize,
 	len: usize,
 }
 
-impl<T: std::cmp::Ord + std::default::Default + 'static> SkipList<T> {
-	fn new() -> SkipList<T> {
-		let mut list = SkipList {
-			head_ : UnsafeCell::new(Box::new(Node {
-				key: Default::default(),
-				nexts: vec![Cell::new(None);MAX_HEIGHT],
-				next: UnsafeCell::new(None),
-			})),
-			head: None,
+impl<T: std::cmp::Ord> SkipList<T> {
+	pub fn new(some_key: T) -> SkipList<T> {
+		SkipList {
+			head: Node {
+				key: some_key,
+				nexts: vec![None; MAX_HEIGHT].into_boxed_slice(),
+			},
 			max_height: 1,
 			len: 0,
-		};
-		unsafe {
-			list.head = Some(&*list.head_.get());
 		}
-		list
 	}
-}
 
-impl<T: std::cmp::Ord + 'static> SkipList<T> {
-	fn find(&self, key: &T) -> Option<()> {
-		if self.head.unwrap()
-			.find_prev(key, self.max_height - 1).nexts[0].get()?
-			.key.eq(key) {
+	pub fn len(&self) -> usize { self.len }
+
+	pub fn is_empty(&self) -> bool { self.len == 0 }
+
+	pub fn find(&self, key: &T) -> Option<()> {
+		if self
+			.head
+			.find_greater_or_equal(key, self.max_height - 1)?
+			.key == *key
+		{
 			Some(())
 		} else {
 			None
 		}
 	}
-	fn ins(&mut self, key: T) {
-		if self.find(&key).is_none() {
-			let _new_node = Box::new(Node::new(key));
-			if _new_node.nexts.len() > self.max_height {
-				self.max_height = _new_node.nexts.len();
+
+	// FIXME: insertion is terribly slow
+	pub fn insert(&mut self, key: T) {
+		unsafe {
+			//is there a simple way to init prev?
+			let mut head_iter =
+				std::iter::repeat(NonNull::new_unchecked(&mut self.head as *mut Node<T>));
+			let mut prev: ArrayVec<[NonNull<Node<T>>; MAX_HEIGHT]> =
+				head_iter.by_ref().take(self.max_height).collect();
+
+			let so = self
+				.head
+				.find_greater_or_equal_mut(&key, self.max_height - 1, &mut prev);
+			if so.is_none() || so.unwrap().key > key {
+				let new_node = Box::new(Node::new(key));
+				let height = new_node.nexts.len();
+				let new_node = NonNull::new_unchecked(Box::into_raw(new_node));
+
+				if height > self.max_height {
+					prev.extend(head_iter.take(height - self.max_height));
+					self.max_height = height;
+				}
+
+				for (lev, (mut prev, co_next)) in prev
+					.into_iter()
+					.zip(new_node.clone().as_mut().nexts.iter_mut())
+					.enumerate()
+				{
+					*co_next = prev.as_mut().nexts[lev].replace(new_node);
+				}
+
+				self.len += 1;
 			}
-			self.head.unwrap()
-				.find_prev_lev(&_new_node.key, self.max_height - 1)
-				.ins(_new_node, self.max_height - 1);
 		}
 	}
-	
-	fn remove(&mut self, key: &T) -> Option<T> {
-		self.head.unwrap().remove(key)
+
+	pub fn remove(&mut self, key: &T) -> Option<T> {
+		unsafe {
+			let mut prev: ArrayVec<[NonNull<Node<T>>; MAX_HEIGHT]> =
+				std::iter::repeat(NonNull::new_unchecked(&mut self.head as *mut Node<T>))
+					.take(self.max_height)
+					.collect();
+			let co = self
+				.head
+				.find_greater_or_equal_mut(&key, self.max_height - 1, &mut prev);
+			if co.as_ref()?.key == *key {
+				let co = co.unwrap();
+				let height = co.nexts.len();
+				for (lev, (mut prev, co_next)) in prev
+					.into_iter()
+					.zip(co.nexts.iter_mut())
+					.take(height)
+					.enumerate()
+				{
+					prev.as_mut().nexts[lev] = co_next.take();
+				}
+
+				let to_ret = Some(Box::from_raw(co as *mut Node<T>).key);
+				while self.head.nexts[self.max_height - 1].is_none() && self.max_height > 1 {
+					self.max_height -= 1;
+				}
+				self.len -= 1;
+				to_ret
+			} else {
+				None
+			}
+		}
 	}
+}
+
+impl<T: std::cmp::Ord> Drop for SkipList<T> {
+	fn drop(&mut self) {
+		unsafe {
+			let mut cur_node = self.head.nexts[0].take();
+			while let Some(mut co) = cur_node {
+				cur_node = co.as_mut().nexts[0].take();
+				Box::from_raw(co.as_ptr());
+			}
+		}
+	}
+}
+
+impl<T: Default + std::cmp::Ord> Default for SkipList<T> {
+	fn default() -> Self { Self::new(Default::default()) }
 }
 
 #[cfg(test)]
@@ -152,49 +189,77 @@ mod tests {
 	use super::*;
 	#[test]
 	fn it_works() {
-		// TODO: 添加一些非'static 的类型T测试, 说不定不小心破坏了生命周期的检查;
-		for _ in 0..100 {
-			let mut list = SkipList::<i32>::new();
-			for i in 0..10000{
-				list.ins(i);
-			}
-			for i in 0..5000 {
-				list.remove(&i);
+		for _ in 0..10 {
+			let mut list = SkipList::new(std::i32::MIN);
+			for i in -1_00_000..1_00_000 {
+				list.insert(i);
 			}
 			check_ok(&list);
+			for i in -5000..5000 {
+				assert!(list.find(&i).is_some());
+				assert_eq!(list.remove(&i), Some(i));
+				assert!(list.find(&i).is_none());
+			}
+			check_ok(&list);
+			let v: Vec<_> = (0..100).collect();
+			let mut list = SkipList::new(&v[0]);
+			for i in v.iter() {
+				list.insert(i);
+			}
+
+			for i in v.iter().skip(20) {
+				assert!(list.find(&i).is_some());
+			}
 		}
 	}
 
-	fn check_ok(list: &SkipList<i32>){
-		for (lev, o) in list.head.unwrap().nexts.iter().enumerate().rev() {
-			let mut no = o.get();
-			let mut prev:i32 = 0;
-			if let Some(Some(oo)) = no.map(|no| no.nexts[lev].get()){
-					prev = oo.key;
-					no = oo.nexts[lev].get();
-			}
-			while let Some(oo) = no {
-				assert!(oo.key > prev);
-				prev = oo.key;
-				no = oo.nexts[lev].get();
-			}
-		}
-		println!("Checks Ok!");
-	}
-
-	impl<T: std::cmp::Ord + std::fmt::Display + 'static> std::fmt::Display for SkipList<T> {
-		fn fmt(&self, f :&mut std::fmt::Formatter) -> std::fmt::Result {
-			let mut no = self.head;
-			while let Some(o) = no {
-				write!(f, "{:4}:", o.key)?;
-				for oo in o.nexts.iter() {
-					match oo.get() {
-						Some(o) => {write!(f, "{:4},", o.key)?},
-						None => {write!(f, "____,")?},
-					};
+	fn check_ok<T: std::cmp::Ord>(list: &SkipList<T>) {
+		unsafe {
+			// check key sorted and continuous in every level
+			let mut prev: Vec<_> = list.head.nexts.iter().copied().flatten().collect();
+			let mut link_cnt = 0;
+			let mut link_dist = [0; MAX_HEIGHT];
+			if let Some(mut no) = list.head.nexts[0] {
+				while let Some(o) = no.as_ref().nexts[0] {
+					for i in 0..o.as_ref().nexts.len() {
+						assert!(prev[i].as_ref().key <= o.as_ref().key);
+						// continuous
+						if prev[i].as_ref().key < o.as_ref().key {
+							assert!(prev[i].as_ref().nexts[i] == Some(o));
+						}
+						prev[i] = o;
+					}
+					link_cnt += no.as_ref().nexts.len();
+					link_dist[no.as_ref().nexts.len()] += 1;
+					no = o;
 				}
-				writeln!(f, "")?;
-				no = o.nexts[0].get();
+			}
+			let cnt: i32 = link_dist.iter().copied().sum();
+			println!(
+				"Checks Ok! (total link: {}, total node: {} , cnt: {}",
+				link_cnt,
+				list.len(),
+				cnt
+			);
+			println!("link distribution: {:?}", link_dist);
+		}
+	}
+
+	impl<T: std::cmp::Ord + std::fmt::Display> std::fmt::Display for SkipList<T> {
+		fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+			let mut no = self.head.nexts[0];
+			unsafe {
+				while let Some(o) = no {
+					write!(f, "{:4}:", o.as_ref().key)?;
+					for oo in o.as_ref().nexts.iter() {
+						match oo {
+							Some(o) => write!(f, "{:4},", o.as_ref().key)?,
+							None => write!(f, "____,")?,
+						};
+					}
+					writeln!(f)?;
+					no = o.as_ref().nexts[0];
+				}
 			}
 			Ok(())
 		}
