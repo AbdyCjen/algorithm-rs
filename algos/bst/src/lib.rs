@@ -83,7 +83,7 @@ pub trait BSTree {
 }
 
 pub struct Iter<'a, Tree: BSTree> {
-	st: Vec<(&'a Tree::Node, Ordering)>,
+	st: Vec<&'a Tree::Node>,
 }
 
 impl<'a, Tree: BSTree> Iterator for Iter<'a, Tree>
@@ -92,16 +92,11 @@ where <Tree as BSTree>::Item: 'a
 	type Item = &'a <Tree as BSTree>::Item;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		let (mut no, ord) = self.st.pop()?;
-		if Ordering::Less == ord {
-			while let Some(lnext) = no.left_ref() {
-				self.st.push((no, Ordering::Equal));
-				no = lnext;
-			}
-		}
-
-		if let Some(r) = no.right_ref() {
-			self.st.push((r, Ordering::Less));
+		let no = self.st.pop()?;
+		let mut r = no.right_ref();
+		while let Some(o) = r {
+			r = o.left_ref();
+			self.st.push(o);
 		}
 		Some(no.key_ref())
 	}
@@ -110,8 +105,10 @@ where <Tree as BSTree>::Item: 'a
 impl<'a, Tree: BSTree> Iter<'a, Tree> {
 	pub fn from_tree(t: &'a Tree) -> Self {
 		let mut st = Vec::new();
-		if let Some(o) = t.root_ref() {
-			st.push((o, Ordering::Less));
+		let mut root = t.root_ref();
+		while let Some(o) = root {
+			root = o.left_ref();
+			st.push(o);
 		}
 		Iter { st }
 	}
@@ -124,8 +121,10 @@ pub struct IntoIter<Tree: BSTree> {
 impl<Tree: BSTree> IntoIter<Tree> {
 	pub fn from_tree(t: Tree) -> Self {
 		let mut st = Vec::new();
-		if let Some(o) = t.root() {
-			st.push(o);
+		let mut root = t.root();
+		while let Some(mut o) = root {
+			root = o.left();
+			st.push(o)
 		}
 		IntoIter { st }
 	}
@@ -135,14 +134,12 @@ impl<Tree: BSTree> Iterator for IntoIter<Tree> {
 	type Item = <Tree as BSTree>::Item;
 	fn next(&mut self) -> Option<Self::Item> {
 		let mut no = self.st.pop()?;
-		while let Some(lnext) = no.left() {
-			self.st.push(no);
-			no = lnext;
+		let mut r = no.right();
+		while let Some(mut o) = r {
+			r = o.left();
+			self.st.push(o);
 		}
 
-		if let Some(r) = no.right() {
-			self.st.push(r)
-		}
 		Some(no.key())
 	}
 }
