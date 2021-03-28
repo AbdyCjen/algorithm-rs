@@ -4,7 +4,7 @@ use std::cmp::{Ord, Ordering};
 #[macro_use]
 pub mod bst_derive;
 
-pub trait BSTNodeInner: std::marker::Sized {
+pub trait BstNodeInner: std::marker::Sized {
 	fn rotate_left(&mut self);
 	fn rotate_right(&mut self);
 	// make child in search path root
@@ -29,7 +29,8 @@ pub trait BSTNodeInner: std::marker::Sized {
 	}
 }
 
-pub trait BSTNode: BSTNodeInner {
+//FIXME: impl BstNode for T: BstNodeInner instead;
+pub trait BstNode: BstNodeInner {
 	type Item: Ord;
 	fn left(&mut self) -> Option<Self>;
 	fn right(&mut self) -> Option<Self>;
@@ -68,10 +69,10 @@ pub trait BSTNode: BSTNodeInner {
 	fn key_ref(&self) -> &Self::Item;
 }
 
-//XXX: may split the BSTree into BSTreeBase and BSTreeInner
-pub trait BSTree {
+//XXX: may split the BsTree into BSTreeBase and BSTreeInner
+pub trait BsTree {
 	type Item: Ord;
-	type Node: BSTNode<Item = Self::Item>;
+	type Node: BstNode<Item = Self::Item>;
 
 	fn root_ref(&self) -> Option<&Self::Node>;
 	fn root(self) -> Option<Self::Node>;
@@ -82,14 +83,14 @@ pub trait BSTree {
 	fn find(&self, k: &Self::Item) -> Option<()> { self.root_ref()?.find(k) }
 }
 
-pub struct Iter<'a, Tree: BSTree> {
+pub struct Iter<'a, Tree: BsTree> {
 	st: Vec<&'a Tree::Node>,
 }
 
-impl<'a, Tree: BSTree> Iterator for Iter<'a, Tree>
-where <Tree as BSTree>::Item: 'a
+impl<'a, Tree: BsTree> Iterator for Iter<'a, Tree>
+where <Tree as BsTree>::Item: 'a
 {
-	type Item = &'a <Tree as BSTree>::Item;
+	type Item = &'a <Tree as BsTree>::Item;
 
 	fn next(&mut self) -> Option<Self::Item> {
 		let no = self.st.pop()?;
@@ -102,7 +103,7 @@ where <Tree as BSTree>::Item: 'a
 	}
 }
 
-impl<'a, Tree: BSTree> Iter<'a, Tree> {
+impl<'a, Tree: BsTree> Iter<'a, Tree> {
 	pub fn from_tree(t: &'a Tree) -> Self {
 		let mut st = Vec::new();
 		let mut root = t.root_ref();
@@ -114,11 +115,11 @@ impl<'a, Tree: BSTree> Iter<'a, Tree> {
 	}
 }
 
-pub struct IntoIter<Tree: BSTree> {
+pub struct IntoIter<Tree: BsTree> {
 	st: Vec<Tree::Node>,
 }
 
-impl<Tree: BSTree> IntoIter<Tree> {
+impl<Tree: BsTree> IntoIter<Tree> {
 	pub fn from_tree(t: Tree) -> Self {
 		let mut st = Vec::new();
 		let mut root = t.root();
@@ -130,8 +131,8 @@ impl<Tree: BSTree> IntoIter<Tree> {
 	}
 }
 
-impl<Tree: BSTree> Iterator for IntoIter<Tree> {
-	type Item = <Tree as BSTree>::Item;
+impl<Tree: BsTree> Iterator for IntoIter<Tree> {
+	type Item = <Tree as BsTree>::Item;
 	fn next(&mut self) -> Option<Self::Item> {
 		let mut no = self.st.pop()?;
 		let mut r = no.right();
@@ -146,7 +147,7 @@ impl<Tree: BSTree> Iterator for IntoIter<Tree> {
 
 //XXX:Is it posible to implement IntoIterator for a type with only trait constraint
 // It's not
-/*impl<T: Ord, Tree: BSTree<Item=T>> IntoIterator for Tree {
+/*impl<T: Ord, Tree: BsTree<Item=T>> IntoIterator for Tree {
 	type Item = T;
 	type IntoIter = IntoIter<T, Tree>;
 	fn into_iter(self) -> Self::IntoIter {
@@ -156,7 +157,7 @@ impl<Tree: BSTree> Iterator for IntoIter<Tree> {
 	}
 }
 
-impl<'a, T: Ord + 'a, Tree: BSTree<Item=T>> IntoIterator for &'a Tree {
+impl<'a, T: Ord + 'a, Tree: BsTree<Item=T>> IntoIterator for &'a Tree {
 	type Item = &'a T;
 	type IntoIter = Iter<'a, T, Tree>;
 

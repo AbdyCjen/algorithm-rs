@@ -1,5 +1,5 @@
 extern crate rand;
-use ::bst::BSTNodeInner;
+use ::bst::BstNodeInner;
 use std::cmp::Ordering;
 mod bst;
 
@@ -38,10 +38,10 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 		}
 	}
 
-	fn by_ord(&self, ord: Ordering) -> &Option<Box<Self>> {
+	fn by_ord(&self, ord: Ordering) -> Option<&Self> {
 		match ord {
-			Ordering::Less => &self.left,
-			Ordering::Greater => &self.right,
+			Ordering::Less => self.left.as_deref(),
+			Ordering::Greater => self.right.as_deref(),
 			Ordering::Equal => unreachable!(),
 		}
 	}
@@ -57,7 +57,7 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 	fn find(&self, k: &T) -> Option<()> {
 		match k.cmp(&self.k) {
 			Ordering::Equal => Some(()),
-			ord => self.by_ord(ord).as_ref()?.find(k),
+			ord => self.by_ord(ord)?.find(k),
 		}
 	}
 
@@ -70,7 +70,7 @@ impl<T: std::cmp::Ord> TreapNode<T> {
 					ch => ch.replace(Box::new(Self::new(k))).map(|_| ()),
 				};
 				// FIXME
-				if self.r < self.by_ord(ord).as_ref().unwrap().r {
+				if self.r < self.by_ord(ord).unwrap().r {
 					self.rotate_by_ord(ord)
 				}
 				ret_val

@@ -1,24 +1,24 @@
 use std::cmp::{Ord, Ordering};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum RB {
+enum Rb {
 	Red,
 	Black,
 }
-use RB::*;
-struct LLRBTreeNode<T: Ord> {
-	left: Option<Box<LLRBTreeNode<T>>>,
-	right: Option<Box<LLRBTreeNode<T>>>,
+use Rb::*;
+struct LlrbTreeNode<T: Ord> {
+	left: Option<Box<LlrbTreeNode<T>>>,
+	right: Option<Box<LlrbTreeNode<T>>>,
 	k: T,
-	color: RB,
+	color: Rb,
 }
 
 #[derive(Default)]
-pub struct RBTree<T: Ord> {
-	root: Option<LLRBTreeNode<T>>,
+pub struct RbTree<T: Ord> {
+	root: Option<LlrbTreeNode<T>>,
 }
 
-impl<T: Ord> RBTree<T> {
+impl<T: Ord> RbTree<T> {
 	pub fn find(&self, k: &T) -> Option<()> {
 		self.root.as_ref()?.find(k)
 	}
@@ -31,7 +31,7 @@ impl<T: Ord> RBTree<T> {
 				res
 			}
 			root => {
-				*root = Some(LLRBTreeNode::new(k));
+				*root = Some(LlrbTreeNode::new(k));
 				None // FIXME:: root.color == Red
 			}
 		}
@@ -42,7 +42,7 @@ impl<T: Ord> RBTree<T> {
 	}
 }
 
-impl<T: Ord> LLRBTreeNode<T> {
+impl<T: Ord> LlrbTreeNode<T> {
 	fn by_ord(&self, ord: Ordering) -> &Option<Box<Self>> {
 		match ord {
 			Ordering::Less => &self.left,
@@ -61,8 +61,8 @@ impl<T: Ord> LLRBTreeNode<T> {
 	}
 
 	#[inline]
-	fn new(k: T) -> LLRBTreeNode<T> {
-		LLRBTreeNode { left: None,
+	fn new(k: T) -> LlrbTreeNode<T> {
+		LlrbTreeNode { left: None,
 		               right: None,
 		               k,
 		               color: Red }
@@ -174,7 +174,7 @@ impl<T: Ord> LLRBTreeNode<T> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	impl<T> std::fmt::Debug for LLRBTreeNode<T> where T: std::fmt::Display + Ord
+	impl<T> std::fmt::Debug for LlrbTreeNode<T> where T: std::fmt::Display + Ord
 	{
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 			write!(f, "{{")?;
@@ -190,7 +190,7 @@ mod tests {
 		}
 	}
 
-	fn check_rbtree<T: Ord>(root: &LLRBTreeNode<T>) -> Result<i32, &str> {
+	fn check_rbtree<T: Ord>(root: &LlrbTreeNode<T>) -> Result<i32, &str> {
 		let lh = root.left
 		             .as_ref()
 		             .map(|l| {
@@ -223,7 +223,7 @@ mod tests {
 	}
 	#[test]
 	fn it_works() {
-		let mut rbt: RBTree<_> = Default::default();
+		let mut rbt: RbTree<_> = Default::default();
 		for i in 0..1000_000 {
 			rbt.insert(i);
 		}

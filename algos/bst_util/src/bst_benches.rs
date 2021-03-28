@@ -1,4 +1,4 @@
-use bst::{BSTree, Iter};
+use bst::{BsTree, Iter};
 use criterion::{black_box, Criterion};
 use std::{collections::BTreeSet, time::Instant};
 
@@ -7,7 +7,7 @@ const TEST_RANGE2: std::ops::Range<i32> = 0..10_000_i32;
 
 // fuck lifetime here
 pub fn bench_iter<Tree>(c: &mut Criterion)
-where Tree: BSTree<Item = i32> + std::default::Default + 'static {
+where Tree: BsTree<Item = i32> + std::default::Default + 'static {
 	let mut test_by_range = |test_range: std::ops::Range<i32>, promt: &str| {
 		let mut tr: Tree = Default::default();
 		for _ in test_range {
@@ -45,7 +45,7 @@ pub fn bench_std_iter(c: &mut Criterion) {
 }
 
 pub fn bench_insert<Tree>(c: &mut Criterion)
-where Tree: BSTree<Item = i32> + std::default::Default + 'static {
+where Tree: BsTree<Item = i32> + std::default::Default + 'static {
 	let mut test_by_range = |promt, test_range: std::ops::Range<i32>| {
 		c.bench_function(promt, |b| {
 			b.iter_custom(|iters| {

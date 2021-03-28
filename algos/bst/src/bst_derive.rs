@@ -15,8 +15,8 @@
 #[macro_export]
 macro_rules! derive_bst {
 	($tr_tp: ident, $node_tp: ident; $rotate_left_fn: item; $rotate_right_fn: item) => {
-		use ::bst::{BSTNode, BSTNodeInner, BSTree};
-		impl<T: std::cmp::Ord> BSTNodeInner for $node_tp<T> {
+		use ::bst::{BstNode, BstNodeInner, BsTree};
+		impl<T: std::cmp::Ord> BstNodeInner for $node_tp<T> {
 			type ChildRaw = Option<Box<Self>>;
 			#[inline]
 			$rotate_left_fn
@@ -31,7 +31,7 @@ macro_rules! derive_bst {
 			fn right_mut(&mut self) -> &mut Self::ChildRaw { &mut self.right }
 		}
 
-		impl<T: std::cmp::Ord> BSTNode for $node_tp<T> {
+		impl<T: std::cmp::Ord> BstNode for $node_tp<T> {
 			type Item = T;
 
 			#[inline]
@@ -53,7 +53,7 @@ macro_rules! derive_bst {
 			fn key_ref(&self) -> &Self::Item { &self.k }
 		}
 
-		impl<T: std::cmp::Ord> BSTree for $tr_tp<T> {
+		impl<T: std::cmp::Ord> BsTree for $tr_tp<T> {
 			type Item = T;
 			type Node = $node_tp<T>;
 
@@ -64,7 +64,7 @@ macro_rules! derive_bst {
 			fn root(self) -> Option<Self::Node> { self.root.map(|o| *o) }
 
 			// FIXME: if remove not manually implemented for $tr_tp, this will cause
-			// unconditionally recursion; BSTree::insert too;
+			// unconditionally recursion; BsTree::insert too;
 			#[inline]
 			fn remove(&mut self, k: &Self::Item) -> Option<()> { $tr_tp::remove(self, k) }
 

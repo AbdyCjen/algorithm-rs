@@ -1,27 +1,27 @@
-use ::bst::{BSTNode, BSTNodeInner};
+use ::bst::{BstNode, BstNodeInner};
 use std::cmp::{Ord, Ordering};
 mod bst;
 mod iterator;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum RB {
+enum Rb {
 	Red,
 	Black,
 }
-use RB::*;
+use Rb::*;
 pub struct RbTreeNode<T: Ord> {
 	left: Option<Box<RbTreeNode<T>>>,
 	right: Option<Box<RbTreeNode<T>>>,
 	k: T,
-	color: RB,
+	color: Rb,
 }
 
 #[derive(Default)]
-pub struct RBTree<T: Ord> {
+pub struct RbTree<T: Ord> {
 	root: Option<Box<RbTreeNode<T>>>,
 }
 
-impl<T: Ord> RBTree<T> {
+impl<T: Ord> RbTree<T> {
 	fn insert(&mut self, k: T) -> Option<()> {
 		match &mut self.root {
 			Some(root) => {
@@ -116,7 +116,7 @@ impl<T: Ord> RbTreeNode<T> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use ::bst::BSTree;
+	use ::bst::BsTree;
 	//use rand;
 	impl<T> std::fmt::Debug for RbTreeNode<T>
 	where T: std::fmt::Display + Ord
@@ -173,7 +173,7 @@ mod tests {
 	}
 	#[test]
 	fn it_works() {
-		let mut rbt: RBTree<_> = Default::default();
+		let mut rbt: RbTree<_> = Default::default();
 		let mut test_seq = Vec::new();
 		const TEST_RANGE: std::ops::Range<i32> = 0..1000_000;
 		for _ in TEST_RANGE {
