@@ -5,18 +5,12 @@ pub struct Solution {}
 use std::iter::FromIterator;
 impl Solution {
 	pub fn string_shift(s: String, shift: Vec<Vec<i32>>) -> String {
-		let sum = shift.into_iter().fold(0_i32, |d, ds| match ds.get(0) {
-			Some(0) => (d - ds[1]) % (s.len() as i32),
-			Some(1) => (d + ds[1]) % (s.len() as i32),
+		let shift = shift.into_iter().fold(0_i32, |d, ds| match ds.as_slice() {
+			&[0, ds] => (d - ds).rem_euclid(s.len() as i32),
+			&[1, ds] => (d + ds).rem_euclid(s.len() as i32),
 			_ => unreachable!(),
 		});
-		// UGLY
-		let shift = if sum > 0 {
-			sum as usize % s.len()
-		} else {
-			(s.len() as i32 + sum) as usize % s.len()
-		};
-		let (l, r) = s.split_at(s.len() - shift);
+		let (l, r) = s.split_at(s.len() - shift as usize);
 		String::from_iter(vec![r, l])
 	}
 }
