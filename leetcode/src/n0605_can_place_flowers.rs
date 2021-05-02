@@ -13,10 +13,10 @@
  *  
  * Constraints:
  *
- * 	1 <= flowerbed.length <= 2 * 10^4
- * 	flowerbed[i] is 0 or 1.
- * 	There are no two adjacent flowers in flowerbed.
- * 	0 <= n <= flowerbed.length
+ *     1 <= flowerbed.length <= 2 * 10^4
+ *     flowerbed[i] is 0 or 1.
+ *     There are no two adjacent flowers in flowerbed.
+ *     0 <= n <= flowerbed.length
  *
  */
 pub struct Solution {}

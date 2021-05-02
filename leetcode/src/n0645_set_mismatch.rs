@@ -14,8 +14,8 @@
  *  
  * Constraints:
  *
- * 	2 <= nums.length <= 10^4
- * 	1 <= nums[i] <= 10^4
+ *     2 <= nums.length <= 10^4
+ *     1 <= nums[i] <= 10^4
  *
  */
 pub struct Solution {}

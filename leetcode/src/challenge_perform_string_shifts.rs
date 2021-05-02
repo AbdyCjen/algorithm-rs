@@ -6,8 +6,8 @@ use std::iter::FromIterator;
 impl Solution {
 	pub fn string_shift(s: String, shift: Vec<Vec<i32>>) -> String {
 		let shift = shift.into_iter().fold(0_i32, |d, ds| match ds.as_slice() {
-			&[0, ds] => (d - ds).rem_euclid(s.len() as i32),
-			&[1, ds] => (d + ds).rem_euclid(s.len() as i32),
+			[0, ds] => (d - ds).rem_euclid(s.len() as i32),
+			[1, ds] => (d + ds).rem_euclid(s.len() as i32),
 			_ => unreachable!(),
 		});
 		let (l, r) = s.split_at(s.len() - shift as usize);

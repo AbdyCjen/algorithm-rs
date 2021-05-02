@@ -24,8 +24,8 @@
  *  
  * Constraints:
  *
- * 	3 <= A.length <= 50000
- * 	-10^4 <= A[i] <= 10^4
+ *     3 <= A.length <= 50000
+ *     -10^4 <= A[i] <= 10^4
  *
  */
 pub struct Solution {}

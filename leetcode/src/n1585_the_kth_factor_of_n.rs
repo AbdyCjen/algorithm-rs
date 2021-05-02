@@ -52,7 +52,7 @@
  * Constraints:
  *
  *
- * 	1 <= k <= n <= 1000
+ *     1 <= k <= n <= 1000
  *
  */
 pub struct Solution {}

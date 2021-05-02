@@ -6,10 +6,10 @@
  * If it is possible, return any [i, j] with i+1 < j, such that:
  *
  *
- * 	A[0], A[1], ..., A[i] is the first part;
- * 	A[i+1], A[i+2], ..., A[j-1] is the second part, and
- * 	A[j], A[j+1], ..., A[A.length - 1] is the third part.
- * 	All three parts have equal binary value.
+ *     A[0], A[1], ..., A[i] is the first part;
+ *     A[i+1], A[i+2], ..., A[j-1] is the second part, and
+ *     A[j], A[j+1], ..., A[A.length - 1] is the third part.
+ *     All three parts have equal binary value.
  *
  *
  * If it is not possible, return [-1, -1].
@@ -38,8 +38,8 @@
  * Note:
  *
  * <ol>
- * 	3 <= A.length <= 30000
- * 	A[i] == 0 or A[i] == 1
+ *     3 <= A.length <= 30000
+ *     A[i] == 0 or A[i] == 1
  * </ol>
  *
  * <div>
@@ -68,8 +68,8 @@ impl Solution {
 			let begin2 = it.nth(part_ones as usize - 1)?.0;
 			let begin3 = it.nth(part_ones as usize - 1)?.0;
 			let part_len = a.len() - begin3;
-			if &a[begin1..begin1 + part_len] == &a[begin2..begin2 + part_len]
-				&& &a[begin2..begin2 + part_len] == &a[begin3..begin3 + part_len]
+			if a[begin1..begin1 + part_len] == a[begin2..begin2 + part_len]
+				&& a[begin2..begin2 + part_len] == a[begin3..begin3 + part_len]
 			{
 				Some(((begin1 + part_len - 1) as i32, (begin2 + part_len) as i32))
 			} else {
@@ -78,7 +78,7 @@ impl Solution {
 		}
 		three_equal_parts_inner(a)
 			.map(|tp| vec![tp.0, tp.1])
-			.unwrap_or(vec![-1, -1])
+			.unwrap_or_else(|| vec![-1, -1])
 	}
 }
 

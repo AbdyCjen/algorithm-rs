@@ -22,8 +22,8 @@
  * Constraints:
  *
  *
- * 	The number of nodes in the given tree will be in the range [1, 100].
- * 	0 <= Node.val <= 1000
+ *     The number of nodes in the given tree will be in the range [1, 100].
+ *     0 <= Node.val <= 1000
  *
  */
 pub struct Solution {}

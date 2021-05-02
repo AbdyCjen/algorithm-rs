@@ -26,10 +26,10 @@
  *  
  * Constraints:
  *
- * 	n == candyType.length
- * 	2 <= n <= 10^4
- * 	n is even.
- * 	-10^5 <= candyType[i] <= 10^5
+ *     n == candyType.length
+ *     2 <= n <= 10^4
+ *     n is even.
+ *     -10^5 <= candyType[i] <= 10^5
  *
  */
 pub struct Solution {}
