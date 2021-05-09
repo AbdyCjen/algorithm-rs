@@ -42,12 +42,19 @@ impl Solution {
 
 		let part_sum = s / 3;
 		let mut it = a.iter().copied();
-		let acc_it = std::iter::successors(Some(0), move |i| Some(it.next()? + i));
+		let acc_it = std::iter::successors(it.next(), move |i| Some(it.next()? + i));
 
-		acc_it.fold(
-			part_sum,
-			|acc, sum| if acc == sum { acc + part_sum } else { acc },
-		) == s + part_sum
+		let mut target = part_sum;
+		acc_it
+			.filter(move |&i| {
+				if i == target {
+					target += part_sum;
+					true
+				} else {
+					false
+				}
+			})
+			.count() >= 3
 	}
 }
 

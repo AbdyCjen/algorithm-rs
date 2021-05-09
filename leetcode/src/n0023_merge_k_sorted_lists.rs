@@ -73,7 +73,7 @@ impl Solution {
 		let mut dummy = ListNode::new(-1);
 		let mut cur_ptr = &mut dummy;
 
-		let mut bh: BinaryHeap<_> = lists.into_iter().filter_map(|o| o).collect();
+		let mut bh: BinaryHeap<_> = lists.into_iter().flatten().collect();
 		while let Some(next_no) = bh.pop() {
 			cur_ptr.next = Some(next_no);
 			cur_ptr = cur_ptr.next.as_mut()?;

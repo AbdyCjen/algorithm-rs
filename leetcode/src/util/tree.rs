@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 pub struct TreeNode {
 	pub val: i32,
 	pub left: Option<Rc<RefCell<TreeNode>>>,
@@ -15,6 +15,22 @@ impl TreeNode {
 			left: None,
 			right: None,
 		}
+	}
+}
+
+impl std::fmt::Debug for TreeNode {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		write!(f, "(")?;
+		if let Some(lt) = self.left.as_ref() {
+			write!(f, "{:?} ", lt.borrow())?;
+		}
+		write!(f, "{}", self.val)?;
+		if let Some(rt) = self.right.as_ref() {
+			write!(f, " {:?}", rt.borrow())?;
+		}
+		write!(f, ")")?;
+
+		Ok(())
 	}
 }
 
