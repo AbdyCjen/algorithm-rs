@@ -47,31 +47,32 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn min_distance(word1: String, word2: String) -> i32 {
+		let (word1, word2) = (word1.into_bytes(), word2.into_bytes());
 		if word1.is_empty() || word2.is_empty() {
 			return (word1.len() + word2.len()) as i32;
 		}
 
-		let mut cache = vec![0_i32; word2.len() + 1];
+		let mut cache = vec![0; word2.len() + 1];
 		for (i, t) in cache.iter_mut().enumerate() {
 			*t = i as i32;
 		}
 
 		let mut prev;
-		for i in 1..=word1.len() {
+		for (i, c1) in word1.into_iter().enumerate() {
 			prev = cache[0];
-			cache[0] = i as i32;
-			for j in 1..=word2.len() {
-				let temp = cache[j];
-				cache[j] = if word1.as_bytes()[i - 1] == word2.as_bytes()[j - 1] {
+			cache[0] = i as i32 + 1;
+			for (j, &c2) in word2.iter().enumerate() {
+				let temp = cache[j + 1];
+				cache[j + 1] = if c1 == c2 {
 					prev
 				} else {
-					std::cmp::min(std::cmp::min(prev, temp), cache[j - 1]) + 1
+					prev.min(temp).min(cache[j]) + 1
 				};
 				prev = temp;
 			}
 		}
 
-		cache[word2.len()]
+		*cache.last().unwrap()
 	}
 }
 

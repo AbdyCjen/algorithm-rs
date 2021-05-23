@@ -29,11 +29,11 @@
  *
  */
 // submission codes start here
-use std::{collections::BTreeMap, default::Default};
+use std::default::Default;
 #[derive(Default)]
 struct MinStack {
-	q: Vec<i32>,
-	s: BTreeMap<i32, i32>,
+	stk: Vec<i32>,
+	mono_stk: Vec<i32>,
 }
 
 /**
@@ -46,23 +46,21 @@ impl MinStack {
 	fn new() -> Self { Default::default() }
 
 	fn push(&mut self, x: i32) {
-		self.q.push(x);
-		*self.s.entry(x).or_insert(0) += 1;
-	}
-
-	fn pop(&mut self) {
-		if let Some(x) = self.q.pop() {
-			let ent = self.s.entry(x).or_insert(0);
-			*ent -= 1;
-			if *ent == 0 {
-				self.s.remove(&x);
-			}
+		self.stk.push(x);
+		if x <= self.mono_stk.last().copied().unwrap_or(std::i32::MAX) {
+			self.mono_stk.push(x)
 		}
 	}
 
-	fn top(&self) -> i32 { *self.q.last().unwrap() }
+	fn pop(&mut self) {
+		if self.stk.pop() == self.mono_stk.last().copied() {
+			self.mono_stk.pop();
+		}
+	}
 
-	fn get_min(&self) -> i32 { *self.s.iter().next().unwrap().0 }
+	fn top(&self) -> i32 { *self.stk.last().unwrap() }
+
+	fn get_min(&self) -> i32 { *self.mono_stk.last().unwrap() }
 }
 
 /**

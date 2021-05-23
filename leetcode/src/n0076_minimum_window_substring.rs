@@ -29,22 +29,24 @@ impl Solution {
 		if s.is_empty() || s.len() < t.len() {
 			return Default::default();
 		}
-		let mut cmap = vec![0; 128];
-		let mut imap = vec![false; 128];
-		for c in t.bytes().map(|c| c as usize) {
+		let (s, t) = (s.into_bytes(), t.into_bytes());
+		let idx = |i| s[i] as usize;
+		let mut cmap = [0; 128];
+		let mut imap = [false; 128];
+		for c in t.iter().map(|&c| c as usize) {
 			cmap[c] += 1;
 			imap[c] = true;
 		}
 
 		let (mut i, mut start, mut minl) = (0, 0, std::usize::MAX);
-		for (j, c) in s.bytes().enumerate() {
+		for (j, &c) in s.iter().enumerate() {
 			let c = c as usize;
 			if imap[c] {
 				cmap[c] -= 1;
 			}
-			while (!imap[s.as_bytes()[i] as usize] || cmap[s.as_bytes()[i] as usize] < 0) && i < j {
-				if imap[s.as_bytes()[i] as usize] {
-					cmap[s.as_bytes()[i] as usize] = cmap[s.as_bytes()[i] as usize] + 1;
+			while (!imap[idx(i)] || cmap[idx(i)] < 0) && i < j {
+				if imap[idx(i)] {
+					cmap[idx(i)] += 1;
 				}
 				i += 1;
 			}
@@ -56,7 +58,7 @@ impl Solution {
 		if minl > s.len() {
 			Default::default()
 		} else {
-			s[start..start + minl].to_owned()
+			String::from_utf8(s[start..start + minl].to_owned()).unwrap()
 		}
 	}
 }

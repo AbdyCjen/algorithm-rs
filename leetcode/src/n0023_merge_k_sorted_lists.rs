@@ -58,12 +58,13 @@
 // }
 use super::util::linked_list::ListNode;
 pub struct Solution {}
-impl std::cmp::PartialOrd for ListNode {
-	fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> { Some(self.cmp(&other)) }
+use std::cmp::{Ord, Ordering, PartialOrd};
+impl PartialOrd for ListNode {
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(&other)) }
 }
 
-impl std::cmp::Ord for ListNode {
-	fn cmp(&self, other: &Self) -> std::cmp::Ordering { other.val.cmp(&self.val) }
+impl Ord for ListNode {
+	fn cmp(&self, other: &Self) -> Ordering { other.val.cmp(&self.val) }
 }
 
 use std::collections::BinaryHeap;

@@ -37,7 +37,6 @@ use super::util::tree::TreeNode;
 
 // submission codes start here
 
-use std::cell::RefCell;
 // Definition for a binary tree node.
 // #[derive(Debug, PartialEq, Eq)]
 // pub struct TreeNode {
@@ -56,29 +55,23 @@ use std::cell::RefCell;
 //     }
 //   }
 // }
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn max_path_sum(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		let mut res = std::i32::MIN;
-		Self::path_sum(&root, &mut res);
-		res
-	}
-	fn path_sum(root: &Option<Rc<RefCell<TreeNode>>>, res: &mut i32) -> i32 {
-		if let Some(root) = root {
-			let root = root.borrow();
-			let mut max_sum = root.val;
-			let lsum = Self::path_sum(&root.left, res);
-			let rsum = Self::path_sum(&root.right, res);
-			let max_sub_sum = &[lsum, rsum, 0].iter().fold(std::i32::MIN, |max, &sum_| {
-				max_sum = std::cmp::max(max_sum, max_sum + sum_);
-				std::cmp::max(max, sum_)
-			});
-			*res = std::cmp::max(max_sum, *res);
-			max_sub_sum + root.val
-		} else {
-			0
+		fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, res: &mut i32) -> i32 {
+			root.map(|root| {
+				let mut root = root.borrow_mut();
+				let lsum = path_sum(root.left.take(), res);
+				let rsum = path_sum(root.right.take(), res);
+				*res = (root.val + lsum + rsum).max(*res);
+				(root.val + lsum.max(rsum)).max(0)
+			})
+			.unwrap_or(0)
 		}
+		let mut res = std::i32::MIN;
+		path_sum(root, &mut res);
+		res
 	}
 }
 

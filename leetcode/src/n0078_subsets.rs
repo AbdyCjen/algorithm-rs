@@ -29,21 +29,19 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn subsets(nums: Vec<i32>) -> Vec<Vec<i32>> {
-		let mut res = Vec::new();
-		Solution::subsets_rec(0, vec![], &mut res, &nums);
+		fn subsets_inner(nums: &[i32], mut st: Vec<i32>, ans: &mut Vec<Vec<i32>>) {
+			if nums.is_empty() {
+				ans.push(st);
+				return;
+			}
 
-		res
-	}
-
-	fn subsets_rec(start: usize, mut st: Vec<i32>, res: &mut Vec<Vec<i32>>, nums: &[i32]) {
-		if start >= nums.len() {
-			res.push(st);
-			return;
+			subsets_inner(&nums[1..], st.clone(), ans);
+			st.push(nums[0]);
+			subsets_inner(&nums[1..], st, ans);
 		}
-
-		Solution::subsets_rec(start + 1, st.clone(), res, nums);
-		st.push(nums[start]);
-		Solution::subsets_rec(start + 1, st, res, nums);
+		let mut ans = Vec::new();
+		subsets_inner(&nums, vec![], &mut ans);
+		ans
 	}
 }
 
