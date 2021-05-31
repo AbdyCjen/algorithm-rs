@@ -97,7 +97,8 @@ fn generate_random_id(except_ids: &[u32]) -> u32 {
 	use rand::Rng;
 	let mut rng = rand::thread_rng();
 	loop {
-		let res: u32 = rng.gen_range(1, 1106);
+		const MAX_QUESTION_ID: u32 = 1883;
+		let res: u32 = rng.gen_range(1, MAX_QUESTION_ID);
 		if !except_ids.contains(&res) {
 			return res;
 		}

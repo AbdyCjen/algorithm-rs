@@ -96,6 +96,7 @@ mod n0662_maximum_width_of_binary_tree;
 mod n0665_non_decreasing_array;
 mod n0689_maximum_sum_of_3_non_overlapping_subarrays;
 mod n0733_flood_fill;
+mod n0739_daily_temperatures;
 mod n0746_prefix_and_suffix_search;
 mod n0782_jewels_and_stones;
 mod n0828_chalkboard_xor_game;
