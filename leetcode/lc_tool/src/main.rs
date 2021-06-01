@@ -5,91 +5,74 @@ extern crate serde_json;
 
 mod problem;
 
-use std::{fs, io, io::Write, path::Path};
+use std::{fs, io::Write, path::Path};
+use clap::clap_app;
 
 /// main() helps to generate the submission template .rs
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-	println!("Welcome to leetcode-rust system.");
-	let mut solved_ids = get_solved_ids();
-	loop {
-		println!("Please enter a problem id, or enter \"random\" to generate a random problem.");
-		let id: u32;
-		let mut id_arg = String::new();
-		io::stdin()
-			.read_line(&mut id_arg)
-			.expect("Failed to read line");
-		let id_arg = id_arg.trim();
-		match id_arg {
-			"random" => {
-				println!("You select random mode.");
-				id = generate_random_id(&solved_ids);
-				println!("Generate random problem: {}", &id);
-			}
-			_ => {
-				id = id_arg
-					.parse::<u32>()
-					.unwrap_or_else(|_| panic!("not a number: {}", id_arg));
-				if solved_ids.contains(&id) {
-					println!(
-						"The problem you chose is invalid (the problem may have been solved \
-						 or may have no rust version)."
-					);
-					continue;
-				}
-			}
-		}
-
-		let problem = problem::get_problem(id).unwrap_or_else(|| {
-			panic!(
-				"Error: failed to get problem #{} \
-43 |              (The problem may be paid-only or may not be exist).",
-				id
-			)
-		});
-		let code = problem.code_definition.iter().find(|&d| d.value == "rust");
-		if code.is_none() {
-			println!("Problem {} has no rust version.", &id);
-			solved_ids.push(id);
-			continue;
-		}
-		let code = code.unwrap();
-
-		let file_name = format!("n{:04}_{}", id, problem.title_slug.replace("-", "_"));
-		let file_path = Path::new("./src").join(format!("{}.rs", file_name));
-		if file_path.exists() {
-			panic!("problem already initialized");
-		}
-
-		let template = fs::read_to_string("./template.rs").unwrap();
-		let source = template
-			.replace("__PROBLEM_TITLE__", &problem.title)
-			.replace("__PROBLEM_DESC__", &build_desc(&problem.content))
-			.replace("__PROBLEM_DEFAULT_CODE__", &code.default_code)
-			.replace("__PROBLEM_ID__", &format!("{}", id))
-			.replace("__EXTRA_USE__", &parse_extra_use(&code.default_code))
-			.replace(
-				"__EXTRA_TEST_USE__",
-				&parse_extra_test_use(&code.default_code),
-			);
-
-		let mut file = fs::OpenOptions::new()
-			.write(true)
-			.create(true)
-			.truncate(true)
-			.open(&file_path)
-			.unwrap();
-
-		file.write_all(source.as_bytes()).unwrap();
-		drop(file);
-
-		let mut lib_file = fs::OpenOptions::new()
-			.write(true)
-			.append(true)
-			.open("./src/lib.rs")
-			.unwrap();
-		writeln!(lib_file, "mod {};", file_name)?;
-		break;
+	let matches = clap_app! { lc_tool =>
+		(version: env!("CARGO_PKG_VERSION"))
+		(author : env!("CARGO_PKG_AUTHORS"))
+		(about : env!("CARGO_PKG_DESCRIPTION"))
+		(@setting DisableHelpSubcommand)
+		(@setting VersionlessSubcommands)
+		(@arg id: -i +takes_value +required "question id, if not set, pick a rand one")
+		(@arg random: -r !takes_value !required "random pick flag, if set, pick a random unsolved question")
 	}
+	.get_matches();
+	let solved_ids = get_solved_ids();
+	let id = if matches.is_present("random") {
+		generate_random_id(&solved_ids)
+	} else {
+		matches.value_of("id").unwrap().parse::<u32>().unwrap()
+	};
+	if solved_ids.contains(&id) {
+		println!("the problem is already solved");
+		return Ok(());
+	}
+
+	let problem = problem::get_problem(id).unwrap_or_else(|| {
+		panic!(
+			"Error: failed to get problem #{} \
+             (The problem may be paid-only or may not be exist).", id)});
+
+	let code = problem.code_definition.iter().find(|&d| d.value == "rust")
+		.unwrap_or_else(|| panic!("Problem {} has no rust version.", &id));
+
+	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace("-", "_"));
+	let file_path = Path::new("./src").join(format!("{}.rs", file_name));
+	if file_path.exists() {
+		panic!("problem already initialized");
+	}
+
+	let template = include_str!("../template.rs");
+	let source = template
+		.replace("__PROBLEM_TITLE__", &problem.title)
+		.replace("__PROBLEM_DESC__", &build_desc(&problem.content))
+		.replace("__PROBLEM_DEFAULT_CODE__", &code.default_code)
+		.replace("__PROBLEM_ID__", &format!("{}", id))
+		.replace("__EXTRA_USE__", &parse_extra_use(&code.default_code))
+		.replace(
+			"__EXTRA_TEST_USE__",
+			&parse_extra_test_use(&code.default_code),
+		);
+
+	let mut file = fs::OpenOptions::new()
+		.write(true)
+		.create(true)
+		.truncate(true)
+		.open(&file_path)
+		.unwrap();
+
+	file.write_all(source.as_bytes()).unwrap();
+	drop(file);
+
+	let mut lib_file = fs::OpenOptions::new()
+		.write(true)
+		.append(true)
+		.open("./src/lib.rs")
+		.unwrap();
+	writeln!(lib_file, "mod {};", file_name)?;
 	Ok(())
 }
 
@@ -191,4 +174,5 @@ fn build_desc(content: &str) -> String {
 		.replace("\n\n", "\n")
 		.replace("\n", "\n * ")
 		.replace("\r\n", "\n")
+		.replace("\t", "    ")
 }

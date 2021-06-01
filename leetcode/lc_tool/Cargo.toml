@@ -3,6 +3,7 @@ name = "lc_tool"
 version = "0.1.0"
 authors = ["ajen <19960524andy@gmail.com>"]
 edition = "2018"
+description = "leetcode cli helper"
 
 [dependencies]
 reqwest = "0.9.8"
@@ -10,3 +11,8 @@ serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
 rand = "0.6.5"
+clap = "2"
+
+[[bin]]
+name = "lc_tool"
+path = "src/main.rs"

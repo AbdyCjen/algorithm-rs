@@ -22,7 +22,6 @@ query questionData($titleSlug: String!) {
         stats
         codeDefinition
         sampleTestCase
-        metaData
 		title
 		titleSlug
 		difficulty
@@ -127,7 +126,7 @@ struct ProblemDetail {
 	stats: String,
 	code_definition: String,
 	sample_test_case: String,
-	meta_data: String,
+	//meta_data: String,
 	title: String,
 	title_slug: String,
 	difficulty: String,
