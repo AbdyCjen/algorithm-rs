@@ -75,12 +75,9 @@ impl Solution {
 		match (p, q) {
 			(Some(p), Some(q)) => {
 				let (mut p, mut q) = (p.borrow_mut(), q.borrow_mut());
-				if p.val == q.val {
-					Self::is_same_tree(p.left.take(), q.left.take())
-						&& Self::is_same_tree(q.right.take(), p.right.take())
-				} else {
-					false
-				}
+				p.val == q.val
+					&& Self::is_same_tree(p.left.take(), q.left.take())
+					&& Self::is_same_tree(q.right.take(), p.right.take())
 			}
 			(None, None) => true,
 			_ => false,

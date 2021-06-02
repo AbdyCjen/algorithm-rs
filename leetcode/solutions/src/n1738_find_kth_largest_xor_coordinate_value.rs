@@ -46,7 +46,7 @@ impl Solution {
 	pub fn kth_largest_value(mat: Vec<Vec<i32>>, k: i32) -> i32 {
 		fn select(nums: &mut [i32], r: usize) -> i32 {
 			let (mut i, mut j, mut k) = (0, 0, nums.len() - 1);
-			let ax = nums[rand::thread_rng().gen_range(0, nums.len())];
+			let ax = nums[rand::thread_rng().gen_range(0..nums.len())];
 			while j <= k {
 				use std::cmp::Ordering;
 				match nums[j].cmp(&ax) {
