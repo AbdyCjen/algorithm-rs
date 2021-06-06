@@ -125,7 +125,7 @@ where T: std::cmp::Ord {
 		}
 	}
 
-	for i in (0..nums.len()).rev() {
+	for i in (0..nums.len() / 2).rev() {
 		shift_down(nums, i);
 	}
 
