@@ -36,7 +36,7 @@ impl Solution {
 			for (&c, col) in row.iter().zip(row_buf.iter_mut()) {
 				*col = if c == '0' { 0 } else { *col + 1 };
 			}
-			max_area = std::cmp::max(max_area, Solution::largest_rectangle_area(&mut row_buf));
+			max_area = max_area.max(Solution::largest_rectangle_area(&mut row_buf));
 		}
 		max_area
 	}
@@ -49,14 +49,14 @@ impl Solution {
 		let mut max_area: i32 = heights[0];
 		heights.push(0);
 		for (i, &h) in heights.iter().enumerate().skip(1) {
-			while let Some(&(_, th)) = st.iter().rev().next() {
+			while let Some(&(_, th)) = st.last() {
 				if th < h {
 					break;
 				}
 				st.pop();
-				max_area = match st.iter().rev().next() {
-					None => std::cmp::max(i as i32 * th, max_area),
-					Some(&(ni, _)) => std::cmp::max((i - ni - 1) as i32 * th, max_area),
+				max_area = match st.last() {
+					None => max_area.max(i as i32 * th),
+					Some(&(ni, _)) => max_area.max((i - ni - 1) as i32 * th),
 				}
 			}
 			st.push((i, h));

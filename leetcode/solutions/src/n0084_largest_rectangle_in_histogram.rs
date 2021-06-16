@@ -31,7 +31,6 @@ pub struct Solution {}
   看了笛卡尔树的构建才知道咋回事, 我擦泪;
   算法主流程基本等价于小根笛卡尔树的构建;
   从左向右扫描输入, 维护一个栈st表示扫描到当前位置i时,
-  TODO: 完成
 */
 #[allow(dead_code)]
 impl Solution {
@@ -43,14 +42,14 @@ impl Solution {
 		let mut max_area: i32 = heights[0];
 		heights.push(0);
 		for (i, &h) in heights.iter().enumerate().skip(1) {
-			while let Some(&(_, th)) = st.iter().rev().next() {
+			while let Some(&(_, th)) = st.last() {
 				if th < h {
 					break;
 				}
 				st.pop();
-				max_area = match st.iter().rev().next() {
-					None => std::cmp::max(i as i32 * th, max_area),
-					Some(&(ni, _)) => std::cmp::max((i - ni - 1) as i32 * th, max_area),
+				max_area = match st.last() {
+					None => max_area.max(i as i32 * th),
+					Some(&(ni, _)) => max_area.max((i - ni - 1) as i32 * th),
 				}
 			}
 			st.push((i, h));

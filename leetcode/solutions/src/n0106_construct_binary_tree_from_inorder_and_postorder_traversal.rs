@@ -28,7 +28,6 @@ use super::util::tree::TreeNode;
 
 // submission codes start here
 
-use std::cell::RefCell;
 // Definition for a binary tree node.
 // #[derive(Debug, PartialEq, Eq)]
 // pub struct TreeNode {
@@ -47,27 +46,32 @@ use std::cell::RefCell;
 //     }
 //   }
 // }
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn build_tree(inorder: Vec<i32>, postorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
-		Self::build(&inorder, &postorder)
-	}
+		use std::iter::Peekable;
+		fn build_tree_inner<I: Iterator<Item = i32>>(
+			in_it: &mut Peekable<I>,
+			post_it: &mut Peekable<I>,
+			stop: Option<i32>,
+		) -> Option<Rc<RefCell<TreeNode>>> {
+			if stop.as_ref() != in_it.peek() {
+				let mut root = TreeNode::new(post_it.next().unwrap());
+				root.right = build_tree_inner(in_it, post_it, Some(root.val));
+				in_it.next();
+				root.left = build_tree_inner(in_it, post_it, stop);
+				Some(Rc::new(RefCell::new(root)))
+			} else {
+				None
+			}
+		}
 
-	// copy from the example, mine is too ugly
-	fn build(inorder: &[i32], postorder: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
-		//dbg!(inorder,postorder);
-		let root_val = postorder.last()?;
-		let slc_ind = inorder.iter().position(|x| x == root_val).unwrap();
-
-		Some(Rc::new(RefCell::new(TreeNode {
-			val: *root_val,
-			left: Self::build(&inorder[..slc_ind], &postorder[..slc_ind]),
-			right: Self::build(
-				&inorder[slc_ind + 1..],
-				&postorder[slc_ind..postorder.len() - 1],
-			),
-		})))
+		build_tree_inner(
+			&mut inorder.into_iter().rev().peekable(),
+			&mut postorder.into_iter().rev().peekable(),
+			None,
+		)
 	}
 }
 
