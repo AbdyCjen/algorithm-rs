@@ -83,9 +83,21 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
+	use super::*;
+	use crate::util::tree::*;
 	#[test]
 	fn test_235() {
-		//???
-		assert_eq!(1, 1);
+		assert_eq!(
+			Solution::lowest_common_ancestor(
+				tree![6, 2, 8, 0, 4, 7, 9, null, null, 3, 5],
+				tree![2],
+				tree![8]
+			),
+			tree![6, 2, 8, 0, 4, 7, 9, null, null, 3, 5]
+		);
+		assert_eq!(
+			Solution::lowest_common_ancestor(tree![2, 1], tree![2], tree![1]),
+			tree![2, 1]
+		);
 	}
 }
