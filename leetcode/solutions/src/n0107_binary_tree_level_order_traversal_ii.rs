@@ -26,7 +26,7 @@
  *
  */
 pub struct Solution {}
-use super::util::tree::{to_tree, TreeNode};
+use super::util::tree::TreeNode;
 
 // submission codes start here
 
@@ -52,37 +52,28 @@ use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn level_order_bottom(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
-		if root.is_none() {
-			return Vec::new();
-		}
 		let mut dq = VecDeque::new();
-		dq.push_back(root);
-		dq.push_back(None);
-		let mut res = Vec::new();
-		let mut lev = Vec::new();
-		while let Some(o) = dq.pop_front() {
-			match o {
-				None => {
-					res.push(lev);
-					lev = Vec::new();
-					if !dq.is_empty() {
-						dq.push_back(None);
-					}
+		if let Some(root) = root {
+			dq.push_back(root);
+		} else {
+			return vec![];
+		}
+		let mut ans = VecDeque::new();
+		while !dq.is_empty() {
+			let mut lev = Vec::new();
+			for cur in dq.split_off(0) {
+				let mut cur = cur.borrow_mut();
+				lev.push(cur.val);
+				if let Some(l) = cur.left.take() {
+					dq.push_back(l);
 				}
-				Some(o) => {
-					let o = o.borrow();
-					lev.push(o.val);
-					if o.left.is_some() {
-						dq.push_back(o.left.clone())
-					};
-					if o.right.is_some() {
-						dq.push_back(o.right.clone())
-					};
+				if let Some(r) = cur.right.take() {
+					dq.push_back(r);
 				}
 			}
+			ans.push_front(lev);
 		}
-		res.reverse();
-		res
+		ans.into()
 	}
 }
 
@@ -90,7 +81,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+	use super::{super::util::tree::to_tree, *};
 
 	#[test]
 	fn test_107() {

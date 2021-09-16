@@ -41,7 +41,8 @@ impl Solution {
 		let (mut lo, mut hi) = (0_usize, nums.len() - 1);
 		while lo < hi {
 			let mid = (hi + lo) / 2;
-			if mid + 1 < nums.len() && nums[mid] < nums[mid + 1] {
+			if nums.get(mid) < nums.get(mid + 1) {
+				//if mid + 1 < nums.len() && nums[mid] < nums[mid + 1] {
 				lo = mid + 1;
 			} else {
 				hi = mid;

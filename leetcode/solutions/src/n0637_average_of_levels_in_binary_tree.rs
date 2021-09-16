@@ -51,35 +51,29 @@ use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 impl Solution {
 	pub fn average_of_levels(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<f64> {
 		let mut dq = VecDeque::new();
-		dq.push_back(root);
-		dq.push_back(None);
-
-		let mut res = Vec::new();
-
-		let (mut cnt, mut sum) = (0, 0_i64);
-		while let Some(cur_node) = dq.pop_front() {
-			if let Some(cur_node) = cur_node {
-				let mut cur_node = cur_node.borrow_mut();
-				if let Some(l) = cur_node.left.take() {
-					dq.push_back(Some(l));
-				}
-				if let Some(r) = cur_node.right.take() {
-					dq.push_back(Some(r));
-				}
-
-				cnt += 1;
-				sum += cur_node.val as i64;
-			} else {
-				res.push(sum as f64 / cnt as f64);
-				cnt = 0;
-				sum = 0;
-				if !dq.is_empty() {
-					dq.push_back(None);
-				}
-			}
+		if let Some(root) = root {
+			dq.push_back(root);
 		}
 
-		res
+		let mut ans = Vec::new();
+		let (mut cnt, mut sum) = (0, 0_i64);
+		while !dq.is_empty() {
+			for cur in dq.split_off(0) {
+				let mut cur = cur.borrow_mut();
+				if let Some(l) = cur.left.take() {
+					dq.push_back(l);
+				}
+				if let Some(r) = cur.right.take() {
+					dq.push_back(r);
+				}
+				cnt += 1;
+				sum += cur.val as i64;
+			}
+			ans.push(sum as f64 / cnt as f64);
+			cnt = 0;
+			sum = 0;
+		}
+		ans
 	}
 }
 

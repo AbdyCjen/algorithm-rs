@@ -54,6 +54,8 @@ impl Solution {
 		for (p, v) in (0..31).map(|i| 1 << i).zip(&dp).rev() {
 			if p & n > 0 {
 				ans += v;
+				// 对于形如a = 0b11xxxx的数, 只要计算
+				// dp[k]+dp[k-1](k=a.next_power_of_two()-1) 就行
 				if (p << 1) & n > 0 {
 					ans -= 1;
 					break;

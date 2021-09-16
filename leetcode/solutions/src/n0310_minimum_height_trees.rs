@@ -49,7 +49,7 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 #[allow(dead_code)]
 impl Solution {
 	pub fn find_min_height_trees(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
@@ -63,12 +63,12 @@ impl Solution {
 			dg[p2] += 1;
 		}
 		while n > 2 {
-			let mut st: VecDeque<_> = dg
+			let mut st: Vec<_> = dg
 				.iter_mut()
 				.enumerate()
 				.filter_map(|(i, d)| if *d == 1 { Some(i) } else { None })
 				.collect();
-			while let Some(o) = st.pop_front() {
+			for o in st {
 				dg.remove(o);
 				for i in gr[o].iter() {}
 			}

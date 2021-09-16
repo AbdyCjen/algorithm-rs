@@ -61,7 +61,6 @@ use super::util::tree::TreeNode;
 
 // submission codes start here
 
-use std::cell::RefCell;
 // Definition for a binary tree node.
 // #[derive(Debug, PartialEq, Eq)]
 // pub struct TreeNode {
@@ -80,36 +79,26 @@ use std::cell::RefCell;
 //     }
 //   }
 // }
-use std::{collections::VecDeque, rc::Rc};
+use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 #[allow(dead_code)]
 impl Solution {
 	pub fn width_of_binary_tree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		let root = root.unwrap();
 		let mut dq = VecDeque::new();
-		dq.push_back(Some((root, 1)));
-		dq.push_back(None);
-		let mut res = 0_u64;
+		dq.push_back((root.unwrap(), 1));
+		let mut ans = 0_u64;
 		while !dq.is_empty() {
-			let mut prev_node = 0;
-			let mut cur_level_begin = std::u64::MAX;
-			while let Some((no, ind)) = dq.pop_front().flatten() {
+			ans = ans.max(dq.back().unwrap().1 - dq.front().unwrap().1 + 1);
+			for (no, idx) in dq.split_off(0) {
 				let mut no = no.borrow_mut();
-				if let Some(left) = no.left.take() {
-					dq.push_back(Some((left, ind * 2)));
+				if let Some(l) = no.left.take() {
+					dq.push_back((l, idx * 2));
 				}
-				if let Some(right) = no.right.take() {
-					dq.push_back(Some((right, ind * 2 + 1)));
+				if let Some(r) = no.right.take() {
+					dq.push_back((r, idx * 2 + 1));
 				}
-				prev_node = ind;
-				cur_level_begin = std::cmp::min(ind, cur_level_begin);
-			}
-			//dbg!(cur_level_begin, prev_node);
-			res = std::cmp::max(res, prev_node - cur_level_begin + 1);
-			if !dq.is_empty() {
-				dq.push_back(None);
 			}
 		}
-		res as i32
+		ans as i32
 	}
 }
 

@@ -53,35 +53,35 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
-// 太感人了, 快过33%的提交
 #[allow(dead_code)]
 impl Solution {
 	pub fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, sum: i32) -> Vec<Vec<i32>> {
-		let mut res = Vec::new();
-		if root.is_none() {
-			return res;
-		}
 		let mut dq = VecDeque::new();
-		dq.push_back((0, Vec::new(), root.unwrap()));
-		while let Some((mut acc, mut vec, node)) = dq.pop_front() {
-			let node = node.borrow();
-			vec.push(node.val);
-			acc += node.val;
-			if node.left.is_none() && node.right.is_none() {
-				if acc == sum {
-					res.push(vec);
+		if let Some(root) = root {
+			dq.push_back((0, vec![], root));
+		} else {
+			return vec![];
+		}
+		let mut ans = Vec::new();
+		while let Some((mut acc, mut path, cur)) = dq.pop_front() {
+			let mut cur = cur.borrow_mut();
+			path.push(cur.val);
+			acc += cur.val;
+			match (cur.left.take(), cur.right.take()) {
+				(None, None) => {
+					if acc == sum {
+						ans.push(path);
+					}
 				}
-			} else {
-				if let Some(left) = node.left.clone() {
-					dq.push_back((acc, vec.clone(), left));
+				(Some(l), Some(r)) => {
+					dq.push_back((acc, path.clone(), l));
+					dq.push_back((acc, path, r));
 				}
-				if let Some(right) = node.right.clone() {
-					dq.push_back((acc, vec, right));
-				}
+				(Some(n), _) | (_, Some(n)) => dq.push_back((acc, path, n)),
 			}
 		}
 
-		res
+		ans
 	}
 }
 

@@ -40,7 +40,7 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn find_longest_word(s: String, mut d: Vec<String>) -> String {
-		d.sort_by(|a, b| b.len().cmp(&a.len()).then(a.cmp(&b)));
+		d.sort_by(|a, b| b.len().cmp(&a.len()).then(a.cmp(b)));
 
 		for p in d.into_iter() {
 			if sub_seq(&s, &p) {

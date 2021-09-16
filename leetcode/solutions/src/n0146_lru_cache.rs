@@ -1,46 +1,56 @@
-use std::collections::hash_map::Entry;
 /**
  * [146] LRU Cache
  *
- * Design and implement a data structure for <a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU" target="_blank">Least Recently Used (LRU) cache</a>. It should support the following operations: get and put.
+ * Design a data structure that follows the constraints of a <a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU" target="_blank">Least Recently Used (LRU) cache</a>.
+ * Implement the LRUCache class:
  *
- * get(key) - Get the value (will always be positive) of the key if the key exists in the cache, otherwise return -1.<br />
- * put(key, value) - Set or insert the value if the key is not already present. When the cache reached its capacity, it should invalidate the least recently used item before inserting a new item.
+ *     LRUCache(int capacity) Initialize the LRU cache with positive size capacity.
+ *     int get(int key) Return the value of the key if the key exists, otherwise return -1.
+ *     void put(int key, int value) Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the capacity from this operation, evict the least recently used key.
  *
- * The cache is initialized with a positive capacity.
+ * The functions <code data-stringify-type="code">get and <code data-stringify-type="code">put must each run in O(1) average time complexity.
+ *  
+ * Example 1:
  *
- * Follow up:<br />
- * Could you do both operations in O(1) time complexity?
- *
- * Example:
- *
- *
- * LRUCache cache = new LRUCache( 2 /* capacity */ );
- *
- * cache.put(1, 1);
- * cache.put(2, 2);
- * cache.get(1);       // returns 1
- * cache.put(3, 3);    // evicts key 2
- * cache.get(2);       // returns -1 (not found)
- * cache.put(4, 4);    // evicts key 1
- * cache.get(1);       // returns -1 (not found)
- * cache.get(3);       // returns 3
- * cache.get(4);       // returns 4
- *
+ * Input
+ * ["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+ * [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+ * Output
+ * [null, null, null, 1, null, -1, null, -1, 3, 4]
+ * Explanation
+ * LRUCache lRUCache = new LRUCache(2);
+ * lRUCache.put(1, 1); // cache is {1=1}
+ * lRUCache.put(2, 2); // cache is {1=1, 2=2}
+ * lRUCache.get(1);    // return 1
+ * lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
+ * lRUCache.get(2);    // returns -1 (not found)
+ * lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
+ * lRUCache.get(1);    // return -1 (not found)
+ * lRUCache.get(3);    // return 3
+ * lRUCache.get(4);    // return 4
  *
  *  
+ * Constraints:
+ *
+ *     1 <= capacity <= 3000
+ *     0 <= key <= 10^4
+ *     0 <= value <= 10^5
+ *     At most 2 * 10^5 calls will be made to get and put.
  *
  */
-use std::collections::HashMap;
-#[allow(dead_code)]
-pub struct Solution {}
-
 // submission codes start here
 
+struct LRUEntry {
+	key: i32,
+	val: i32,
+	next: *mut LRUEntry,
+	prev: *mut LRUEntry,
+}
+use std::collections::HashMap;
 struct LRUCache {
-	ks: Vec<i32>,
-	m: HashMap<i32, i32>,
-	ind: usize,
+	map: HashMap<i32, Box<LRUEntry>>,
+	cap: i32,
+	head: Box<LRUEntry>,
 }
 
 /**
@@ -49,34 +59,76 @@ struct LRUCache {
  */
 #[allow(dead_code)]
 impl LRUCache {
-	fn new(capacity: i32) -> Self {
-		LRUCache {
-			ks: Vec::with_capacity(capacity as usize),
-			m: HashMap::new(),
-			ind: 0,
+	fn new(cap: i32) -> Self {
+		unsafe {
+			use std::mem::MaybeUninit;
+			let mut cache = LRUCache {
+				cap,
+				map: HashMap::with_capacity((cap + 1) as usize),
+				head: Box::new(MaybeUninit::zeroed().assume_init()), //is this safe?
+			};
+			cache.head.next = cache.head.as_mut();
+			cache.head.prev = cache.head.as_mut();
+			cache
 		}
 	}
 
-	fn get(&self, key: i32) -> i32 {
-		match self.m.get(&key) {
-			Some(&i) => i,
+	fn get(&mut self, key: i32) -> i32 {
+		match self.map.get_mut(&key) {
+			Some(e) => unsafe {
+				Self::detach(e);
+				let val = e.val;
+				let e = e.as_mut() as *mut LRUEntry;
+				self.append(e);
+				val
+			},
 			None => -1,
 		}
 	}
 
-	fn put(&mut self, key: i32, value: i32) {
-		// TODO: 重入值的时候刷新不了
-		let mut ent = self.m.entry(key);
-		match ent {
-			Entry::Vacant(v) => {
-				v.insert(value);
+	fn put(&mut self, key: i32, val: i32) {
+		use std::collections::hash_map::Entry;
+		match self.map.entry(key) {
+			Entry::Vacant(o) => {
+				let e = o.insert(Box::new(LRUEntry {
+					key,
+					val,
+					prev: std::ptr::null_mut(),
+					next: std::ptr::null_mut(),
+				}));
+				let e = e.as_mut() as *mut LRUEntry;
+
+				unsafe {
+					self.append(e);
+					if self.map.len() > self.cap as usize {
+						let to_rem = (*self.head.next).key;
+						let mut e = self.map.remove(&to_rem).unwrap();
+						Self::detach(e.as_mut());
+					}
+				}
 			}
-			Entry::Occupied(o) => {
-				// 这里应该要刷新生命周期的, 如果是vec的话就不好做
-				// o.insert(value) => 这里insert也不行...
-				*o.into_mut() = value;
+			Entry::Occupied(mut e) => {
+				let e = e.get_mut();
+				unsafe {
+					Self::detach(e);
+					e.val = val;
+					let e = e.as_mut() as *mut LRUEntry;
+					self.append(e);
+				}
 			}
-		};
+		}
+	}
+
+	unsafe fn detach(e: &LRUEntry) {
+		(*e.prev).next = e.next;
+		(*e.next).prev = e.prev;
+	}
+
+	unsafe fn append(&mut self, e: *mut LRUEntry) {
+		(*e).prev = self.head.prev;
+		self.head.prev = e;
+		(*e).next = self.head.as_mut();
+		(*(*e).prev).next = e;
 	}
 }
 
@@ -95,10 +147,16 @@ mod tests {
 
 	#[test]
 	fn test_146() {
-		let mut obj = LRUCache::new(3);
-		obj.put(3, 20);
-		assert_eq!(obj.get(3), 20);
-		obj.put(4, 40);
-		obj.put(8, 30);
+		let mut obj = LRUCache::new(2);
+		obj.put(1, 1);
+		assert_eq!(obj.get(1), 1);
+		obj.put(2, 2);
+		assert_eq!(obj.get(1), 1);
+		obj.put(3, 3);
+		assert_eq!(obj.get(2), -1);
+		obj.put(4, 4);
+		assert_eq!(obj.get(1), -1);
+		assert_eq!(obj.get(3), 3);
+		assert_eq!(obj.get(4), 4);
 	}
 }

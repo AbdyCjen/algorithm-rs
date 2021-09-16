@@ -29,11 +29,12 @@ pub struct Solution {}
 // submission codes start here
 
 // 杀妈了, 写完发现不是单纯的逆序对
+// 只能用bst了, 每次插入时也查找 ..(n - 1) / 2 的计数
 #[allow(dead_code)]
 impl Solution {
 	pub fn reverse_pairs(nums: Vec<i32>) -> i32 {
-		// vec[(val, lcnt, rcnt)]
-		let mut st = Vec::new();
+		// (val, lcnt, rcnt)
+		let mut st = vec![(0, 0, 0); 0];
 		if let Some(&i) = nums.get(0) {
 			st.push((i, 0, 0));
 		} else {

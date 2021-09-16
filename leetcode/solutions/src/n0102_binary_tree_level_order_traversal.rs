@@ -59,29 +59,21 @@ impl Solution {
 		let mut dq = VecDeque::new();
 		let mut cur_lev = Vec::new();
 		let mut ans = Vec::new();
-		dq.push_back(root);
-		dq.push_back(None);
+		dq.push_back(root.unwrap());
 
-		while let Some(cur) = dq.pop_front() {
-			if let Some(cur) = cur {
+		while !dq.is_empty() {
+			for cur in dq.split_off(0) {
 				let mut cur = cur.borrow_mut();
 				cur_lev.push(cur.val);
 				if let Some(l) = cur.left.take() {
-					dq.push_back(Some(l));
+					dq.push_back(l);
 				}
 				if let Some(r) = cur.right.take() {
-					dq.push_back(Some(r));
-				}
-			} else {
-				ans.push(cur_lev);
-				cur_lev = Vec::new();
-
-				if !dq.is_empty() {
-					dq.push_back(None);
+					dq.push_back(r);
 				}
 			}
+			ans.push(cur_lev.split_off(0));
 		}
-
 		ans
 	}
 }

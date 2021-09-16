@@ -60,7 +60,7 @@ use super::util::linked_list::ListNode;
 pub struct Solution {}
 use std::cmp::{Ord, Ordering, PartialOrd};
 impl PartialOrd for ListNode {
-	fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(&other)) }
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
 }
 
 impl Ord for ListNode {
