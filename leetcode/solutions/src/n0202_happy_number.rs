@@ -46,6 +46,6 @@ mod tests {
 
 	#[test]
 	fn test_202() {
-		assert_eq!(Solution::is_happy(19), true);
+		assert!(Solution::is_happy(19));
 	}
 }

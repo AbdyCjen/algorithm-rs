@@ -59,8 +59,8 @@ mod tests {
 
 	#[test]
 	fn test_365() {
-		assert_eq!(Solution::can_measure_water(3, 5, 4), true);
-		assert_eq!(Solution::can_measure_water(2, 6, 5), false);
-		assert_eq!(Solution::can_measure_water(1, 2, 3), true);
+		assert!(Solution::can_measure_water(3, 5, 4));
+		assert!(!Solution::can_measure_water(2, 6, 5));
+		assert!(Solution::can_measure_water(1, 2, 3));
 	}
 }

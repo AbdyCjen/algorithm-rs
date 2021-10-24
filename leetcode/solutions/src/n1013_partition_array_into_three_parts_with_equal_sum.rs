@@ -66,25 +66,16 @@ mod tests {
 
 	#[test]
 	fn test_1062() {
-		assert_eq!(
-			Solution::can_three_parts_equal_sum(vec![0, 2, 1, -6, 6, -7, 9, 1, 2, 0, 1]),
-			true
-		);
-		assert_eq!(
-			Solution::can_three_parts_equal_sum(vec![0, 2, 1, -6, 6, 7, 9, -1, 2, 0, 1]),
-			false
-		);
-		assert_eq!(
-			Solution::can_three_parts_equal_sum(vec![3, 3, 6, 5, -2, 2, 5, 1, -9, 4]),
-			true
-		);
-		assert_eq!(
-			Solution::can_three_parts_equal_sum(vec![3, 1, -1, 6]),
-			false
-		);
-		assert_eq!(
-			Solution::can_three_parts_equal_sum(vec![1, -1, 1, -1]),
-			false
-		);
+		assert!(Solution::can_three_parts_equal_sum(vec![
+			0, 2, 1, -6, 6, -7, 9, 1, 2, 0, 1
+		]));
+		assert!(!Solution::can_three_parts_equal_sum(vec![
+			0, 2, 1, -6, 6, 7, 9, -1, 2, 0, 1
+		]));
+		assert!(Solution::can_three_parts_equal_sum(vec![
+			3, 3, 6, 5, -2, 2, 5, 1, -9, 4
+		]));
+		assert!(!Solution::can_three_parts_equal_sum(vec![3, 1, -1, 6]));
+		assert!(!Solution::can_three_parts_equal_sum(vec![1, -1, 1, -1]));
 	}
 }

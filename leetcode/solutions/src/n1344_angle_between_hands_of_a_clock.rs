@@ -67,6 +67,7 @@ mod tests {
 	use super::*;
 
 	#[test]
+	#[allow(clippy::float_cmp)]
 	fn test_1446() {
 		assert_eq!(Solution::angle_clock(12, 30), 165.0);
 		assert_eq!(Solution::angle_clock(3, 30), 75.0);

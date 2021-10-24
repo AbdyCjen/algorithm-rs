@@ -62,14 +62,11 @@ mod tests {
 
 	#[test]
 	fn test_523() {
-		assert_eq!(Solution::check_subarray_sum(vec![23, 2, 4, 6, 7], 6), true);
-		assert_eq!(Solution::check_subarray_sum(vec![23, 2, 6, 4, 7], 6), true);
-		assert_eq!(
-			Solution::check_subarray_sum(vec![23, 2, 6, 4, 7], 13),
-			false
-		);
-		assert_eq!(Solution::check_subarray_sum(vec![23, 2, 4, 6, 6], 7), true);
-		assert_eq!(Solution::check_subarray_sum(vec![0], 1), false);
-		assert_eq!(Solution::check_subarray_sum(vec![23, 0, 0], 6), true);
+		assert!(Solution::check_subarray_sum(vec![23, 2, 4, 6, 7], 6));
+		assert!(Solution::check_subarray_sum(vec![23, 2, 6, 4, 7], 6));
+		assert!(!Solution::check_subarray_sum(vec![23, 2, 6, 4, 7], 13));
+		assert!(Solution::check_subarray_sum(vec![23, 2, 4, 6, 6], 7));
+		assert!(!Solution::check_subarray_sum(vec![0], 1));
+		assert!(Solution::check_subarray_sum(vec![23, 0, 0], 6));
 	}
 }

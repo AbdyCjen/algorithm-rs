@@ -126,21 +126,21 @@ mod tests {
 
 	#[test]
 	fn test_87() {
-		assert_eq!(
-			Solution::is_scramble("great".to_owned(), "rgeat".to_owned()),
-			true
-		);
-		assert_eq!(
-			Solution::is_scramble("abcde".to_owned(), "caebd".to_owned()),
-			false
-		);
-		assert_eq!(
-			Solution::is_scramble("great".to_owned(), "eatgr".to_owned()),
-			true
-		);
-		assert_eq!(
-			Solution::is_scramble("great".to_owned(), "rgtae".to_owned()),
-			true
-		);
+		assert!(Solution::is_scramble(
+			"great".to_owned(),
+			"rgeat".to_owned()
+		));
+		assert!(!Solution::is_scramble(
+			"abcde".to_owned(),
+			"caebd".to_owned()
+		));
+		assert!(Solution::is_scramble(
+			"great".to_owned(),
+			"eatgr".to_owned()
+		));
+		assert!(Solution::is_scramble(
+			"great".to_owned(),
+			"rgtae".to_owned()
+		));
 	}
 }

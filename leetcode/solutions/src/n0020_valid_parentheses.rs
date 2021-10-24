@@ -56,9 +56,8 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn is_valid(s: String) -> bool {
-		let s = s.into_bytes();
 		let mut st = Vec::new();
-		s.into_iter().all(|c| match c {
+		s.bytes().all(|c| match c {
 			b'(' | b'[' | b'{' => {
 				st.push(c);
 				true
@@ -79,12 +78,12 @@ mod tests {
 
 	#[test]
 	fn test_20() {
-		assert_eq!(Solution::is_valid("()".to_owned()), true);
-		assert_eq!(Solution::is_valid("(()".to_owned()), false);
-		assert_eq!(Solution::is_valid("(]".to_owned()), false);
-		assert_eq!(Solution::is_valid("()[]{}".to_owned()), true);
-		assert_eq!(Solution::is_valid("(]".to_owned()), false);
-		assert_eq!(Solution::is_valid("([)]".to_owned()), false);
-		assert_eq!(Solution::is_valid("{[]}".to_owned()), true);
+		assert!(Solution::is_valid("()".to_owned()));
+		assert!(!Solution::is_valid("(()".to_owned()));
+		assert!(!Solution::is_valid("(]".to_owned()));
+		assert!(Solution::is_valid("()[]{}".to_owned()));
+		assert!(!Solution::is_valid("(]".to_owned()));
+		assert!(!Solution::is_valid("([)]".to_owned()));
+		assert!(Solution::is_valid("{[]}".to_owned()));
 	}
 }

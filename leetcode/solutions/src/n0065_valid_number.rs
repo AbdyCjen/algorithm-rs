@@ -115,10 +115,10 @@ mod tests {
 		];
 		let invalid_nums = vec_string!["abc", "1a", "1e", "e3", "99e2.5", "--6", "-+3", "95a54e53"];
 		for s in valid_nums {
-			assert_eq!(Solution::is_number(s), true);
+			assert!(Solution::is_number(s));
 		}
 		for s in invalid_nums {
-			assert_eq!(Solution::is_number(s), false);
+			assert!(!Solution::is_number(s));
 		}
 	}
 }

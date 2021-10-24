@@ -44,8 +44,8 @@ mod tests {
 
 	#[test]
 	fn test_326() {
-		assert_eq!(Solution::is_power_of_three(3), true);
-		assert_eq!(Solution::is_power_of_three(27), true);
-		assert_eq!(Solution::is_power_of_three(45), false);
+		assert!(Solution::is_power_of_three(3));
+		assert!(Solution::is_power_of_three(27));
+		assert!(!Solution::is_power_of_three(45));
 	}
 }

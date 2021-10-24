@@ -51,7 +51,7 @@ mod tests {
 		// lc输出不要求有序, 本地要修饰一下测试用例
 		let mut res =
 			Solution::group_anagrams(vec_string!["eat", "tea", "tan", "ate", "nat", "bat"]);
-		res.sort_by(|a, b| a.len().cmp(&b.len()));
+		res.sort_by_key(|a| a.len());
 		assert_eq!(
 			res,
 			vec![

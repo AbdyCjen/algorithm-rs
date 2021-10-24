@@ -38,17 +38,16 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn find_peak_element(nums: Vec<i32>) -> i32 {
-		let (mut lo, mut hi) = (0_usize, nums.len() - 1);
-		while lo < hi {
-			let mid = (hi + lo) / 2;
-			if nums.get(mid) < nums.get(mid + 1) {
-				//if mid + 1 < nums.len() && nums[mid] < nums[mid + 1] {
-				lo = mid + 1;
+		let (mut l, mut r) = (0, nums.len() - 1);
+		while l < r {
+			let mid = (l + r) / 2;
+			if nums[mid] < nums[r] || nums[mid] < *nums.get(mid + 1).unwrap_or(&i32::MAX) {
+				l = mid + 1;
 			} else {
-				hi = mid;
+				r = mid;
 			}
 		}
-		lo as i32
+		l as i32
 	}
 }
 
@@ -60,7 +59,19 @@ mod tests {
 
 	#[test]
 	fn test_162() {
-		assert_eq!(Solution::find_peak_element(vec![1, 2, 3, 1]), 2);
-		assert!([1, 5].contains(&Solution::find_peak_element(vec![1, 2, 1, 3, 5, 6, 4])));
+		fn test_peak(arr: Vec<i32>) {
+			let a = Solution::find_peak_element(arr.clone()) as usize;
+			// dbg!(&arr,a);
+			assert!(
+				arr[a]
+					>= arr[..a]
+						.last()
+						.max(arr[a + 1..].first())
+						.copied()
+						.unwrap_or(i32::MIN)
+			);
+		}
+		test_peak(vec![1, 2, 3, 1]);
+		test_peak(vec![1, 2, 1, 3, 5, 6]);
 	}
 }

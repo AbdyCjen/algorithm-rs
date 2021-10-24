@@ -94,6 +94,7 @@ mod tests {
 	use super::*;
 
 	#[test]
+	#[allow(clippy::float_cmp)]
 	fn test_295() {
 		let mut md = MedianFinder::new();
 		md.add_num(1);

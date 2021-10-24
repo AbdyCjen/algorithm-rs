@@ -57,11 +57,11 @@ mod tests {
 
 	#[test]
 	fn test_367() {
-		assert_eq!(Solution::is_perfect_square(16), true);
-		assert_eq!(Solution::is_perfect_square(1), true);
-		assert_eq!(Solution::is_perfect_square(0), true);
-		assert_eq!(Solution::is_perfect_square(-1), false);
-		assert_eq!(Solution::is_perfect_square(std::i32::MAX), false);
-		assert_eq!(Solution::is_perfect_square(std::i32::MAX - 1), false);
+		assert!(Solution::is_perfect_square(16));
+		assert!(Solution::is_perfect_square(1));
+		assert!(Solution::is_perfect_square(0));
+		assert!(!Solution::is_perfect_square(-1));
+		assert!(!Solution::is_perfect_square(std::i32::MAX));
+		assert!(!Solution::is_perfect_square(std::i32::MAX - 1));
 	}
 }

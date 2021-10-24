@@ -42,15 +42,14 @@ pub fn to_tree(vec: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
 
 	for children in vec[1..].chunks(2) {
 		let parent = queue.pop_front().unwrap();
+		let mut parent = parent.borrow_mut();
 		if let Some(v) = children[0] {
-			parent.borrow_mut().left = Some(Rc::new(RefCell::new(TreeNode::new(v))));
-			queue.push_back(parent.borrow().left.as_ref().unwrap().clone());
+			parent.left = Some(Rc::new(RefCell::new(TreeNode::new(v))));
+			queue.push_back(parent.left.clone().unwrap());
 		}
-		if children.len() > 1 {
-			if let Some(v) = children[1] {
-				parent.borrow_mut().right = Some(Rc::new(RefCell::new(TreeNode::new(v))));
-				queue.push_back(parent.borrow().right.as_ref().unwrap().clone());
-			}
+		if let Some(&Some(v)) = children.get(1) {
+			parent.right = Some(Rc::new(RefCell::new(TreeNode::new(v))));
+			queue.push_back(parent.right.clone().unwrap());
 		}
 	}
 	head

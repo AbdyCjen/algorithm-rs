@@ -81,11 +81,10 @@ impl Solution {
 			if wlen + cache.len() + word.len() > max_width as usize {
 				res.push(Solution::line_compact(&mut cache, wlen, max_width));
 				wlen = word.len();
-				cache.push(word);
 			} else {
 				wlen += word.len();
-				cache.push(word);
 			}
+			cache.push(word);
 		}
 		res.push(Solution::last_line_compact(&mut cache, wlen, max_width));
 		res

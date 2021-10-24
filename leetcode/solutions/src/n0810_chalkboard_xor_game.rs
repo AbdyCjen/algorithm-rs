@@ -47,7 +47,7 @@ mod tests {
 
 	#[test]
 	fn test_828() {
-		assert_eq!(Solution::xor_game(vec![1, 1, 2]), false);
-		assert_eq!(Solution::xor_game(vec![1, 2, 3]), true);
+		assert!(!Solution::xor_game(vec![1, 1, 2]));
+		assert!(Solution::xor_game(vec![1, 2, 3]));
 	}
 }

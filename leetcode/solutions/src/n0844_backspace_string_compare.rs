@@ -103,22 +103,22 @@ mod tests {
 
 	#[test]
 	fn test_874() {
-		assert_eq!(
-			Solution::backspace_compare("ab#c".to_owned(), "ad#c".to_owned()),
-			true
-		);
-		assert_eq!(
-			Solution::backspace_compare("ab##".to_owned(), "c#d#".to_owned()),
-			true
-		);
-		assert_eq!(
-			Solution::backspace_compare("a##c".to_owned(), "#a#c".to_owned()),
-			true
-		);
-		assert_eq!(Solution::backspace_compare("a#c".into(), "b".into()), false);
-		assert_eq!(
-			Solution::backspace_compare("bxj##tw".to_owned(), "bxj###tw".to_owned()),
-			false
-		);
+		assert!(Solution::backspace_compare(
+			"ab#c".to_owned(),
+			"ad#c".to_owned()
+		));
+		assert!(Solution::backspace_compare(
+			"ab##".to_owned(),
+			"c#d#".to_owned()
+		));
+		assert!(Solution::backspace_compare(
+			"a##c".to_owned(),
+			"#a#c".to_owned()
+		));
+		assert!(!Solution::backspace_compare("a#c".into(), "b".into()));
+		assert!(!Solution::backspace_compare(
+			"bxj##tw".to_owned(),
+			"bxj###tw".to_owned()
+		));
 	}
 }

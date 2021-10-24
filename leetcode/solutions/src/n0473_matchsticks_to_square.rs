@@ -68,11 +68,10 @@ mod tests {
 
 	#[test]
 	fn test_473() {
-		assert_eq!(Solution::makesquare(vec![1, 1, 2, 2, 2]), true);
-		assert_eq!(Solution::makesquare(vec![3, 3, 3, 3, 4]), false);
-		assert_eq!(
-			Solution::makesquare(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-			true
-		);
+		assert!(Solution::makesquare(vec![1, 1, 2, 2, 2]));
+		assert!(!Solution::makesquare(vec![3, 3, 3, 3, 4]));
+		assert!(Solution::makesquare(vec![
+			1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+		]));
 	}
 }

@@ -71,10 +71,10 @@ mod tests {
 
 	#[test]
 	fn test_665() {
-		assert_eq!(Solution::check_possibility(vec![4, 2, 3]), true);
-		assert_eq!(Solution::check_possibility(vec![1, 2, 7, 4, 5]), true);
-		assert_eq!(Solution::check_possibility(vec![4, 2, 1]), false);
-		assert_eq!(Solution::check_possibility(vec![1, 4, 1, 2]), true);
-		assert_eq!(Solution::check_possibility(vec![1, 2, -1]), true);
+		assert!(Solution::check_possibility(vec![4, 2, 3]));
+		assert!(Solution::check_possibility(vec![1, 2, 7, 4, 5]));
+		assert!(!Solution::check_possibility(vec![4, 2, 1]));
+		assert!(Solution::check_possibility(vec![1, 4, 1, 2]));
+		assert!(Solution::check_possibility(vec![1, 2, -1]));
 	}
 }

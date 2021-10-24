@@ -69,16 +69,16 @@ mod tests {
 
 	#[test]
 	fn test_81() {
-		assert_eq!(Solution::search(vec![2, 5, 6, 0, 0, 1, 2], 0), true);
-		assert_eq!(Solution::search(vec![2, 5, 6, 0, 0, 1, 2], 3), false);
-		assert_eq!(Solution::search(vec![], 3), false);
-		assert_eq!(Solution::search(vec![1], 1), true);
-		assert_eq!(Solution::search(vec![1], 0), false);
-		assert_eq!(Solution::search(vec![3, 1], 1), true);
-		assert_eq!(Solution::search(vec![1, 3], 3), true);
-		assert_eq!(Solution::search(vec![5, 1, 3], 3), true);
-		assert_eq!(Solution::search(vec![1, 3, 1, 1, 1], 3), true);
-		assert_eq!(Solution::search(vec![1, 1, 1, 3, 1], 3), true);
-		assert_eq!(Solution::search(vec![1, 0, 0, 0, 1], 1), true);
+		assert!(Solution::search(vec![2, 5, 6, 0, 0, 1, 2], 0));
+		assert!(!Solution::search(vec![2, 5, 6, 0, 0, 1, 2], 3));
+		assert!(!Solution::search(vec![], 3));
+		assert!(Solution::search(vec![1], 1));
+		assert!(!Solution::search(vec![1], 0));
+		assert!(Solution::search(vec![3, 1], 1));
+		assert!(Solution::search(vec![1, 3], 3));
+		assert!(Solution::search(vec![5, 1, 3], 3));
+		assert!(Solution::search(vec![1, 3, 1, 1, 1], 3));
+		assert!(Solution::search(vec![1, 1, 1, 3, 1], 3));
+		assert!(Solution::search(vec![1, 0, 0, 0, 1], 1));
 	}
 }

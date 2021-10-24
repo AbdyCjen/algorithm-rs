@@ -49,17 +49,8 @@ mod tests {
 
 	#[test]
 	fn test_383() {
-		assert_eq!(
-			Solution::can_construct("a".to_owned(), "b".to_owned()),
-			false
-		);
-		assert_eq!(
-			Solution::can_construct("aa".to_owned(), "ab".to_owned()),
-			false
-		);
-		assert_eq!(
-			Solution::can_construct("aa".to_owned(), "aab".to_owned()),
-			true
-		);
+		assert!(!Solution::can_construct("a".to_owned(), "b".to_owned()));
+		assert!(!Solution::can_construct("aa".to_owned(), "ab".to_owned()));
+		assert!(Solution::can_construct("aa".to_owned(), "aab".to_owned()));
 	}
 }
