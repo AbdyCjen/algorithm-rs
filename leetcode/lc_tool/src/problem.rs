@@ -36,9 +36,7 @@ pub fn get_problem(id: u32) -> Option<Problem> {
 		.find(move |p| p.question_frontend_id == id)
 		.unwrap();
 
-	if problem.is_paid_only {
-		panic!("this problem is paid only");
-	}
+	assert!(!problem.is_paid_only, "this problem is paid only");
 
 	let client = reqwest::Client::new();
 	let resp = client

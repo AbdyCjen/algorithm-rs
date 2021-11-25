@@ -5,8 +5,8 @@ extern crate serde_json;
 
 mod problem;
 
-use std::{fs, io::Write, path::Path};
 use clap::clap_app;
+use std::{fs, io::Write, path::Path};
 
 /// main() helps to generate the submission template .rs
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,16 +34,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	let problem = problem::get_problem(id).unwrap_or_else(|| {
 		panic!(
 			"Error: failed to get problem #{} \
-             (The problem may be paid-only or may not be exist).", id)});
+             (The problem may be paid-only or may not be exist).",
+			id
+		)
+	});
 
-	let code = problem.code_definition.iter().find(|&d| d.value == "rust")
+	let code = problem
+		.code_definition
+		.iter()
+		.find(|&d| d.value == "rust")
 		.unwrap_or_else(|| panic!("Problem {} has no rust version.", &id));
 
 	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace("-", "_"));
 	let file_path = Path::new("./src").join(format!("{}.rs", file_name));
-	if file_path.exists() {
-		panic!("problem already initialized");
-	}
+	assert!(!file_path.exists(), "problem already initialized");
 
 	let template = include_str!("../template.rs");
 	let source = template
