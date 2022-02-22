@@ -101,8 +101,7 @@ impl Solution {
 			if let Some(dl) = root
 				.left
 				.as_ref()
-				.map(|o| find(&o.borrow(), p, k, res))
-				.flatten()
+				.and_then(|o| find(&o.borrow(), p, k, res))
 			{
 				match dl.cmp(&k) {
 					Equal => res.push(root.val),
@@ -118,8 +117,7 @@ impl Solution {
 				let dr = root
 					.right
 					.as_ref()
-					.map(|o| find(&o.borrow(), p, k, res))
-					.flatten()?;
+					.and_then(|o| find(&o.borrow(), p, k, res))?;
 				match dr.cmp(&k) {
 					Equal => res.push(root.val),
 					Less => {

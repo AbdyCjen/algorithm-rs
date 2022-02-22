@@ -59,6 +59,7 @@ mod tests {
 	fn test_629() {
 		assert_eq!(Solution::k_inverse_pairs(3, 0), 1);
 		assert_eq!(Solution::k_inverse_pairs(3, 1), 2);
+		panic!("bad performance");
 		assert_eq!(Solution::k_inverse_pairs(1000, 1000), 663677020);
 	}
 }

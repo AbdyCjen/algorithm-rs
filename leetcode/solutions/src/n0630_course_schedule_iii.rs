@@ -61,7 +61,7 @@ impl Solution {
 				}
 			}
 		}
-		selected_course.iter().map(|(_, i)| i).sum()
+		selected_course.values().sum()
 	}
 }
 

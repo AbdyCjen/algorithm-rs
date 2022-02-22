@@ -60,8 +60,7 @@ impl Solution {
 				scores[k] += 1;
 				if let Some(fut_scr) = (k + n)
 					.checked_sub(ai as usize)
-					.map(|j| scores.get_mut(j))
-					.flatten()
+					.and_then(|j| scores.get_mut(j))
 				{
 					*fut_scr -= 1;
 				}
@@ -77,8 +76,7 @@ impl Solution {
 				scores_rev[k] += 1;
 			} else if let Some(fut_scr) = k
 				.checked_sub(ai as usize)
-				.map(|j| scores_rev.get_mut(j))
-				.flatten()
+				.and_then(|j| scores_rev.get_mut(j))
 			{
 				*fut_scr += 1;
 			}
