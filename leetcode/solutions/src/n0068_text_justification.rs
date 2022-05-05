@@ -108,7 +108,7 @@ impl Solution {
 		res
 	}
 
-	fn last_line_compact(cache: &mut Vec<String>, wlen: usize, max_width: i32) -> String {
+	fn last_line_compact(cache: &mut [String], wlen: usize, max_width: i32) -> String {
 		let spcs = max_width as usize - wlen;
 		let last_spc = spcs - cache.len() + 1;
 		let mut res = String::new();

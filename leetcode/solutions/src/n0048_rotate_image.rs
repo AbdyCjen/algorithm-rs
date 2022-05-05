@@ -39,6 +39,7 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
+	#[allow(clippy::ptr_arg)]
 	pub fn rotate(mat: &mut Vec<Vec<i32>>) {
 		if mat.len() < 2 {
 			return;

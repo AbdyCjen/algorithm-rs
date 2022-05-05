@@ -32,6 +32,7 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
+	#[allow(clippy::ptr_arg)]
 	pub fn solve_sudoku(board: &mut Vec<Vec<char>>) {
 		fn solve_inner(mat: &mut [Vec<char>], cur: usize) -> bool {
 			if cur >= 9 * 9 {
