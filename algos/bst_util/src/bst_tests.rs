@@ -1,11 +1,11 @@
 use bst::*;
-pub fn bst_valid<Tree: BSTree>(tr: &Tree)
+pub fn bst_valid<Tree: BsTree>(tr: &Tree)
 where Tree::Item: Copy + Ord + Default {
 	tr.root_ref().map(bst_valid_inner);
 
 	fn bst_valid_inner<TreeNode, Item>(tr: &TreeNode) -> Result<(&Item, &Item), ()>
 	where
-		TreeNode: BSTNode<Item = Item>,
+		TreeNode: BstNode<Item = Item>,
 		Item: Ord,
 	{
 		let (mut min_k, mut max_k) = (tr.key_ref(), tr.key_ref());

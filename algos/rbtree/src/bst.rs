@@ -1,7 +1,7 @@
 use crate::*;
 use ::bst::derive_bst;
 
-derive_bst! {RBTree, RbTreeNode;
+derive_bst! {RbTree, RbTreeNode;
 	fn rotate_right(&mut self) {
 		let mut left = self.left.take().unwrap();
 		self.left = left.right.take();
@@ -27,7 +27,7 @@ mod test {
 	const TEST_RANGE: std::ops::Range<i32> = 0..1_000_000;
 	#[test]
 	fn bst_test() {
-		let mut rbt: RBTree<_> = Default::default();
+		let mut rbt: RbTree<_> = Default::default();
 		let mut test_case = Vec::new();
 		for _ in TEST_RANGE {
 			test_case.push(rand::random::<i32>());

@@ -7,5 +7,17 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+arrayvec = "0.5"
+rand = "0.7"
 
-rand = "*"
+[dev-dependencies]
+bst_util = { path = "../bst_util", features=["bst_bench", "bst_test"] }
+criterion = "0.3"
+
+[[bench]]
+name = "iter_bench"
+harness = false
+
+[[bench]]
+name = "insert_bench"
+harness = false

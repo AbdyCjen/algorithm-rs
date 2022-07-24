@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 mod bst;
 mod iterator;
-use ::bst::{BSTNode, BSTNodeInner};
+use ::bst::{BstNode, BstNodeInner};
 pub struct AvlNode<T: Ord> {
 	h: i8,
 	k: T,
@@ -144,7 +144,7 @@ impl<T: Ord> AvlTree<T> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use ::bst::BSTree;
+	use ::bst::BsTree;
 	fn check_avl<T: Ord>(root: &AvlNode<T>) -> (i8, bool) {
 		let check_rec =
 			|no: &Option<Box<AvlNode<T>>>| no.as_deref().map(check_avl).unwrap_or((0, true));
