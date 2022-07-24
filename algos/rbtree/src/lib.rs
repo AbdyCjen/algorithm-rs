@@ -9,16 +9,19 @@ enum Rb {
 	Black,
 }
 use Rb::*;
-pub struct RbTreeNode<T: Ord> {
+pub struct RbTreeNode<T> {
 	left: Option<Box<RbTreeNode<T>>>,
 	right: Option<Box<RbTreeNode<T>>>,
 	k: T,
 	color: Rb,
 }
 
-#[derive(Default)]
-pub struct RbTree<T: Ord> {
+pub struct RbTree<T> {
 	root: Option<Box<RbTreeNode<T>>>,
+}
+
+impl<T> Default for RbTree<T> {
+	fn default() -> Self { Self { root: None } }
 }
 
 impl<T: Ord> RbTree<T> {
@@ -42,8 +45,7 @@ impl<T: Ord> RbTreeNode<T> {
 	fn by_ord_mut_all(
 		&mut self,
 		ord: Ordering,
-	) -> (&mut Option<Box<Self>>, &mut Option<Box<Self>>)
-	{
+	) -> (&mut Option<Box<Self>>, &mut Option<Box<Self>>) {
 		match ord {
 			Ordering::Less => (&mut self.left, &mut self.right),
 			Ordering::Greater => (&mut self.right, &mut self.left),
@@ -119,7 +121,8 @@ mod tests {
 	use ::bst::BsTree;
 	//use rand;
 	impl<T> std::fmt::Debug for RbTreeNode<T>
-	where T: std::fmt::Display + Ord
+	where
+		T: std::fmt::Display + Ord,
 	{
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 			return inner_fmt(Some(self), f, 0);
@@ -128,8 +131,7 @@ mod tests {
 				no: Option<&RbTreeNode<T>>,
 				f: &mut std::fmt::Formatter<'_>,
 				idt_lv: usize,
-			) -> std::fmt::Result
-			{
+			) -> std::fmt::Result {
 				if let Some(no) = no {
 					inner_fmt(no.left.as_deref(), f, idt_lv + 1)?;
 

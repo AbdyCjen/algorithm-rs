@@ -1,6 +1,8 @@
 use bst::*;
 pub fn bst_valid<Tree: BsTree>(tr: &Tree)
-where Tree::Item: Copy + Ord + Default {
+where
+	Tree::Item: Copy + Ord + Default,
+{
 	tr.root_ref().map(bst_valid_inner);
 
 	fn bst_valid_inner<TreeNode, Item>(tr: &TreeNode) -> Result<(&Item, &Item), ()>

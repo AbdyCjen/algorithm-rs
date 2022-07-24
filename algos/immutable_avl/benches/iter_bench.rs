@@ -1,4 +1,4 @@
-use avl::*;
+use immutable_avl::*;
 use bst_util::bst_benches;
 use criterion::{criterion_group, criterion_main};
 
@@ -12,7 +12,7 @@ criterion_group!(
 	benches,
 	bench_iter_avl,
 	bst_benches::bench_std_iter,
-	bst_benches::bench_insert::<AvlTree<i32>>,
+	//bst_benches::bench_insert::<AvlTree<i32>>,
 	bst_benches::bench_std_insert
 );
 criterion_main!(benches);

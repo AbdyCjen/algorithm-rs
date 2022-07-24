@@ -3,16 +3,20 @@ use ::bst::BstNodeInner;
 use std::cmp::Ordering;
 mod bst;
 
-pub struct TreapNode<T: std::cmp::Ord> {
+pub struct TreapNode<T> {
 	left: Option<Box<TreapNode<T>>>,
 	right: Option<Box<TreapNode<T>>>,
 	r: u32,
 	k: T,
 }
 
-#[derive(Default)]
-pub struct Treap<T: std::cmp::Ord> {
+pub struct Treap<T> {
 	root: Option<Box<TreapNode<T>>>,
+}
+impl<T> Default for Treap<T> {
+	fn default() -> Self {
+		Self { root: None }
+	}
 }
 
 impl<T: std::cmp::Ord> Treap<T> {

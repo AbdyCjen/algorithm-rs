@@ -1,6 +1,6 @@
 use crate::*;
 use ::bst;
-use std::cmp::Ord;
+use std::{cmp::Ord, iter::FromIterator};
 
 impl<T: Ord> IntoIterator for RbTree<T> {
 	type Item = T;
@@ -14,6 +14,16 @@ impl<'a, T: Ord + 'a> IntoIterator for &'a RbTree<T> {
 	type IntoIter = bst::Iter<'a, RbTree<T>>;
 
 	fn into_iter(self) -> Self::IntoIter { bst::Iter::from_tree(self) }
+}
+
+impl<T: Ord> FromIterator<T> for RbTree<T> {
+	fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+		let mut tr = Self::default();
+		for v in iter {
+			tr.insert(v);
+		}
+		tr
+	}
 }
 
 #[cfg(test)]

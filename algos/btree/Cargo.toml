@@ -10,3 +10,9 @@ arrayvec = "0.7.2"
 
 [dev-dependencies]
 rand = "0.8.5"
+bst_util = { path = "../bst_util", features=["bst_bench", "bst_test"] }
+criterion = "0.3.6"
+
+[[bench]]
+name = "iter_bench"
+harness = false

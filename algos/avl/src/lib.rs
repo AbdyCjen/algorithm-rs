@@ -2,16 +2,19 @@ use std::cmp::Ordering;
 mod bst;
 mod iterator;
 use ::bst::{BstNode, BstNodeInner};
-pub struct AvlNode<T: Ord> {
+pub struct AvlNode<T> {
 	h: i8,
 	k: T,
 	left: Option<Box<AvlNode<T>>>,
 	right: Option<Box<AvlNode<T>>>,
 }
 
-#[derive(Default)]
-pub struct AvlTree<T: Ord> {
+pub struct AvlTree<T> {
 	root: Option<Box<AvlNode<T>>>,
+}
+
+impl<T> Default for AvlTree<T> {
+	fn default() -> Self { Self { root: None } }
 }
 
 impl<T: Ord> AvlNode<T> {
@@ -158,7 +161,8 @@ mod tests {
 	}
 
 	impl<T> std::fmt::Debug for AvlNode<T>
-	where T: std::fmt::Display + Ord
+	where
+		T: std::fmt::Display + Ord,
 	{
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 			return inner_fmt(Some(self), f, 0);
@@ -167,8 +171,7 @@ mod tests {
 				no: Option<&AvlNode<T>>,
 				f: &mut std::fmt::Formatter<'_>,
 				idt_lv: usize,
-			) -> std::fmt::Result
-			{
+			) -> std::fmt::Result {
 				if let Some(no) = no {
 					inner_fmt(no.left.as_deref(), f, idt_lv + 1)?;
 

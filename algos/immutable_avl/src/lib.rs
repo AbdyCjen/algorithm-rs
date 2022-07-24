@@ -1,4 +1,5 @@
 use std::{cmp::Ordering, rc::Rc};
+pub mod iter;
 
 const BAL_FACTOR: u8 = 1;
 
@@ -75,8 +76,14 @@ impl<T> AvlNode<T> {
 	}
 }
 
-#[derive(Default, Clone)]
+#[derive(Clone)]
 pub struct AvlTree<T>(Option<Rc<AvlNode<T>>>);
+
+impl<T> Default for AvlTree<T> {
+	fn default() -> Self {
+		Self(None)
+	}
+}
 
 impl<T: Ord> AvlNode<T> {
 	pub(crate) fn find(&self, k: &T) -> Option<()> {

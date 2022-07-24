@@ -1,3 +1,5 @@
+use std::iter::FromIterator;
+
 use crate::*;
 use ::bst::derive_bst;
 
@@ -20,15 +22,12 @@ derive_bst! {Treap, TreapNode;
 mod test {
 	use super::*;
 	use bst_util::bst_tests::bst_valid;
-	const TEST_RANGE: std::ops::Range<i32> = 0..1_000_0;
 	#[test]
 	fn bst_test() {
+		const TEST_RANGE: std::ops::Range<i32> = 0..10_000;
 		let mut rbt: Treap<_> = Default::default();
-		let mut test_case = Vec::new();
-		for _ in TEST_RANGE {
-			test_case.push(rand::random::<i32>());
-		}
-		for i in test_case.iter().copied() {
+		let test_case: Vec<_> = TEST_RANGE.map(|_| rand::random::<i32>()).collect();
+		for &i in &test_case {
 			rbt.insert(i);
 		}
 
@@ -36,5 +35,15 @@ mod test {
 		for i in &test_case {
 			assert!(rbt.find(i).is_some());
 		}
+	}
+}
+
+impl<T: Ord> FromIterator<T> for Treap<T> {
+	fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+		let mut tr = Self::default();
+		for v in iter {
+			tr.insert(v);
+		}
+		tr
 	}
 }

@@ -1,5 +1,6 @@
 use arrayvec::ArrayVec;
 use std::cmp::Ord;
+pub mod iter;
 
 const B: usize = 6;
 const MAX_CHILD: usize = B * 2;
@@ -19,7 +20,7 @@ impl<T> Default for BTree<T> {
 	}
 }
 
-enum Children<T> {
+pub(crate) enum Children<T> {
 	Leaf(ArrayVec<Box<BTreeLeafNode<T>>, MAX_CHILD>),
 	Inner(ArrayVec<Box<BTreeInnerNode<T>>, MAX_CHILD>),
 }
@@ -515,11 +516,14 @@ mod test {
 	use std::fmt::{Debug, Display};
 	impl<T: Display> Debug for BTreeLeafNode<T> {
 		fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-			write!(f, "(")?;
-			for k in &self.keys {
-				write!(f, "{},", k)?;
+			let mut key_it = self.keys.iter();
+			if let Some(k) = key_it.next() {
+				write!(f, "{}", k)?;
 			}
-			write!(f, ")")
+			for k in key_it {
+				write!(f, ",{}", k)?;
+			}
+			Ok(())
 		}
 	}
 
@@ -689,24 +693,26 @@ mod test {
 	use rand::{prelude::*, seq::SliceRandom};
 	#[test]
 	fn it_works() {
-		let rng = 0..100_000;
-		let rand_iter = rand::distributions::Bernoulli::from_ratio(1, 10000).unwrap();
+		let sameple = 0..100_000;
+		let mut rng = rand::thread_rng();
+		let rand_iter = rand::distributions::Bernoulli::from_ratio(1, 100).unwrap();
 		let mut tr = BTree::default();
-		for i in rng.clone().rev() {
+		for i in sameple.clone().rev() {
 			tr.insert(i);
 			assert!(tr.find(&i));
-			if rand_iter.sample(&mut rand::thread_rng()) {
+			if rand_iter.sample(&mut rng) {
 				check_btree(&tr).unwrap();
 			}
 		}
-		for i in rng.clone() {
+		println!("{tr:?}");
+		for i in sameple.clone() {
 			assert!(tr.find(&i));
 		}
-		let mut to_del: Vec<_> = rng.collect();
-		to_del.shuffle(&mut rand::thread_rng());
+		let mut to_del: Vec<_> = sameple.collect();
+		to_del.shuffle(&mut rng);
 		for i in to_del {
 			assert!(tr.remove(&i).is_some());
-			if rand_iter.sample(&mut rand::thread_rng()) {
+			if rand_iter.sample(&mut rng) {
 				check_btree(&tr).unwrap()
 			}
 			assert!(!tr.find(&i));
