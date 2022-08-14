@@ -18,6 +18,23 @@ derive_bst! {Treap, TreapNode;
 	}
 }
 
+impl<T: Ord> FromIterator<T> for Treap<T> {
+	fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+		let mut tr = Self::default();
+		for v in iter {
+			tr.insert(v);
+		}
+		tr
+	}
+}
+
+impl<'a, T: Ord + 'a> IntoIterator for &'a Treap<T> {
+	type Item = &'a T;
+	type IntoIter = ::bst::Iter<'a, Treap<T>>;
+
+	fn into_iter(self) -> Self::IntoIter { ::bst::Iter::from_tree(self) }
+}
+
 #[cfg(test)]
 mod test {
 	use super::*;
@@ -35,15 +52,5 @@ mod test {
 		for i in &test_case {
 			assert!(rbt.find(i).is_some());
 		}
-	}
-}
-
-impl<T: Ord> FromIterator<T> for Treap<T> {
-	fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-		let mut tr = Self::default();
-		for v in iter {
-			tr.insert(v);
-		}
-		tr
 	}
 }
