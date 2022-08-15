@@ -2,6 +2,7 @@
 use avl::*;
 use bst_util::bst_benches;
 use btree::*;
+use skiplist::*;
 use criterion::{criterion_group, criterion_main, Criterion};
 use rbtree::*;
 use treap::*;
@@ -27,6 +28,11 @@ fn bench_iter_rbtree(c: &mut criterion::Criterion) {
 	let mut bench_fn = bst_benches::bench_iter_generator::<RbTree<i32>>();
 	bench_fn(c, bst_benches::TEST_RANGE2, "10_000 rbtree iter");
 	bench_fn(c, bst_benches::TEST_RANGE1, "1_000_000 rbtree iter");
+}
+fn bench_iter_skiplist(c: &mut criterion::Criterion) {
+	let mut bench_fn = bst_benches::bench_iter_generator::<SkipList<i32>>();
+	bench_fn(c, bst_benches::TEST_RANGE2, "10_000 skiplist iter");
+	bench_fn(c, bst_benches::TEST_RANGE1, "1_000_000 skiplist iter");
 }
 
 pub fn bench_insert(c: &mut Criterion) {
@@ -58,6 +64,7 @@ criterion_group!(
 	bench_iter_avl,
 	bench_iter_btree,
 	bench_iter_treap,
+	bench_iter_skiplist,
 	bst_benches::bench_std_iter,
 	bench_insert,
 	bst_benches::bench_std_insert

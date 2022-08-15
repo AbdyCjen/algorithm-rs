@@ -12,6 +12,7 @@ btree = { path = "../btree" }
 rbtree = { path = "../rbtree" }
 avl = { path = "../avl" }
 treap = { path = "../treap" }
+skiplist = { path = "../skiplist" }
 rand = "0.8.5"
 criterion = "0.3.6"
 bst_util = { path = "../bst_util/" }
