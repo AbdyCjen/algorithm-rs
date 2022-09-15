@@ -3,9 +3,10 @@ use std::{cell::Cell, ptr::NonNull};
 mod iter;
 
 const MAX_HEIGHT: usize = 32;
+type NodeRef<T> = Cell<Option<NonNull<Node<T>>>>;
 struct Node<T> {
 	key: T,
-	nexts: Box<[Cell<Option<NonNull<Node<T>>>>]>,
+	nexts: Box<[NodeRef<T>]>,
 }
 
 impl<'a, T: std::cmp::Ord + 'a> Node<T> {
@@ -17,51 +18,37 @@ impl<'a, T: std::cmp::Ord + 'a> Node<T> {
 		}
 	}
 
-	fn find_greater_or_equal<'b: 'a>(&'b self, key: &'_ T, mut lev: usize) -> Option<&'b Node<T>> {
-		unsafe {
-			let mut co = self;
-			loop {
-				while let Some(no) = co.nexts[lev].get() {
-					if no.as_ref().key >= *key {
-						break;
-					}
-					co = &*no.as_ptr();
+	unsafe fn find_ge<'b: 'a>(&'b self, key: &'_ T, max_height: usize) -> Option<&'b Node<T>> {
+		let mut co = self;
+		for lev in (0..max_height).rev() {
+			while let Some(no) = co.nexts[lev].get() {
+				if no.as_ref().key >= *key {
+					break;
 				}
-
-				if lev == 0 {
-					break co.nexts[0].get().map(|co| &*co.as_ptr());
-				} else {
-					lev -= 1;
-				}
+				co = &*no.as_ptr();
 			}
 		}
+		co.nexts[0].get().map(|co| &*co.as_ptr())
 	}
 
-	fn find_greater_or_equal_mut<'b: 'a>(
-		&'b mut self,
+	unsafe fn find_ge_with_prevs<'b: 'a>(
+		&'b self,
 		key: &'_ T,
-		mut lev: usize,
-		prev: &mut [NonNull<Node<T>>],
+		max_height: usize,
+		prev: &mut [*const Node<T>],
 	) -> Option<&'b mut Node<T>> {
-		unsafe {
-			let mut co = self;
-			loop {
-				while let Some(no) = co.nexts[lev].get() {
-					if no.as_ref().key >= *key {
-						break;
-					}
-					co = &mut *no.as_ptr();
+		let mut co = self;
+		for lev in (0..max_height).rev() {
+			while let Some(no) = co.nexts[lev].get() {
+				if no.as_ref().key >= *key {
+					break;
 				}
-
-				prev[lev] = NonNull::new_unchecked(co as *mut Node<T>);
-
-				if lev == 0 {
-					break co.nexts[0].get().map(|co| &mut *co.as_ptr());
-				} else {
-					lev -= 1;
-				}
+				co = no.as_ref();
 			}
+
+			prev[lev] = co as *const _;
 		}
+		co.nexts[0].get().map(|co| &mut *co.as_ptr())
 	}
 }
 
@@ -89,14 +76,12 @@ impl<T: std::cmp::Ord> SkipList<T> {
 	pub fn is_empty(&self) -> bool { self.len == 0 }
 
 	pub fn find(&self, key: &T) -> Option<()> {
-		if self
-			.head
-			.find_greater_or_equal(key, self.max_height - 1)?
-			.key == *key
-		{
-			Some(())
-		} else {
-			None
+		unsafe {
+			if self.head.find_ge(key, self.max_height - 1)?.key == *key {
+				Some(())
+			} else {
+				None
+			}
 		}
 	}
 
@@ -104,14 +89,13 @@ impl<T: std::cmp::Ord> SkipList<T> {
 	pub fn insert(&mut self, key: T) {
 		unsafe {
 			//is there a simple way to init prev?
-			let mut head_iter =
-				std::iter::repeat(NonNull::new_unchecked(&mut self.head as *mut Node<T>));
-			let mut prevs: ArrayVec<[NonNull<Node<T>>; MAX_HEIGHT]> =
+			let mut head_iter = std::iter::repeat(&self.head as *const _);
+			let mut prevs: ArrayVec<[*const Node<T>; MAX_HEIGHT]> =
 				head_iter.by_ref().take(self.max_height).collect();
 
 			let so = self
 				.head
-				.find_greater_or_equal_mut(&key, self.max_height - 1, &mut prevs);
+				.find_ge_with_prevs(&key, self.max_height, &mut prevs);
 			if so.is_none() || so.unwrap().key > key {
 				let new_node = Box::new(Node::new(key));
 				let height = new_node.nexts.len();
@@ -127,8 +111,7 @@ impl<T: std::cmp::Ord> SkipList<T> {
 					.zip(new_node.as_ref().nexts.iter())
 					.enumerate()
 				{
-					//eprint!("{lev}");
-					new_node_next.set(prev.as_ref().nexts[lev].replace(Some(new_node)));
+					new_node_next.set((*prev).nexts[lev].replace(Some(new_node)));
 				}
 
 				self.len += 1;
@@ -138,13 +121,13 @@ impl<T: std::cmp::Ord> SkipList<T> {
 
 	pub fn remove(&mut self, key: &T) -> Option<T> {
 		unsafe {
-			let mut prev: ArrayVec<[NonNull<Node<T>>; MAX_HEIGHT]> =
-				std::iter::repeat(NonNull::new_unchecked(&mut self.head as *mut Node<T>))
+			let mut prev: ArrayVec<[*const Node<T>; MAX_HEIGHT]> =
+				std::iter::repeat(&self.head as *const _)
 					.take(self.max_height)
 					.collect();
 			let co = self
 				.head
-				.find_greater_or_equal_mut(key, self.max_height - 1, &mut prev)?;
+				.find_ge_with_prevs(key, self.max_height, &mut prev)?;
 			if co.key == *key {
 				let height = co.nexts.len();
 				for (lev, (prev, co_next)) in prev
@@ -153,7 +136,7 @@ impl<T: std::cmp::Ord> SkipList<T> {
 					.take(height)
 					.enumerate()
 				{
-					prev.as_ref().nexts[lev].set(co_next.take());
+					(*prev).nexts[lev].set(co_next.take());
 				}
 
 				let to_ret = Some(Box::from_raw(co as *mut Node<T>).key);
@@ -217,18 +200,18 @@ mod tests {
 	fn check_ok<T: std::cmp::Ord>(list: &SkipList<T>) {
 		unsafe {
 			// check key sorted and continuous in every level
-			let mut prev: Vec<_> = list.head.nexts.iter().filter_map(Cell::get).collect();
+			let mut prevs: Vec<_> = list.head.nexts.iter().filter_map(Cell::get).collect();
 			let mut link_cnt = 0;
 			let mut link_dist = [0; MAX_HEIGHT];
 			if let Some(mut no) = list.head.nexts[0].get() {
 				while let Some(o) = no.as_ref().nexts[0].get() {
-					for i in 0..o.as_ref().nexts.len() {
-						assert!(prev[i].as_ref().key <= o.as_ref().key);
+					for (i, prev) in prevs.iter_mut().enumerate().take(o.as_ref().nexts.len()) {
+						assert!(prev.as_ref().key <= o.as_ref().key);
 						// continuous
-						if prev[i].as_ref().key < o.as_ref().key {
-							assert!(prev[i].as_ref().nexts[i].get() == Some(o));
+						if prev.as_ref().key < o.as_ref().key {
+							assert!(prev.as_ref().nexts[i].get() == Some(o));
 						}
-						prev[i] = o;
+						*prev = o;
 					}
 					link_cnt += no.as_ref().nexts.len();
 					link_dist[no.as_ref().nexts.len()] += 1;

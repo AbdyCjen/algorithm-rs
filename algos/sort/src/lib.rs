@@ -1,7 +1,9 @@
 use std::cmp::Ordering;
 
 pub fn merge_sort<T>(nums: &mut [T])
-where T: std::cmp::Ord + Clone {
+where
+	T: std::cmp::Ord + Clone,
+{
 	if nums.len() > 32 {
 		let (lower, upper) = nums.split_at_mut(nums.len() / 2);
 		merge_sort(lower);
@@ -14,7 +16,9 @@ where T: std::cmp::Ord + Clone {
 }
 
 pub fn bottomup_sort<T>(nums: &mut [T])
-where T: std::cmp::Ord + Clone {
+where
+	T: std::cmp::Ord + Clone,
+{
 	if nums.len() <= 1 {
 		return;
 	}
@@ -32,7 +36,9 @@ where T: std::cmp::Ord + Clone {
 }
 
 fn merge_into<T: std::cmp::Ord, I>(nums: &mut [T], nums_lower: I)
-where I: ExactSizeIterator<Item = T> {
+where
+	I: ExactSizeIterator<Item = T>,
+{
 	let mut i = nums_lower.len();
 	let mut nums_lower = nums_lower.peekable();
 	for k in 0..nums.len() {
@@ -48,65 +54,71 @@ where I: ExactSizeIterator<Item = T> {
 }
 
 pub fn insert_sort<T>(nums: &mut [T])
-where T: std::cmp::Ord {
-	for i in 1..nums.len() {
-		let (l, r) = nums[..i + 1].split_at_mut(i);
-		let mut prev = &mut r[0];
-		for b in l.iter_mut().rev() {
-			if b < prev {
-				break;
+where
+	T: std::cmp::Ord,
+{
+	for i in 2..(nums.len() + 1) {
+		if let [l @ .., r] = &mut nums[..i] {
+			let mut prev = r;
+			for b in l.iter_mut().rev() {
+				if b < prev {
+					break;
+				}
+				std::mem::swap(prev, b);
+				prev = b;
 			}
-			std::mem::swap(prev, b);
-			prev = b;
 		}
 	}
 }
 
 pub fn select_sort<T>(nums: &mut [T])
-where T: std::cmp::Ord {
+where
+	T: std::cmp::Ord,
+{
 	if nums.len() <= 1 {
 		return;
 	}
 	for i in 0..(nums.len() - 1) {
-		let (l, r) = nums[i..].split_at_mut(1);
-		if let Some(min) = r.iter_mut().min() {
-			if *min < l[0] {
-				std::mem::swap(&mut l[0], min)
+		if let [l, r @ ..] = &mut nums[i..] {
+			if let Some(min) = r.iter_mut().min() {
+				if min < l {
+					std::mem::swap(l, min)
+				}
 			}
 		}
 	}
 }
 
-pub fn quick_sort<T>(iv: &mut [T])
-where T: std::cmp::Ord {
-	if iv.len() <= 1 {
-		return;
-	}
-	let (mut i, mut j, mut k) = (0, 0, iv.len() - 1);
-	{
-		let (o, iv) = iv.split_at_mut(1);
+pub fn quick_sort<T>(v: &mut [T])
+where
+	T: std::cmp::Ord,
+{
+	if let [o, rest @ ..] = v {
+		let (mut i, mut j, mut k) = (0, 0, rest.len());
 		while j < k {
-			match iv[j].cmp(&o[0]) {
+			match rest[j].cmp(o) {
 				Ordering::Less => {
-					iv.swap(j, i);
+					rest.swap(j, i);
 					i += 1;
 					j += 1;
 				}
 				Ordering::Greater => {
-					iv.swap(j, k - 1);
+					rest.swap(j, k - 1);
 					k -= 1;
 				}
 				Ordering::Equal => j += 1,
 			}
 		}
+		v.swap(0, i);
+		quick_sort(&mut v[..i]);
+		quick_sort(&mut v[k + 1..]);
 	}
-	iv.swap(0, i);
-	quick_sort(&mut iv[..i]);
-	quick_sort(&mut iv[k + 1..]);
 }
 
 pub fn heap_sort<T>(nums: &mut [T])
-where T: std::cmp::Ord {
+where
+	T: std::cmp::Ord,
+{
 	fn shift_down<T: std::cmp::Ord>(tree: &mut [T], mut i: usize) {
 		let child_idxs = |i: usize| (i * 2 + 1, i * 2 + 2);
 		while i < tree.len() {

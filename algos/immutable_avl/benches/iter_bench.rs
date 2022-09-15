@@ -1,6 +1,6 @@
-use immutable_avl::*;
 use bst_util::bst_benches;
 use criterion::{criterion_group, criterion_main};
+use immutable_avl::*;
 
 fn bench_iter_avl(c: &mut criterion::Criterion) {
 	let mut bench_fn = bst_benches::bench_iter_generator::<AvlTree<i32>>();

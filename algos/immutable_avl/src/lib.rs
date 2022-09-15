@@ -80,9 +80,7 @@ impl<T> AvlNode<T> {
 pub struct AvlTree<T>(Option<Rc<AvlNode<T>>>);
 
 impl<T> Default for AvlTree<T> {
-	fn default() -> Self {
-		Self(None)
-	}
+	fn default() -> Self { Self(None) }
 }
 
 impl<T: Ord> AvlNode<T> {
@@ -111,25 +109,22 @@ impl<T: Ord + Clone> AvlNode<T> {
 		let right_mut = Rc::make_mut(&mut right);
 		root.right = right_mut.left.take();
 		root.update_height();
-		std::mem::swap(self, &mut right);
 
-		let root = Rc::make_mut(self);
-		root.left = Some(right);
-		root.update_height();
+		right_mut.left = Some(self.clone());
+		right_mut.update_height();
+		*self = right;
 	}
 
 	fn rotate_right(self: &mut Rc<Self>) {
-		// XXX:maybe too many make_mut?
 		let mut root = Rc::make_mut(self);
 		let mut left = root.left.take().unwrap();
 		let left_mut = Rc::make_mut(&mut left);
-		root.left = left_mut.left.take();
+		root.left = left_mut.right.take();
 		root.update_height();
-		std::mem::swap(self, &mut left);
 
-		let root = Rc::make_mut(self);
-		root.left = Some(left);
-		root.update_height();
+		left_mut.right = Some(self.clone());
+		left_mut.update_height();
+		*self = left
 	}
 
 	fn straighten(self: &mut Rc<Self>, toward: Ordering) {
@@ -204,7 +199,7 @@ mod tests {
 				if let Some(no) = no {
 					inner_fmt(no.left.as_deref(), f, idt_lv + 1)?;
 
-					write!(f, "{}", "	".repeat(idt_lv))?;
+					write!(f, "{}", "..".repeat(idt_lv))?;
 					writeln!(f, "{}: {}", no.key, no.h)?;
 
 					inner_fmt(no.right.as_deref(), f, idt_lv + 1)?;
@@ -217,11 +212,13 @@ mod tests {
 	#[test]
 	fn it_works() {
 		let mut trs = vec![AvlTree::default()];
-		let rng = 0..2_000_000;
-		for i in rng.clone() {
+		//let rng = 0..2_000_000;
+		let rng = 0..2_000;
+		for i in rng.clone().rev() {
 			trs.push(trs.last().cloned().unwrap().insert(i));
 		}
 		if let Some(tr) = trs.last() {
+			dbg!(&tr.0);
 			check_avl(tr.0.as_deref().unwrap()).unwrap();
 		}
 	}
