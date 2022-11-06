@@ -8,3 +8,5 @@ pub mod tree;
 pub mod point;
 #[macro_use]
 pub mod vec_char;
+#[macro_use]
+pub mod matrix;

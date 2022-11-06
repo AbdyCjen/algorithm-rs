@@ -69,19 +69,15 @@ mod tests {
 	#[test]
 	fn test_63() {
 		assert_eq!(
-			Solution::unique_paths_with_obstacles(vec![
-				vec![0, 0, 0],
-				vec![0, 1, 0],
-				vec![0, 0, 0]
-			]),
+			Solution::unique_paths_with_obstacles(matrix![[0, 0, 0], [0, 1, 0], [0, 0, 0]]),
 			2
 		);
 		assert_eq!(
-			Solution::unique_paths_with_obstacles(vec![vec![0, 1], vec![0, 0]]),
+			Solution::unique_paths_with_obstacles(matrix![[0, 1], [0, 0]]),
 			1
 		);
 		assert_eq!(
-			Solution::unique_paths_with_obstacles(vec![vec![0, 0], vec![0, 1]]),
+			Solution::unique_paths_with_obstacles(matrix![[0, 0], [0, 1]]),
 			0
 		);
 	}

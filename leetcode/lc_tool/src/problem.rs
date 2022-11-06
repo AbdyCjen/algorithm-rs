@@ -121,7 +121,7 @@ struct ProblemDetailData {
 #[serde(rename_all = "camelCase")]
 struct ProblemDetail {
 	content: String,
-	stats: String,
+	//stats: String,
 	code_definition: String,
 	sample_test_case: String,
 	//meta_data: String,
@@ -157,7 +157,7 @@ struct QuestionListData {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct QuestListEntry {
-	question_id: String,
+	//question_id: String,
 	question_frontend_id: String,
 	title_slug: String,
 	is_paid_only: bool,

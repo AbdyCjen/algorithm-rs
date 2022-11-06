@@ -86,31 +86,21 @@ mod tests {
 	#[test]
 	fn test_310() {
 		assert_eq!(
-			Solution::find_min_height_trees(4, vec![vec![1, 0], vec![1, 2], vec![1, 3]]),
+			Solution::find_min_height_trees(4, matrix![[1, 0], [1, 2], [1, 3]]),
 			vec![1]
 		);
 		assert_eq!(
-			Solution::find_min_height_trees(
-				6,
-				vec![vec![0, 3], vec![1, 3], vec![2, 3], vec![4, 3], vec![5, 4]]
-			),
+			Solution::find_min_height_trees(6, matrix![[0, 3], [1, 3], [2, 3], [4, 3], [5, 4]]),
 			vec![3, 4]
 		);
 		assert_eq!(
-			Solution::find_min_height_trees(2, vec![vec![0, 1]]),
+			Solution::find_min_height_trees(2, matrix![[0, 1]]),
 			vec![0, 1]
 		);
 		assert_eq!(
 			Solution::find_min_height_trees(
 				7,
-				vec![
-					vec![0, 1],
-					vec![1, 2],
-					vec![1, 3],
-					vec![2, 4],
-					vec![3, 5],
-					vec![4, 6]
-				]
+				matrix![[0, 1], [1, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
 			),
 			vec![1, 2]
 		);

@@ -23,13 +23,13 @@ mod tests {
 	#[test]
 	fn test_perform_string_shifts() {
 		assert_eq!(
-			Solution::string_shift("abc".to_owned(), vec![vec![0, 1], vec![1, 2]]),
+			Solution::string_shift("abc".to_owned(), matrix![[0, 1], [1, 2]]),
 			"cab".to_owned()
 		);
 		assert_eq!(
 			Solution::string_shift(
 				"abcdefg".to_owned(),
-				vec![vec![1, 1], vec![1, 1], vec![0, 2], vec![1, 3]]
+				matrix![[1, 1], [1, 1], [0, 2], [1, 3]]
 			),
 			"efgabcd".to_owned()
 		);

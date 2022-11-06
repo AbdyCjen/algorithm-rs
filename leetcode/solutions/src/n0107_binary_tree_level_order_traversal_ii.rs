@@ -87,7 +87,7 @@ mod tests {
 	fn test_107() {
 		assert_eq!(
 			Solution::level_order_bottom(tree![3, 9, 20, null, null, 15, 7]),
-			vec![vec![15, 7], vec![9, 20], vec![3]]
+			matrix![[15, 7], [9, 20], [3]]
 		);
 	}
 }

@@ -128,19 +128,19 @@ mod tests {
 	#[test]
 	fn test_980() {
 		assert_eq!(
-			Solution::unique_paths_iii(vec![vec![1, 0, 0, 0], vec![0, 0, 0, 0], vec![0, 0, 2, -1]]),
+			Solution::unique_paths_iii(matrix![[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, -1]]),
 			2
 		);
 		assert_eq!(
-			Solution::unique_paths_iii(vec![vec![1, 0, 0, 0], vec![0, 0, 0, 0], vec![0, 0, 0, 2]]),
+			Solution::unique_paths_iii(matrix![[1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 2]]),
 			4
 		);
 		assert_eq!(
-			Solution::unique_paths_iii(vec![
-				vec![0, 0, 0, 0, 0],
-				vec![0, 2, 1, 0, 0],
-				vec![0, 0, 0, 0, 0],
-				vec![0, 0, 0, 0, 0]
+			Solution::unique_paths_iii(matrix![
+				[0, 0, 0, 0, 0],
+				[0, 2, 1, 0, 0],
+				[0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0]
 			]),
 			8
 		);

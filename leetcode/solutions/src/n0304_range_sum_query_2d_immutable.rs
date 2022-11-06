@@ -86,12 +86,12 @@ mod tests {
 
 	#[test]
 	fn test_304() {
-		let obj = NumMatrix::new(vec![
-			vec![3, 0, 1, 4, 2],
-			vec![5, 6, 3, 2, 1],
-			vec![1, 2, 0, 1, 5],
-			vec![4, 1, 0, 1, 7],
-			vec![1, 0, 3, 0, 5],
+		let obj = NumMatrix::new(matrix![
+			[3, 0, 1, 4, 2],
+			[5, 6, 3, 2, 1],
+			[1, 2, 0, 1, 5],
+			[4, 1, 0, 1, 7],
+			[1, 0, 3, 0, 5],
 		]);
 		assert_eq!(obj.sum_region(2, 1, 4, 3), 8);
 		assert_eq!(obj.sum_region(1, 1, 2, 2), 11);

@@ -95,7 +95,7 @@ mod tests {
 	fn test_113() {
 		assert_eq!(
 			Solution::path_sum(tree![5, 4, 8, 11, null, 13, 4, 7, 2, null, null, 5, 1], 22),
-			vec![vec![5, 4, 11, 2], vec![5, 8, 4, 5]]
+			matrix![[5, 4, 11, 2], [5, 8, 4, 5]]
 		)
 	}
 }

@@ -75,8 +75,8 @@ mod tests {
 	#[test]
 	fn test_733() {
 		assert_eq!(
-			Solution::flood_fill(vec![vec![1, 1, 1], vec![1, 1, 0], vec![1, 0, 1]], 1, 1, 2),
-			vec![vec![2, 2, 2], vec![2, 2, 0], vec![2, 0, 1]]
+			Solution::flood_fill(matrix![[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2),
+			matrix![[2, 2, 2], [2, 2, 0], [2, 0, 1]]
 		);
 	}
 }

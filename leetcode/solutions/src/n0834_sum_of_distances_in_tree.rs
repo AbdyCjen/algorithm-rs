@@ -85,10 +85,7 @@ mod tests {
 	fn test_863() {
 		assert_eq!(
 			vec![8, 12, 6, 10, 10, 10],
-			Solution::sum_of_distances_in_tree(
-				6,
-				vec![vec![0, 1], vec![0, 2], vec![2, 3], vec![2, 4], vec![2, 5]]
-			)
+			Solution::sum_of_distances_in_tree(6, matrix![[0, 1], [0, 2], [2, 3], [2, 4], [2, 5]])
 		)
 	}
 }

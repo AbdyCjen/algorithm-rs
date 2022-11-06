@@ -57,7 +57,7 @@ mod tests {
 	#[test]
 	fn test_120() {
 		assert_eq!(
-			Solution::minimum_total(vec![vec![2], vec![3, 4], vec![6, 5, 7], vec![4, 1, 8, 3]]),
+			Solution::minimum_total(matrix![[2], [3, 4], [6, 5, 7], [4, 1, 8, 3]]),
 			11
 		)
 	}

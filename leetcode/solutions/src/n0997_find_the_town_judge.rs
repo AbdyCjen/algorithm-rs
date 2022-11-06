@@ -107,18 +107,12 @@ mod tests {
 
 	#[test]
 	fn test_1039() {
-		assert_eq!(Solution::find_judge(2, vec![vec![1, 2]]), 2);
-		assert_eq!(Solution::find_judge(3, vec![vec![1, 3], vec![2, 3]]), 3);
+		assert_eq!(Solution::find_judge(2, matrix![[1, 2]]), 2);
+		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3]]), 3);
+		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3], [3, 1]]), -1);
+		assert_eq!(Solution::find_judge(3, matrix![[1, 2], [2, 3]]), -1);
 		assert_eq!(
-			Solution::find_judge(3, vec![vec![1, 3], vec![2, 3], vec![3, 1]]),
-			-1
-		);
-		assert_eq!(Solution::find_judge(3, vec![vec![1, 2], vec![2, 3]]), -1);
-		assert_eq!(
-			Solution::find_judge(
-				4,
-				vec![vec![1, 3], vec![1, 4], vec![2, 3], vec![2, 4], vec![4, 3]]
-			),
+			Solution::find_judge(4, matrix![[1, 3], [1, 4], [2, 3], [2, 4], [4, 3]]),
 			3
 		);
 	}

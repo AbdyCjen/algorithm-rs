@@ -42,10 +42,10 @@ impl Solution {
 	// 依次类推, 可知针对固定的pickup序列，总共有1 * 3 *..(2n - 1)个order序列
 	// 根据枚举规则总共有n!个pickup序列, 所以结果为n! * 1 * 3 * ..(2n - 1)
 	pub fn count_orders(n: i32) -> i32 {
-		const mo: i64 = 1e9 as i64 + 7;
+		const MO: i64 = 1e9 as i64 + 7;
 		(1..=n as i64)
-			.map(|i| (i * 2 - 1) * i % mo)
-			.fold(1, |i, v| i * v % mo) as _
+			.map(|i| (i * 2 - 1) * i % MO)
+			.fold(1, |i, v| i * v % MO) as _
 	}
 }
 

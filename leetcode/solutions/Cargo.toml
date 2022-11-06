@@ -1,7 +1,6 @@
 [package]
 name = "solutions"
 version = "0.1.0"
-authors = ["ajen <19960524andy@gmail.com>"]
 edition = "2018"
 
 [dependencies]

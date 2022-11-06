@@ -45,7 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 		.find(|&d| d.value == "rust")
 		.unwrap_or_else(|| panic!("Problem {} has no rust version.", &id));
 
-	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace("-", "_"));
+	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace('-', "_"));
 	let file_path = Path::new("./src").join(format!("{}.rs", file_name));
 	assert!(!file_path.exists(), "problem already initialized");
 
@@ -176,7 +176,7 @@ fn build_desc(content: &str) -> String {
 		.replace("&minus;", "-")
 		.replace("&#39;", "'")
 		.replace("\n\n", "\n")
-		.replace("\n", "\n * ")
+		.replace('\n', "\n * ")
 		.replace("\r\n", "\n")
-		.replace("\t", "    ")
+		.replace('\t', "    ")
 }

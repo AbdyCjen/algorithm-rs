@@ -98,28 +98,13 @@ mod tests {
 
 	#[test]
 	fn test_1860() {
-		assert_eq!(
-			Solution::kth_largest_value(vec![vec![5, 2], vec![1, 6]], 1),
-			7
-		);
-		assert_eq!(
-			Solution::kth_largest_value(vec![vec![5, 2], vec![1, 6]], 2),
-			5
-		);
-		assert_eq!(
-			Solution::kth_largest_value(vec![vec![5, 2], vec![1, 6]], 3),
-			4
-		);
-		assert_eq!(
-			Solution::kth_largest_value(vec![vec![5, 2], vec![1, 6]], 4),
-			0
-		);
+		assert_eq!(Solution::kth_largest_value(matrix![[5, 2], [1, 6]], 1), 7);
+		assert_eq!(Solution::kth_largest_value(matrix![[5, 2], [1, 6]], 2), 5);
+		assert_eq!(Solution::kth_largest_value(matrix![[5, 2], [1, 6]], 3), 4);
+		assert_eq!(Solution::kth_largest_value(matrix![[5, 2], [1, 6]], 4), 0);
 
 		assert_eq!(
-			Solution::kth_largest_value(
-				vec![vec![10, 9, 5], vec![2, 0, 4], vec![1, 0, 9], vec![3, 4, 8]],
-				10
-			),
+			Solution::kth_largest_value(matrix![[10, 9, 5], [2, 0, 4], [1, 0, 9], [3, 4, 8]], 10),
 			1
 		);
 	}

@@ -55,13 +55,10 @@ mod tests {
 
 	#[test]
 	fn test_64() {
+		assert_eq!(Solution::min_path_sum(matrix![[1, 2, 5], [3, 2, 1]]), 6);
 		assert_eq!(
-			Solution::min_path_sum(vec![vec![1, 3, 1], vec![1, 5, 1], vec![4, 2, 1]]),
+			Solution::min_path_sum(matrix![[1, 3, 1], [1, 5, 1], [4, 2, 1]]),
 			7
-		);
-		assert_eq!(
-			Solution::min_path_sum(vec![vec![1, 2, 5], vec![3, 2, 1]]),
-			6
-		);
+		)
 	}
 }

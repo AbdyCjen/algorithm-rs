@@ -73,18 +73,13 @@ mod tests {
 	#[test]
 	fn test_630() {
 		assert_eq!(
-			Solution::schedule_course(vec![
-				vec![100, 200],
-				vec![200, 1300],
-				vec![1000, 1250],
-				vec![2000, 3200]
-			]),
+			Solution::schedule_course(matrix![[100, 200], [200, 1300], [1000, 1250], [2000, 3200]]),
 			3
 		);
-		assert_eq!(Solution::schedule_course(vec![vec![1, 2]]), 1);
-		assert_eq!(Solution::schedule_course(vec![vec![3, 2], vec![4, 3]]), 0);
+		assert_eq!(Solution::schedule_course(matrix![[1, 2]]), 1);
+		assert_eq!(Solution::schedule_course(matrix![[3, 2], [4, 3]]), 0);
 		assert_eq!(
-			Solution::schedule_course(vec![vec![3, 3], vec![3, 6], vec![2, 7], vec![1, 7]]),
+			Solution::schedule_course(matrix![[3, 3], [3, 6], [2, 7], [1, 7]]),
 			3
 		);
 	}
