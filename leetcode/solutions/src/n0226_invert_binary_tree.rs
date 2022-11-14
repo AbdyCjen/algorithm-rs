@@ -57,17 +57,17 @@ use std::{cell::RefCell, rc::Rc};
 impl Solution {
 	pub fn invert_tree(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
 		root.map(|root| {
-			Self::invert(&mut *root.borrow_mut());
+			Self::invert(&mut root.borrow_mut());
 			root
 		})
 	}
 	fn invert(root: &mut TreeNode) {
 		std::mem::swap(&mut root.left, &mut root.right);
 		if let Some(o) = root.left.as_mut() {
-			Self::invert(&mut *o.borrow_mut())
+			Self::invert(&mut o.borrow_mut())
 		}
 		if let Some(o) = root.right.as_mut() {
-			Self::invert(&mut *o.borrow_mut())
+			Self::invert(&mut o.borrow_mut())
 		}
 	}
 }

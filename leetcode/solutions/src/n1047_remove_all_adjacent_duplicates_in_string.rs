@@ -30,7 +30,23 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
+	// local
 	pub fn remove_duplicates(s: String) -> String {
+		let mut i = 0;
+		let mut s = s.into_bytes();
+		for j in 0..s.len() {
+			if i > 0 && s[i - 1] == s[j] {
+				i -= 1;
+			} else {
+				s[i] = s[j];
+				i += 1;
+			}
+		}
+		s.truncate(i);
+		String::from_utf8(s).unwrap()
+	}
+
+	pub fn remove_duplicates_01(s: String) -> String {
 		let s = s.into_bytes();
 		let mut ans = Vec::new();
 

@@ -44,27 +44,28 @@ pub struct Solution {}
 impl Solution {
 	pub fn maximum_subarray_sum(nums: Vec<i32>, k: i32) -> i64 {
 		let k = k as usize;
-		let mut set = std::collections::BTreeSet::new();
+		let mut set = std::collections::HashSet::new();
 		let mut s = 0;
 		let mut ans = 0;
-		let mut i = 0;
-		for (j, &n) in nums.iter().enumerate() {
+		let mut i = nums.iter().copied();
+		for &n in nums.iter() {
 			s += n as i64;
 
 			if !set.insert(n) {
-				while nums[i] != n {
-					set.remove(&nums[i]);
-					s -= nums[i] as i64;
-					i += 1;
+				for cur in i.by_ref() {
+					s -= cur as i64;
+					if cur != n {
+						set.remove(&cur);
+					} else {
+						break;
+					}
 				}
-				s -= nums[i] as i64;
-				i += 1;
 			}
-			if j - i + 1 == k {
+			if set.len() == k {
 				ans = ans.max(s);
-				set.remove(&nums[i]);
-				s -= nums[i] as i64;
-				i += 1;
+				let cur = i.next().unwrap();
+				set.remove(&cur);
+				s -= cur as i64;
 			}
 		}
 

@@ -35,7 +35,7 @@ impl Solution {
 	pub fn reverse_pairs(nums: Vec<i32>) -> i32 {
 		// (val, lcnt, rcnt)
 		let mut st = vec![(0, 0, 0); 0];
-		if let Some(&i) = nums.get(0) {
+		if let Some(&i) = nums.first() {
 			st.push((i, 0, 0));
 		} else {
 			return 0;

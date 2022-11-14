@@ -36,7 +36,7 @@ impl Solution {
 			k.sort_unstable();
 			m.entry(k).or_insert_with(Vec::new).push(s);
 		}
-		m.into_iter().map(|(_, v)| v).collect()
+		m.into_values().collect()
 	}
 }
 

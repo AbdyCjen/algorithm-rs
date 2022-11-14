@@ -2,7 +2,6 @@
 pub struct Solution {}
 
 use std::collections::HashSet;
-#[allow(dead_code)]
 impl Solution {
 	pub fn count_elements(arr: Vec<i32>) -> i32 {
 		let mut hs = HashSet::new();
@@ -10,7 +9,7 @@ impl Solution {
 			hs.insert(n);
 		}
 		arr.iter()
-			.fold(0, |acc, n| acc + if hs.contains(&(n + 1)) { 1 } else { 0 })
+			.fold(0, |acc, n| acc + hs.contains(&(n + 1)) as i32)
 	}
 }
 

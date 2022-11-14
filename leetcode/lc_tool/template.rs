@@ -7,7 +7,6 @@ pub struct Solution {}__EXTRA_USE__
 
 // submission codes start here
 
-#[allow(dead_code)]
 __PROBLEM_DEFAULT_CODE__
 
 // submission codes end
