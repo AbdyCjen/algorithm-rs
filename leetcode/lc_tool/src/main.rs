@@ -16,18 +16,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 		(about : env!("CARGO_PKG_DESCRIPTION"))
 		(@setting DisableHelpSubcommand)
 		(@setting VersionlessSubcommands)
-		(@arg id: -i +takes_value +required "question id, if not set, pick a rand one")
+		(@arg id: -i +takes_value !required "question id, if not set, pick a rand one")
 		(@arg random: -r !takes_value !required "random pick flag, if set, pick a random unsolved question")
+		(@arg daily: -d !takes_value !required "daily challenge flag")
 	}
 	.get_matches();
 	let solved_ids = get_solved_ids();
 	let id = if matches.is_present("random") {
 		generate_random_id(&solved_ids)
+	} else if matches.is_present("daily") {
+		problem::get_daily_id()
 	} else {
 		matches.value_of("id").unwrap().parse::<u32>().unwrap()
 	};
+
 	if solved_ids.contains(&id) {
-		println!("the problem is already solved");
+		println!("problem-{id} is already solved");
 		return Ok(());
 	}
 
@@ -47,7 +51,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace('-', "_"));
 	let file_path = Path::new("./src").join(format!("{}.rs", file_name));
-	assert!(!file_path.exists(), "problem already initialized");
+	assert!(!file_path.exists(), "problem-{id} already  initialized");
 
 	let template = include_str!("../template.rs");
 	let source = template
@@ -96,6 +100,7 @@ fn generate_random_id(except_ids: &[u32]) -> u32 {
 		);
 	}
 }
+
 
 fn get_solved_ids() -> Vec<u32> {
 	let paths = fs::read_dir("./src").unwrap();

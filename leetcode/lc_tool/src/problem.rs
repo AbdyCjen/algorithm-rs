@@ -29,6 +29,20 @@ query questionData($titleSlug: String!) {
 }"#;
 const QUESTION_QUERY_OPERATION: &str = "questionData";
 
+pub fn get_daily_id() -> u32 {
+	let cli = reqwest::Client::new();
+	cli.post(GRAPHQL_URL)
+		.json(&Query::daily_problem_query())
+		.send()
+		.unwrap()
+		.json::<serde_json::Value>()
+		.unwrap()["data"]["activeDailyCodingChallengeQuestion"]["question"]["frontendQuestionId"]
+		.as_str()
+		.unwrap()
+		.parse::<u32>()
+		.unwrap()
+}
+
 pub fn get_problem(id: u32) -> Option<Problem> {
 	let id = id.to_string();
 	let problem = get_problems()
@@ -84,25 +98,42 @@ pub struct CodeDefinition {
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct Query {
-	operation_name: String,
+	operation_name: &'static str,
 	variables: serde_json::Value,
-	query: String,
+	query: &'static str,
 }
 
 impl Query {
 	fn question_query(title_slug: &str) -> Query {
 		Query {
-			operation_name: QUESTION_QUERY_OPERATION.to_owned(),
+			operation_name: QUESTION_QUERY_OPERATION,
 			variables: json!({ "titleSlug": title_slug }),
-			query: QUESTION_QUERY_STRING.to_owned(),
+			query: QUESTION_QUERY_STRING,
 		}
 	}
 
 	fn question_list_query() -> Query {
 		Query {
-			operation_name: QUESTION_LIST_OPERATION.to_owned(),
+			operation_name: QUESTION_LIST_OPERATION,
 			variables: json!({}),
-			query: QUESTION_LIST_QUERY_STRING.to_owned(),
+			query: QUESTION_LIST_QUERY_STRING,
+		}
+	}
+
+	fn daily_problem_query() -> Query {
+		Query {
+			operation_name: "",
+			variables: json!({}),
+			query: r#"
+	query questionOfToday {
+	  activeDailyCodingChallengeQuestion {
+		question {
+		  frontendQuestionId: questionFrontendId
+		  titleSlug
+		}
+	  }
+	}
+"#,
 		}
 	}
 }
