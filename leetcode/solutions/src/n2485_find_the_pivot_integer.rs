@@ -1,0 +1,65 @@
+/**
+ * [2485] Find the Pivot Integer
+ *
+ * Given a positive integer n, find the pivot integer x such that:
+ *
+ *     The sum of all elements between 1 and x inclusively equals the sum of all elements between x and n inclusively.
+ *
+ * Return the pivot integer x. If no such integer exists, return -1. It is guaranteed that there will be at most one pivot index for the given input.
+ *  
+ * <strong class="example">Example 1:
+ *
+ * Input: n = 8
+ * Output: 6
+ * Explanation: 6 is the pivot integer since: 1 + 2 + 3 + 4 + 5 + 6 = 6 + 7 + 8 = 21.
+ *
+ * <strong class="example">Example 2:
+ *
+ * Input: n = 1
+ * Output: 1
+ * Explanation: 1 is the pivot integer since: 1 = 1.
+ *
+ * <strong class="example">Example 3:
+ *
+ * Input: n = 4
+ * Output: -1
+ * Explanation: It can be proved that no such integer exist.
+ *
+ *  
+ * Constraints:
+ *
+ *     1 <= n <= 1000
+ *
+ */
+pub struct Solution {}
+
+// submission codes start here
+
+impl Solution {
+	pub fn pivot_integer(n: i32) -> i32 {
+		if n <= 1 {
+			return n;
+		}
+		let sn = (1 + n) * n / 2;
+		let mut s = 0;
+		for i in 1..n {
+			s += i;
+			if s * 2 == sn + i {
+				return i;
+			}
+		}
+		-1
+	}
+}
+
+// submission codes end
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn test_2485() {
+		assert_eq!(Solution::pivot_integer(8), 6);
+	}
+}
