@@ -32,21 +32,23 @@ use super::util::linked_list::ListNode;
 // }
 impl Solution {
 	pub fn merge_two_lists(
-		mut l: Option<Box<ListNode>>,
-		mut r: Option<Box<ListNode>>,
+		l: Option<Box<ListNode>>,
+		r: Option<Box<ListNode>>,
 	) -> Option<Box<ListNode>> {
-		let mut dummy = ListNode::new(-1);
-		let mut cur_ptr = &mut dummy;
-		while let (Some(lnext), Some(rnext)) = (&mut l, &mut r) {
-			if lnext.val > rnext.val {
-				std::mem::swap(lnext, rnext);
+		let mut list = None;
+		let mut cur = &mut list;
+		let mut lr = (l, r);
+		while let (Some(mut ln), Some(mut rn)) = lr {
+			if ln.val > rn.val {
+				lr = (rn.next.take(), Some(ln));
+				cur = &mut cur.insert(rn).next;
+			} else {
+				lr = (ln.next.take(), Some(rn));
+				cur = &mut cur.insert(ln).next;
 			}
-			cur_ptr.next = l.take();
-			cur_ptr = cur_ptr.next.as_mut().unwrap();
-			l = cur_ptr.next.take();
 		}
-		cur_ptr.next = l.or(r);
-		dummy.next
+		*cur = lr.0.or(lr.1);
+		list
 	}
 }
 

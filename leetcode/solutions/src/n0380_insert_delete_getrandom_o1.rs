@@ -39,10 +39,9 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::{hash_map::Entry, HashMap};
+use std::collections::HashMap;
 
-use rand::random;
-#[allow(dead_code)]
+#[derive(Default)]
 struct RandomizedSet {
 	set: HashMap<i32, usize>,
 	nums: Vec<i32>,
@@ -53,14 +52,10 @@ struct RandomizedSet {
  * If you need a mutable reference, change it to `&mut self` instead.
  */
 impl RandomizedSet {
-	fn new() -> Self {
-		Self {
-			set: HashMap::new(),
-			nums: Vec::new(),
-		}
-	}
+	fn new() -> Self { Self::default() }
 
 	fn insert(&mut self, val: i32) -> bool {
+		use std::collections::hash_map::Entry;
 		if let Entry::Vacant(e) = self.set.entry(val) {
 			e.insert(self.nums.len());
 			self.nums.push(val);
@@ -71,10 +66,10 @@ impl RandomizedSet {
 	}
 
 	fn remove(&mut self, val: i32) -> bool {
-		if let Some(e) = self.set.remove(&val) {
-			self.nums.swap_remove(e);
-			if let Some(&v) = self.nums.get(e) {
-				self.set.insert(v, e);
+		if let Some(idx) = self.set.remove(&val) {
+			self.nums.swap_remove(idx);
+			if let Some(&v) = self.nums.get(idx) {
+				self.set.insert(v, idx);
 			}
 			true
 		} else {
@@ -82,7 +77,7 @@ impl RandomizedSet {
 		}
 	}
 
-	fn get_random(&self) -> i32 { self.nums[random::<usize>() % self.nums.len()] }
+	fn get_random(&self) -> i32 { self.nums[rand::random::<usize>() % self.nums.len()] }
 }
 
 /**

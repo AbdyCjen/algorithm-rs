@@ -37,40 +37,30 @@ pub struct Solution {}
 impl Solution {
 	pub fn shortest_path(grid: Vec<Vec<i32>>, k: i32) -> i32 {
 		let (m, n) = (grid.len(), grid[0].len());
-		let mut visited = vec![vec![vec![false; k as usize + 1]; n]; m];
-		let is_visited = |visited: &Vec<Vec<Vec<bool>>>, i: usize, j: usize, r: usize| {
-			visited[i][j][..=r].iter().any(|b| *b)
-		};
+		let mut visited = vec![vec![k + 1; n]; m];
+		visited[0][0] = 0;
 
-		let (m, n) = (m as i32, n as i32);
-		let mut dq = std::collections::VecDeque::new();
-		dq.push_back((0, 0, 0));
-		let dirs = [(0, 1), (1, 0), (-1, 0), (0, -1)];
-		let mut d = 0;
+		let mut dq = vec![(0, 0, 0)];
+		let mut step = 0;
 		while !dq.is_empty() {
-			for (i, j, r) in dq.split_off(0) {
-				for (i, j) in dirs
-					.iter()
-					.map(|dir| (i + dir.0, j + dir.1))
-					.filter(|(i, j)| (0..m).contains(i) && (0..n).contains(j))
-				{
-					let (i, j) = (i as usize, j as usize);
-					if grid[i][j] == 1 && r < k {
-						let r = r + 1;
-						if !is_visited(&visited, i, j, r as _) {
-							dq.push_back((i as _, j as _, r));
-							visited[i][j][r as usize] = true;
+			for (i, j, brk) in std::mem::take(&mut dq) {
+				if i as usize == m - 1 && j as usize == n - 1 {
+					return step;
+				}
+				for (ii, jj) in [(i, j + 1), (i, j - 1), (i + 1, j), (i - 1, j)] {
+					if ii >= 0
+						&& ii < m as i32 && jj >= 0
+						&& jj < n as i32 && visited[ii as usize][jj as usize] > brk
+					{
+						let brk = grid[ii as usize][jj as usize] + brk;
+						if brk <= k {
+							visited[ii as usize][jj as usize] = brk;
+							dq.push((ii, jj, brk));
 						}
-					} else if grid[i][j] == 0 && !is_visited(&visited, i, j, r as _) {
-						dq.push_back((i as _, j as _, r));
-						visited[i][j][r as usize] = true;
 					}
 				}
-				if i == m - 1 && j == n - 1 {
-					return d;
-				}
 			}
-			d += 1;
+			step += 1;
 		}
 		-1
 	}
@@ -84,10 +74,10 @@ mod tests {
 
 	#[test]
 	fn test_1293() {
-		let mat = matrix![[0, 0, 0], [1, 1, 0], [0, 0, 0], [0, 1, 1], [0, 0, 0]];
-		assert_eq!(Solution::shortest_path(mat, 1), 6);
 		let mat = matrix![[0, 1, 1], [1, 1, 1], [1, 0, 0]];
 		assert_eq!(Solution::shortest_path(mat, 1), -1);
+		let mat = matrix![[0, 0, 0], [1, 1, 0], [0, 0, 0], [0, 1, 1], [0, 0, 0]];
+		assert_eq!(Solution::shortest_path(mat, 1), 6);
 		assert_eq!(Solution::shortest_path(vec![vec![0]], 0), 0);
 		let mat = matrix![
 			[
