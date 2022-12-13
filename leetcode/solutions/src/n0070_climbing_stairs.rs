@@ -31,22 +31,8 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn climb_stairs(n: i32) -> i32 {
-		if n <= 1 {
-			return 1;
-		} else if n == 2 {
-			return 2;
-		}
-		let (mut a, mut b) = (1, 2);
-		for _ in 2..n {
-			let c = a + b;
-			a = b;
-			b = c;
-		}
-		b
-	}
+	pub fn climb_stairs(n: i32) -> i32 { (0..n).fold((0, 1), |(a, b), _| (b, a + b)).1 }
 }
 
 // submission codes end

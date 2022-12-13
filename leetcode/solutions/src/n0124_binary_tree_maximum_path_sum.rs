@@ -56,22 +56,19 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
 	pub fn max_path_sum(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, res: &mut i32) -> i32 {
-			root.map(|root| {
-				let mut root = root.borrow_mut();
-				let lsum = path_sum(root.left.take(), res);
-				let rsum = path_sum(root.right.take(), res);
-				*res = (root.val + lsum + rsum).max(*res);
-				(root.val + lsum.max(rsum)).max(0)
-			})
-			.unwrap_or(0)
+		root.map(|r| Self::solve(&r.borrow()).1).unwrap_or(0)
+	}
+	fn solve(root: &TreeNode) -> (i32, i32) {
+		let (mut sum, mut ans, mut cand) = (0, root.val, root.val);
+		for no in [&root.left, &root.right].iter().copied().flatten() {
+			let (s, a) = Self::solve(&no.borrow());
+			sum = sum.max(s);
+			cand += 0.max(s);
+			ans = ans.max(a);
 		}
-		let mut res = std::i32::MIN;
-		path_sum(root, &mut res);
-		res
+		(sum + root.val, ans.max(cand))
 	}
 }
 
