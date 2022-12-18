@@ -32,6 +32,11 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn rob(nums: Vec<i32>) -> i32 {
+		nums.into_iter()
+			.fold((0, 0), |(p1, p2), n| (p2, p2.max(p1 + n)))
+			.1
+	}
+	pub fn rob_1(nums: Vec<i32>) -> i32 {
 		let mut dp = [0, 0, 0, 0];
 		for (&n, i) in nums.iter().zip(4..) {
 			dp[i % 4] = dp[(i - 1) % 4].max(dp[(i - 2) % 4] + n);

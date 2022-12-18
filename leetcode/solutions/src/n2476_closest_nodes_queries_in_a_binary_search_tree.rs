@@ -75,8 +75,6 @@ impl Solution {
 		ans
 	}
 
-	fn compress(root: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> { None }
-
 	fn straighten(
 		root: Option<Rc<RefCell<TreeNode>>>,
 		tail: Option<Rc<RefCell<TreeNode>>>,

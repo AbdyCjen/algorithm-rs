@@ -36,6 +36,18 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn rob(nums: Vec<i32>) -> i32 {
+		let a1 = nums
+			.iter()
+			.fold((0, 0), |(p1, p2), &n| (p2, p2.max(p1 + n)))
+			.0;
+		let a2 = nums
+			.iter()
+			.rev()
+			.fold((0, 0), |(p1, p2), &n| (p2, p2.max(p1 + n)))
+			.0;
+		a1.max(a2).max(nums[0])
+	}
+	pub fn rob_1(nums: Vec<i32>) -> i32 {
 		if nums.len() <= 3 {
 			return nums.into_iter().max().unwrap();
 		}

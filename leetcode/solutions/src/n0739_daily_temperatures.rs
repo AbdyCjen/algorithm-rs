@@ -12,7 +12,23 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
-	pub fn daily_temperatures(mut temps: Vec<i32>) -> Vec<i32> {
+	pub fn daily_temperatures(temps: Vec<i32>) -> Vec<i32> {
+		let mut ans = vec![0; temps.len()];
+		let mut st = vec![];
+		for (i, t) in temps.into_iter().enumerate() {
+			while let Some(&(ii, tt)) = st.last() {
+				if tt < t {
+					ans[ii] = (i - ii) as i32;
+					st.pop();
+				} else {
+					break;
+				}
+			}
+			st.push((i, t));
+		}
+		ans
+	}
+	pub fn daily_temperatures_1(mut temps: Vec<i32>) -> Vec<i32> {
 		let mut mono_stk = vec![(0, temps.pop().unwrap())];
 		let mut ans = vec![0];
 

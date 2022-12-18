@@ -51,6 +51,26 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn eval_rpn(tokens: Vec<String>) -> i32 {
+		let mut st = vec![];
+		for tok in tokens {
+			let new = match tok.as_str() {
+				"+" => st.pop().unwrap() + st.pop().unwrap(),
+				"*" => st.pop().unwrap() * st.pop().unwrap(),
+				"/" => {
+					let ro = st.pop().unwrap();
+					st.pop().unwrap() / ro
+				}
+				"-" => {
+					let ro = st.pop().unwrap();
+					st.pop().unwrap() - ro
+				}
+				s => s.parse::<i32>().unwrap(),
+			};
+			st.push(new);
+		}
+		st.pop().unwrap()
+	}
+	pub fn eval_rpn_1(tokens: Vec<String>) -> i32 {
 		let mut st: Vec<i32> = vec![];
 
 		for tok in &tokens {
