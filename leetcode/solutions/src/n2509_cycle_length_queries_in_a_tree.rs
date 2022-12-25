@@ -56,6 +56,28 @@ impl Solution {
 		queries
 			.into_iter()
 			.map(|q| {
+				let q = (q[0] as u32, q[1] as u32);
+				let (mut p1, mut p2) = (
+					(q.0 + 1).next_power_of_two() >> 1,
+					(q.1 + 1).next_power_of_two() >> 1,
+				);
+				while p1 > 0 && p2 > 0 && (p1 & q.0 > 0) == (p2 & q.1 > 0) {
+					p1 >>= 1;
+					p2 >>= 1;
+				}
+				match (p1, p2) {
+					(0, 0) => 1,
+					(0, n) | (n, 0) => n.trailing_zeros() as i32 + 2,
+					(n, m) => (n.trailing_zeros() + m.trailing_zeros()) as i32 + 3,
+				}
+			})
+			.collect()
+	}
+
+	pub fn cycle_length_queries_1(_: i32, queries: Vec<Vec<i32>>) -> Vec<i32> {
+		queries
+			.into_iter()
+			.map(|q| {
 				let (mut p1, mut p2) = (Self::pos(q[0]).into_iter(), Self::pos(q[1]).into_iter());
 				let cur = loop {
 					match (p1.next(), p2.next()) {

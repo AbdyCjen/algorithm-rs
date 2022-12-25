@@ -50,7 +50,7 @@ mod tests {
 	fn test_187() {
 		assert_eq!(
 			Solution::find_repeated_dna_sequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT".to_owned()),
-			vec_string!["AAAAACCCCC", "CCCCCAAAAA"]
+			vec_string!["CCCCCAAAAA", "AAAAACCCCC"]
 		);
 		assert_eq!(
 			Solution::find_repeated_dna_sequences("AAAAAAAAAAAAA".to_owned()),

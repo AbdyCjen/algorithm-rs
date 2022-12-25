@@ -32,43 +32,45 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
-	pub fn sum_of_distances_in_tree(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
-		let n = n as usize;
-		let mut adj: Vec<Vec<_>> = vec![Vec::new(); n];
+	pub fn sum_of_distances_in_tree(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> { todo!() }
+
+	pub fn sum_of_distances_in_tree_1(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
+		let mut adj: Vec<Vec<_>> = vec![Vec::new(); n as usize];
 		for edge in edges {
-			adj[edge[0] as usize].push(edge[1] as usize);
-			adj[edge[1] as usize].push(edge[0] as usize);
+			adj[edge[0] as usize].push(edge[1]);
+			adj[edge[1] as usize].push(edge[0]);
 		}
 
-		let mut child_cnts = vec![0; n];
-		let (_, dist) = count_child(&adj, &mut child_cnts, 0, std::usize::MAX);
-		let mut res = vec![0; n];
+		let mut child_cnts = vec![0; n as usize];
+		let (_, dist) = count_child(&adj, &mut child_cnts, 0, -1);
+		let mut res = vec![0; n as usize];
 		res[0] = dist;
-		dfs(&mut res, &child_cnts, &adj, 0, std::usize::MAX);
+		dfs(&mut res, &child_cnts, &adj, 0, n + 1);
 		return res;
 
 		fn count_child(
-			adj: &[Vec<usize>],
+			adj: &[Vec<i32>],
 			child_cnts: &mut [i32],
-			cur: usize,
-			parent: usize,
+			cur: i32,
+			parent: i32,
 		) -> (i32, i32) {
-			let (child_cnt, child_dist) = adj[cur]
+			let (cnt, dist) = adj[cur as usize]
 				.iter()
 				.copied()
 				.filter(|i| *i != parent)
 				.map(|nei| count_child(adj, child_cnts, nei, cur))
 				.fold((0, 0), |(a, b), (i, j)| (a + i, b + j));
-			child_cnts[cur] = child_cnt;
-			(child_cnt + 1, child_dist + child_cnt)
+			child_cnts[cur as usize] = cnt;
+			(cnt + 1, dist + cnt)
 		}
 
-		fn dfs(res: &mut [i32], child_cnts: &[i32], adj: &[Vec<usize>], cur: usize, parent: usize) {
-			if let Some(p) = res.get(parent) {
-				res[cur] = p - child_cnts[cur] + (child_cnts.len() as i32 - 2 - child_cnts[cur]);
+		fn dfs(res: &mut [i32], child_cnts: &[i32], adj: &[Vec<i32>], cur: i32, parent: i32) {
+			if let Some(p) = res.get(parent as usize) {
+				res[cur as usize] = p - child_cnts[cur as usize]
+					+ (child_cnts.len() as i32 - 2 - child_cnts[cur as usize]);
 			}
 
-			for nei in adj[cur].iter().copied().filter(|i| *i != parent) {
+			for nei in adj[cur as usize].iter().copied().filter(|i| *i != parent) {
 				dfs(res, child_cnts, adj, nei, cur);
 			}
 		}
