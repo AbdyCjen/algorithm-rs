@@ -62,60 +62,36 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn unique_paths_iii(mut grid: Vec<Vec<i32>>) -> i32 {
-		fn dfs(grid: &mut [Vec<i32>], i: usize, j: usize, cnt: i32) -> i32 {
-			if grid[i][j] == 2 {
-				if cnt == 0 {
-					return 1;
-				} else {
-					return 0;
-				}
-			} else if grid[i][j] < 0 {
-				return 0;
+		fn dfs(grid: &mut [Vec<i32>], i: i32, j: i32, cnt: i32) -> i32 {
+			match (grid[i as usize][j as usize], cnt) {
+				(2, 0) => return 1,
+				(2 | -1, _) => return 0,
+				_ => {}
 			}
-			let (m, n) = (grid.len() as isize, grid[0].len() as isize);
-
-			grid[i][j] = -2;
-			let walked = |grid: &[Vec<i32>], i: isize, j: isize| {
-				(0..m).contains(&i) && (0..n).contains(&j) && -2 == grid[i as usize][j as usize]
-			};
-			let valid_all = |grid: &[Vec<i32>], i: isize, j: isize| {
-				(0..m).contains(&i)
-					&& (0..n).contains(&j)
-					&& [0, 2].contains(&grid[i as usize][j as usize])
-			};
-			let ans = [(0, 1), (0, -1), (-1, 0), (1, 0)]
-				.iter()
-				.filter_map(|(ii, jj)| {
-					let (i, j) = (i as isize + ii, j as isize + jj);
-					if valid_all(grid, i, j)
-						&& (!walked(grid, i + ii, j + jj) // 额, 这个剪枝不用其实也能过...
-							|| !valid_all(grid, i + jj, j + ii)
-							|| !valid_all(grid, i - jj, j - ii))
-					{
-						Some(dfs(grid, i as usize, j as usize, cnt - 1))
-					} else {
-						None
-					}
-				})
-				.sum();
-			grid[i][j] = 0;
-
-			ans
+			let (m, n) = (grid.len() as i32, grid[0].len() as i32);
+			grid[i as usize][j as usize] = -1;
+			let mut s = 0;
+			for (i, j) in [(i, j + 1), (i, j - 1), (i - 1, j), (i + 1, j)] {
+				if i >= 0 && i < m && j >= 0 && j < n && grid[i as usize][j as usize] >= 0 {
+					s += dfs(grid, i, j, cnt - 1);
+				}
+			}
+			grid[i as usize][j as usize] = 0;
+			s
 		}
-		let (i, j) = grid
-			.iter()
-			.map(|row| row.iter().position(|&i| i == 1))
-			.enumerate()
-			.find_map(|(i, o)| Some((i, o?)))
-			.unwrap_or((0, 0));
-		let cnt = grid
-			.iter()
-			.map(|r| r.iter().filter(|i| **i == 0).count())
-			.sum::<usize>() as i32;
-		dfs(&mut grid, i, j, cnt + 1)
+		let (mut pos, mut cnt) = ((0, 0), 0);
+		for (row, i) in grid.iter().zip(0..) {
+			for (&v, j) in row.iter().zip(0..) {
+				match v {
+					0 => cnt += 1,
+					1 => pos = (i, j),
+					_ => {}
+				}
+			}
+		}
+		dfs(&mut grid, pos.0, pos.1, cnt + 1)
 	}
 }
 

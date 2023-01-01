@@ -28,9 +28,18 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn can_jump(nums: Vec<i32>) -> bool {
+		let mut reach = 0;
+		for (i, s) in nums.into_iter().zip(0..) {
+			if i > reach {
+				return false;
+			}
+			reach = reach.max(i + s);
+		}
+		true
+	}
+	pub fn can_jump_1(nums: Vec<i32>) -> bool {
 		let (mut cur, mut end, l) = (0, 0, nums.len());
 		while cur <= end && cur < l {
 			end = std::cmp::max(cur + nums[cur] as usize, end);
