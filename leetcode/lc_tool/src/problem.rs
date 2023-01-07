@@ -1,8 +1,5 @@
-extern crate reqwest;
-extern crate serde_json;
-
-//use std::fmt::{Display, Error, Formatter};
-
+use serde::{Deserialize, Serialize};
+use serde_json::json;
 const GRAPHQL_URL: &str = "https://leetcode.com/graphql";
 const QUESTION_LIST_OPERATION: &str = "allQuestionsRaw";
 const QUESTION_LIST_QUERY_STRING: &str = r#"
@@ -29,50 +26,37 @@ query questionData($titleSlug: String!) {
 }"#;
 const QUESTION_QUERY_OPERATION: &str = "questionData";
 
-pub fn get_daily_id() -> u32 {
-	let cli = reqwest::Client::new();
-	cli.post(GRAPHQL_URL)
-		.json(&Query::daily_problem_query())
-		.send()
-		.unwrap()
-		.json::<serde_json::Value>()
-		.unwrap()["data"]["activeDailyCodingChallengeQuestion"]["question"]["frontendQuestionId"]
+pub fn get_daily_id() -> anyhow::Result<u32> {
+	Ok(ureq::post(GRAPHQL_URL)
+		.send_json(&Query::daily_problem_query())?
+		.into_json::<serde_json::Value>()?["data"]["activeDailyCodingChallengeQuestion"]["question"]
+		["frontendQuestionId"]
 		.as_str()
 		.unwrap()
-		.parse::<u32>()
-		.unwrap()
+		.parse::<u32>()?)
 }
 
-pub fn get_problem(id: u32) -> Option<Problem> {
+pub fn get_problem(id: u32) -> anyhow::Result<Problem> {
 	let id = id.to_string();
-	let problem = get_problems()
+	let problem = get_problems()?
 		.into_iter()
-		.find(move |p| p.question_frontend_id == id)
-		.unwrap();
+		.find(|p| p.question_frontend_id == id)
+		.ok_or_else(|| anyhow::format_err!("problem-{id} not found"))?;
 
-	assert!(!problem.is_paid_only, "this problem is paid only");
+	anyhow::ensure!(!problem.is_paid_only, "this problem is paid only");
 
-	let client = reqwest::Client::new();
-	let resp = client
-		.post(GRAPHQL_URL)
-		.json(&Query::question_query(&problem.title_slug))
-		.send()
-		.unwrap()
-		.json::<ProblemDetailResp>()
-		.unwrap();
-	Some(resp.data.question.into())
+	let resp = ureq::post(GRAPHQL_URL)
+		.send_json(&Query::question_query(&problem.title_slug))?
+		.into_json::<ProblemDetailResp>()?;
+	Ok(resp.data.question.into())
 }
 
-fn get_problems() -> Vec<QuestListEntry> {
-	reqwest::Client::new()
-		.post(GRAPHQL_URL)
-		.json(&Query::question_list_query())
-		.send()
-		.unwrap()
-		.json::<QuestionListResp>()
-		.unwrap()
+fn get_problems() -> anyhow::Result<Vec<QuestListEntry>> {
+	Ok(ureq::post(GRAPHQL_URL)
+		.send_json(&Query::question_list_query())?
+		.into_json::<QuestionListResp>()?
 		.data
-		.all_questions
+		.all_questions)
 }
 
 #[derive(Deserialize)]

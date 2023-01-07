@@ -1,57 +1,47 @@
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
-
 mod problem;
 
-use clap::clap_app;
+use clap::{command, Args, Parser};
 use std::{fs, io::Write, path::Path};
 
+#[derive(Parser)]
+#[command(author, version, about)]
+enum Command {
+	Random,
+	Pick(ProbelmId),
+	Daily,
+}
+
+#[derive(Args)]
+struct ProbelmId {
+	id: u32,
+}
+
 /// main() helps to generate the submission template .rs
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-	let matches = clap_app! { lc_tool =>
-		(version: env!("CARGO_PKG_VERSION"))
-		(author : env!("CARGO_PKG_AUTHORS"))
-		(about : env!("CARGO_PKG_DESCRIPTION"))
-		(@setting DisableHelpSubcommand)
-		(@setting VersionlessSubcommands)
-		(@arg id: -i +takes_value !required "question id, if not set, pick a rand one")
-		(@arg random: -r !takes_value !required "random pick flag, if set, pick a random unsolved question")
-		(@arg daily: -d !takes_value !required "daily challenge flag")
-	}
-	.get_matches();
-	let solved_ids = get_solved_ids();
-	let id = if matches.is_present("random") {
-		generate_random_id(&solved_ids)
-	} else if matches.is_present("daily") {
-		problem::get_daily_id()
-	} else {
-		matches.value_of("id").unwrap().parse::<u32>().unwrap()
+fn main() -> anyhow::Result<()> {
+	let cmd = Command::parse();
+	let solved_ids = get_solved_ids()?;
+	let id = match cmd {
+		Command::Daily => problem::get_daily_id()?,
+		Command::Pick(p) => p.id,
+		Command::Random => generate_random_id(&solved_ids),
 	};
 
-	if solved_ids.contains(&id) {
-		println!("problem-{id} is already solved");
-		return Ok(());
-	}
+	anyhow::ensure!(
+		!solved_ids.contains(&id),
+		"problem-{id} is already solved/initialized"
+	);
 
-	let problem = problem::get_problem(id).unwrap_or_else(|| {
-		panic!(
-			"Error: failed to get problem #{} \
-             (The problem may be paid-only or may not be exist).",
-			id
-		)
-	});
+	let problem = problem::get_problem(id)?;
 
 	let code = problem
 		.code_definition
 		.iter()
 		.find(|&d| d.value == "rust")
-		.unwrap_or_else(|| panic!("Problem {} has no rust version.", &id));
+		.ok_or_else(|| anyhow::format_err!("Problem {} has no rust version.", &id))?;
 
 	let file_name = format!("n{:04}_{}", id, problem.title_slug.replace('-', "_"));
 	let file_path = Path::new("./src").join(format!("{}.rs", file_name));
-	assert!(!file_path.exists(), "problem-{id} already  initialized");
+	anyhow::ensure!(!file_path.exists(), "problem-{id} already  initialized");
 
 	let template = include_str!("../template.rs");
 	let source = template
@@ -65,21 +55,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 			&parse_extra_test_use(&code.default_code),
 		);
 
-	let mut file = fs::OpenOptions::new()
-		.write(true)
-		.create(true)
-		.truncate(true)
-		.open(&file_path)
-		.unwrap();
-
-	file.write_all(source.as_bytes()).unwrap();
-	drop(file);
+	std::fs::write(file_path, source.as_bytes())?;
 
 	let mut lib_file = fs::OpenOptions::new()
 		.write(true)
 		.append(true)
-		.open("./src/lib.rs")
-		.unwrap();
+		.open("./src/lib.rs")?;
 	writeln!(lib_file, "mod {};", file_name)?;
 	Ok(())
 }
@@ -88,8 +69,8 @@ fn generate_random_id(except_ids: &[u32]) -> u32 {
 	use rand::Rng;
 	let mut rng = rand::thread_rng();
 	loop {
-		const MAX_QUESTION_ID: u32 = 1883;
-		let res: u32 = rng.gen_range(1, MAX_QUESTION_ID);
+		const MAX_QUESTION_ID: u32 = 2523;
+		let res: u32 = rng.gen_range(1..=MAX_QUESTION_ID);
 		if !except_ids.contains(&res) {
 			return res;
 		}
@@ -101,22 +82,17 @@ fn generate_random_id(except_ids: &[u32]) -> u32 {
 	}
 }
 
-
-fn get_solved_ids() -> Vec<u32> {
-	let paths = fs::read_dir("./src").unwrap();
+fn get_solved_ids() -> anyhow::Result<Vec<u32>> {
 	let mut solved_ids = Vec::new();
-
-	for path in paths {
-		let path = path.unwrap().path();
-		let s = path.to_str().unwrap();
-		if !s.starts_with('n') {
+	for entry in fs::read_dir("./src")? {
+		let file_name = entry?.file_name().into_string().unwrap();
+		if !file_name.starts_with('n') {
 			continue;
 		}
-		let id = &s[7..11];
-		let id = id.parse::<u32>().unwrap();
+		let id = file_name[1..5].parse::<u32>()?;
 		solved_ids.push(id);
 	}
-	solved_ids
+	Ok(solved_ids)
 }
 
 fn parse_extra_use(code: &str) -> String {
