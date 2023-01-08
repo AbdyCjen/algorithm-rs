@@ -90,22 +90,4 @@ impl MyQueue {
 
 	fn empty(&self) -> bool { self.out_st.is_empty() && self.in_st.is_empty() }
 }
-
-/**
- * Your MyQueue object will be instantiated and called as such:
- * let obj = MyQueue::new();
- * obj.push(x);
- * let ret_2: i32 = obj.pop();
- * let ret_3: i32 = obj.peek();
- * let ret_4: bool = obj.empty();
- */
-
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_232() {}
-}

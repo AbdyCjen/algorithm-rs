@@ -26,38 +26,36 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	// 暴力三层循环运行时间反而更好
 	pub fn max_points(points: Vec<Vec<i32>>) -> i32 {
-		use std::collections::HashMap;
 		fn gcd(x: i32, y: i32) -> i32 {
-			if y == 0 {
-				x.abs()
-			} else {
-				gcd(y, x % y)
+			match y {
+				0 => x.abs(),
+				_ => gcd(y, x % y),
 			}
 		}
+		// given two points, return a ***unique*** line representation;
 		fn line(a: (i32, i32), b: (i32, i32)) -> (u32, i32, i32) {
-			let yd = b.1 - a.1;
 			let xd = b.0 - a.0;
-			let (a, b, c) = (xd, yd, a.1 * xd - a.0 * yd);
-			let div = gcd(gcd(a, b), c);
-			((a / div) as _, b / div, c / div)
+			let yd = b.1 - a.1;
+			let c = a.0 * b.1 - a.1 * b.0;
+			let div = match xd.signum() {
+				0 => yd.signum(),
+				signum => signum,
+			} * gcd(gcd(xd, yd), c);
+			((xd / div) as _, yd / div, c / div)
 		}
-		let mut count: HashMap<_, (i32, i32)> = HashMap::new();
-		let mut points: Vec<_> = points.into_iter().map(|p| (p[0], p[1])).collect();
-		points.sort_unstable();
-		for (i, a) in points.iter().enumerate() {
-			for b in &points[i + 1..] {
-				let cur = line(*a, *b);
-				let ent = count.entry(cur).or_insert((i as _, 1));
-				if ent.0 == i as i32 {
-					ent.1 += 1;
-				}
+		let points = points.into_iter().map(|p| (p[0], p[1])).collect::<Vec<_>>();
+		let mut cnts = std::collections::HashMap::new();
+		let mut ans = 1;
+		let mut it = points.iter();
+		while let Some(&a) = it.next() {
+			for &b in it.clone() {
+				*cnts.entry(line(a, b)).or_insert(1) += 1;
 			}
+			ans = cnts.drain().fold(ans, |acc, (_, v)| v.max(acc));
 		}
-		count.into_iter().map(|e| e.1 .1).max().unwrap_or(1)
+		ans
 	}
 }
 

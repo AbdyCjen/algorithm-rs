@@ -99,20 +99,3 @@ impl WordDictionary {
 		self.end
 	}
 }
-
-/**
- * Your WordDictionary object will be instantiated and called as such:
- * let obj = WordDictionary::new();
- * obj.add_word(word);
- * let ret_2: bool = obj.search(word);
- */
-
-// submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_211() {}
-}

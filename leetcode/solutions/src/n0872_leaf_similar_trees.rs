@@ -71,11 +71,3 @@ impl Solution {
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::{super::util::tree::to_tree, *};
-
-	#[test]
-	fn test_872() {}
-}

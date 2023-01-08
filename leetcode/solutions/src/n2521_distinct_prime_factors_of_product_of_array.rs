@@ -51,9 +51,3 @@ impl Solution {
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	#[test]
-	fn test_2521() {}
-}

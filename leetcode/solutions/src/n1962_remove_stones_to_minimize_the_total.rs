@@ -55,11 +55,3 @@ impl Solution {
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_1962() {}
-}

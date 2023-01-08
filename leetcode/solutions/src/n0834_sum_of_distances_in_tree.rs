@@ -32,9 +32,7 @@ pub struct Solution {}
 
 #[allow(dead_code)]
 impl Solution {
-	pub fn sum_of_distances_in_tree(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> { todo!() }
-
-	pub fn sum_of_distances_in_tree_1(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
+	pub fn sum_of_distances_in_tree(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
 		let mut adj: Vec<Vec<_>> = vec![Vec::new(); n as usize];
 		for edge in edges {
 			adj[edge[0] as usize].push(edge[1]);

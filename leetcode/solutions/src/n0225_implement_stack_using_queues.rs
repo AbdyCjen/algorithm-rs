@@ -76,21 +76,4 @@ impl MyStack {
 	fn empty(&self) -> bool { self.queue.is_empty() }
 }
 
-/**
- * Your MyStack object will be instantiated and called as such:
- * let obj = MyStack::new();
- * obj.push(x);
- * let ret_2: i32 = obj.pop();
- * let ret_3: i32 = obj.top();
- * let ret_4: bool = obj.empty();
- */
-
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_225() {}
-}
