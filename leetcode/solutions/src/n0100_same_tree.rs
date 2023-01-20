@@ -66,9 +66,29 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
 	pub fn is_same_tree(
+		p: Option<Rc<RefCell<TreeNode>>>,
+		q: Option<Rc<RefCell<TreeNode>>>,
+	) -> bool {
+		let mut st = vec![(p, q)];
+		while let Some((p, q)) = st.pop() {
+			match (p, q) {
+				(Some(p), Some(q)) => {
+					let (mut p, mut q) = (p.borrow_mut(), q.borrow_mut());
+					if p.val != q.val {
+						return false;
+					}
+					st.push((p.left.take(), q.left.take()));
+					st.push((p.right.take(), q.right.take()));
+				}
+				(None, None) => {}
+				_ => return false,
+			}
+		}
+		true
+	}
+	pub fn is_same_tree_01(
 		p: Option<Rc<RefCell<TreeNode>>>,
 		q: Option<Rc<RefCell<TreeNode>>>,
 	) -> bool {
