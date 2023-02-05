@@ -31,7 +31,7 @@ pub struct Solution {}
 impl Solution {
 	pub fn can_jump(nums: Vec<i32>) -> bool {
 		let mut reach = 0;
-		for (i, s) in nums.into_iter().zip(0..) {
+		for (s, i) in nums.into_iter().zip(0..) {
 			if i > reach {
 				return false;
 			}

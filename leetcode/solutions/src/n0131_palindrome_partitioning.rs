@@ -21,39 +21,70 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
+	// dp
 	pub fn partition(s: String) -> Vec<Vec<String>> {
 		fn is_palindrom(s: &[u8]) -> bool {
-			s.iter()
-				.rev()
-				.zip(s.iter())
-				.take(s.len() / 2)
-				.all(|(c1, c2)| c1 == c2)
+			s[..s.len() / 2]
+				.iter()
+				.eq(s[(s.len() + 1) / 2..].iter().rev())
 		}
-		// dp?
-		fn dfs<'a>(
-			s: &'a [u8],
-			start: usize,
-			ans: &mut Vec<Vec<String>>,
-			cur_stk: &mut Vec<&'a [u8]>,
-		) {
-			if start == s.len() {
-				ans.push(cur_stk.iter().copied().map(to_string).collect());
+		fn dfs<'a>(s: &'a [u8], cache: &mut [Option<Vec<Vec<&'a [u8]>>>]) -> Vec<Vec<&'a [u8]>> {
+			if let Some(ans) = &cache[s.len()] {
+				return ans.clone();
+			}
+			let mut ans = vec![];
+			for i in 1..s.len() {
+				if is_palindrom(&s[..i]) {
+					let mut sub_ans = dfs(&s[i..], cache);
+					for v in &mut sub_ans {
+						v.push(&s[..i]);
+					}
+					ans.extend(sub_ans);
+				}
+			}
+			if is_palindrom(s) {
+				ans.push(vec![s]);
+			}
+			cache[s.len()] = Some(ans.clone());
+			ans
+		}
+		dfs(s.as_bytes(), &mut vec![None; s.len() + 1])
+			.iter()
+			.map(|v| {
+				v.iter()
+					.map(|s| std::str::from_utf8(s).unwrap().to_owned())
+					.rev()
+					.collect()
+			})
+			.collect()
+	}
+	// simple dfs
+	pub fn partition_01(s: String) -> Vec<Vec<String>> {
+		fn is_palindrom(s: &[u8]) -> bool {
+			s[..s.len() / 2]
+				.iter()
+				.eq(s[(s.len() + 1) / 2..].iter().rev())
+		}
+		fn dfs<'a>(s: &'a [u8], ans: &mut Vec<Vec<String>>, st: &mut Vec<&'a [u8]>) {
+			if s.is_empty() {
+				ans.push(
+					st.iter()
+						.map(|s| std::str::from_utf8(s).unwrap().to_owned())
+						.collect(),
+				);
 				return;
 			}
-			for i in (start + 1)..=s.len() {
-				if is_palindrom(&s[start..i]) {
-					cur_stk.push(&s[start..i]);
-					dfs(s, i, ans, cur_stk);
-					cur_stk.pop();
+			for i in 1..=s.len() {
+				if is_palindrom(&s[..i]) {
+					st.push(&s[..i]);
+					dfs(&s[i..], ans, st);
+					st.pop();
 				}
 			}
 		}
-
-		fn to_string(s: &[u8]) -> String { unsafe { std::str::from_utf8_unchecked(s).to_owned() } }
 		let mut ans = Vec::new();
-		dfs(s.as_bytes(), 0, &mut ans, &mut Vec::new());
+		dfs(s.as_bytes(), &mut ans, &mut Vec::new());
 		ans
 	}
 }

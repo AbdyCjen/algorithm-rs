@@ -52,10 +52,12 @@ impl Solution {
 					if s1 == s2 {
 						return true;
 					}
+				} else if s1 == s2 {
+					return true;
 				}
 			}
 		}
-		s1 == s2
+		false
 	}
 
 	fn count(c: &[i32; 26]) -> i32 { c.iter().filter(|i| **i > 0).count() as i32 }

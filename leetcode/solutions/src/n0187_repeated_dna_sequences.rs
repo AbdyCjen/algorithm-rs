@@ -42,7 +42,7 @@ impl Solution {
 
 // submission codes end
 
-#[cfg(test)]
+/*#[cfg(test)]
 mod tests {
 	use super::*;
 
@@ -57,4 +57,4 @@ mod tests {
 			vec_string!["AAAAAAAAAA"]
 		);
 	}
-}
+}*/

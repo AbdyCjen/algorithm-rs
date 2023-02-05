@@ -41,6 +41,9 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
+		prices.windows(2).map(|win| 0.max(win[1] - win[0])).sum()
+	}
+	pub fn max_profit_0(prices: Vec<i32>) -> i32 {
 		let mut pro_sum = 0;
 		let mut cur_pro = 0;
 		let mut cur_lo = std::i32::MAX - 1;

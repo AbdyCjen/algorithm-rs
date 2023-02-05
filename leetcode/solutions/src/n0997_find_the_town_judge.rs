@@ -83,17 +83,17 @@ impl Solution {
 			return 1;
 		}
 		let mut trusts = vec![0; n as usize + 1];
-		let mut trustees = vec![0; n as usize + 1];
-		for pair in trust {
-			let (trust, trustee) = (pair[0] as usize, pair[1] as usize);
-			trusts[trust] += 1;
-			trustees[trustee] += 1;
+		let mut trusted = vec![0; n as usize + 1];
+		for t in trust {
+			trusts[t[0] as usize] += 1;
+			trusted[t[1] as usize] += 1;
 		}
-		trustees
+
+		trusts
 			.into_iter()
-			.enumerate()
-			.filter(|&(i, cnt)| cnt == n - 1 && trusts[i] == 0)
-			.map(|(c, _)| c as i32)
+			.zip(trusted)
+			.zip(0..)
+			.filter_map(|((t, td), i)| if t == 0 && td == n - 1 { Some(i) } else { None })
 			.next()
 			.unwrap_or(-1)
 	}
@@ -106,7 +106,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn test_1039() {
+	fn test_997() {
 		assert_eq!(Solution::find_judge(2, matrix![[1, 2]]), 2);
 		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3]]), 3);
 		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3], [3, 1]]), -1);
