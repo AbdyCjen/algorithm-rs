@@ -30,51 +30,9 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn str_str(haystack: String, needle: String) -> i32 {
-		let kmp = Solution::gen_kmp(needle.as_bytes());
-
-		match kmp(haystack.as_bytes()) {
-			Some(i) => i as i32,
-			None => -1,
-		}
-	}
-	fn gen_kmp<T>(p: &[T]) -> impl Fn(&[T]) -> Option<usize>
-	where
-		T: std::clone::Clone + PartialEq,
-	{
-		let p: Vec<T> = Vec::from(p);
-		let mut v: Vec<usize> = vec![0; p.len() + 1];
-		let mut j: usize = 0;
-		for i in 2..p.len() {
-			while j > 0 && p[j] != p[i - 1] {
-				j = v[j]
-			}
-			if p[j] == p[i - 1] {
-				j += 1
-			}
-			v[i] = if p[j] == p[i] { v[j] } else { j }
-		}
-
-		move |s: &[T]| {
-			if p.is_empty() {
-				return Some(0);
-			}
-			let mut j: usize = 0;
-			for (i, cur) in s.iter().enumerate() {
-				while j > 0 && !p[j].eq(cur) {
-					j = v[j]
-				}
-				if p[j].eq(cur) {
-					j += 1
-				}
-				if j == p.len() {
-					return Some(i - j + 1);
-				}
-			}
-			None
-		}
+		haystack.find(&needle).map(|i| i as i32).unwrap_or(-1)
 	}
 }
 

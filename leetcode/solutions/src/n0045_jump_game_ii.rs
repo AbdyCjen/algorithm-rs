@@ -32,15 +32,14 @@ pub struct Solution {}
 impl Solution {
 	pub fn jump(mut nums: Vec<i32>) -> i32 {
 		nums.pop();
-
 		nums.into_iter()
-			.enumerate()
-			.fold((0, 0, 0), |(step_cnt, cur_max, next_max), (i, stp)| {
-				let next_max = next_max.max(i + stp as usize);
-				if i == cur_max {
-					(step_cnt + 1, next_max, next_max)
+			.zip(0..)
+			.fold((0, 0, 0), |(cnt, cur, mut next), (stp, i)| {
+				next = next.max(i + stp);
+				if i == cur {
+					(cnt + 1, next, next)
 				} else {
-					(step_cnt, cur_max, next_max)
+					(cnt, cur, next)
 				}
 			})
 			.0

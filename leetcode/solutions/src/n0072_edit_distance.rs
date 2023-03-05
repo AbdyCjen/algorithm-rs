@@ -44,24 +44,17 @@ pub struct Solution {}
  * 显然地, 有mat[i][0] = i, mat[0][j] = j, 目标的返回值是mat[word1.len()][word2.len()]
  * 如果已知mat[i-1][j-1], mat[i-1][j], mat[i][j-1],
  * */
-#[allow(dead_code)]
 impl Solution {
 	pub fn min_distance(word1: String, word2: String) -> i32 {
-		let (word1, word2) = (word1.into_bytes(), word2.into_bytes());
 		if word1.is_empty() || word2.is_empty() {
 			return (word1.len() + word2.len()) as i32;
 		}
 
-		let mut cache = vec![0; word2.len() + 1];
-		for (i, t) in cache.iter_mut().enumerate() {
-			*t = i as i32;
-		}
-
-		let mut prev;
-		for (i, c1) in word1.into_iter().enumerate() {
-			prev = cache[0];
-			cache[0] = i as i32 + 1;
-			for (j, &c2) in word2.iter().enumerate() {
+		let mut cache = (0..=word2.len() as i32).collect::<Vec<_>>();
+		for (c1, i) in word1.bytes().zip(0..) {
+			let mut prev = cache[0];
+			cache[0] = i + 1;
+			for (j, c2) in word2.bytes().enumerate() {
 				let temp = cache[j + 1];
 				cache[j + 1] = if c1 == c2 {
 					prev
@@ -71,8 +64,7 @@ impl Solution {
 				prev = temp;
 			}
 		}
-
-		*cache.last().unwrap()
+		cache[word2.len()]
 	}
 }
 

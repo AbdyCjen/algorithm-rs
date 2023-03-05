@@ -21,8 +21,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-// FIXME: 比较绝望, 二分实在gg, 观察一下这个万能式呢
-#[allow(dead_code)]
 impl Solution {
 	pub fn single_non_duplicate(nums: Vec<i32>) -> i32 {
 		if nums.len() < 5 {
@@ -31,11 +29,8 @@ impl Solution {
 		let (mut lb, mut ub) = (0, nums.len() - 1);
 		while lb < ub {
 			let mid = (ub + lb) / 2;
-			//dbg!(lb, ub, mid);
-			//dbg!(nums[lb], nums[ub], nums[mid]);
-			let neighbor = if mid % 2 == 0 { mid + 1 } else { mid - 1 };
-			if nums[mid] == nums[neighbor] {
-				lb = mid + 1;
+			if nums[mid] == nums[mid ^ 1] {
+				lb = mid.max(mid ^ 1) + 1;
 			} else {
 				ub = mid;
 			}
