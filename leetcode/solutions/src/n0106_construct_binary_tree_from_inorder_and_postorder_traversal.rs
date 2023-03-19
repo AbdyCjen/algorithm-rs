@@ -47,31 +47,49 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
 	pub fn build_tree(inorder: Vec<i32>, postorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
-		use std::iter::Peekable;
-		fn build_tree_inner<I: Iterator<Item = i32>>(
-			in_it: &mut Peekable<I>,
-			post_it: &mut Peekable<I>,
-			stop: Option<i32>,
-		) -> Option<Rc<RefCell<TreeNode>>> {
-			if stop.as_ref() != in_it.peek() {
-				let mut root = TreeNode::new(post_it.next().unwrap());
-				root.right = build_tree_inner(in_it, post_it, Some(root.val));
-				in_it.next();
-				root.left = build_tree_inner(in_it, post_it, stop);
-				Some(Rc::new(RefCell::new(root)))
-			} else {
-				None
-			}
-		}
+		Self::solve(&inorder, &postorder)
+	}
 
-		build_tree_inner(
-			&mut inorder.into_iter().rev().peekable(),
-			&mut postorder.into_iter().rev().peekable(),
-			None,
-		)
+	fn solve(inor: &[i32], post: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
+		match post {
+			[post @ .., val] => {
+				let ox = inor.iter().position(|i| i == val).unwrap();
+				Some(Rc::new(RefCell::new(TreeNode {
+					val: *val,
+					left: Self::solve(&inor[..ox], &post[..ox]),
+					right: Self::solve(&inor[ox + 1..], &post[ox..]),
+				})))
+			}
+			_ => None,
+		}
+	}
+
+	pub fn build_tree_01(inorder: Vec<i32>, postorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+		Self::build(&inorder, &postorder, None).1
+	}
+	fn build(
+		inor: &[i32],
+		post: &[i32],
+		stop: Option<&i32>,
+	) -> (usize, Option<Rc<RefCell<TreeNode>>>) {
+		match post {
+			[post @ .., val] if stop != inor.last() => {
+				let (rc, right) = Self::build(inor, post, Some(val));
+				let (inor, post) = (&inor[..inor.len() - rc - 1], &post[..post.len() - rc]);
+				let (lc, left) = Self::build(inor, post, stop);
+				(
+					lc + rc + 1,
+					Some(Rc::new(RefCell::new(TreeNode {
+						left,
+						right,
+						val: *val,
+					}))),
+				)
+			}
+			_ => (0, None),
+		}
 	}
 }
 

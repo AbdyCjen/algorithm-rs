@@ -46,9 +46,7 @@ use super::util::tree::TreeNode;
 // }
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
-	pub fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		Self::solve(&root) 
-	}
+	pub fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 { Self::solve(&root) }
 
 	fn solve(root: &Option<Rc<RefCell<TreeNode>>>) -> i32 {
 		match root {

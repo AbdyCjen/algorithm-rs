@@ -26,11 +26,9 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::HashMap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
-		let mut m: HashMap<_, Vec<String>> = HashMap::new();
+		let mut m = std::collections::HashMap::new();
 		for s in strs.into_iter() {
 			let mut k = s.clone().into_bytes();
 			k.sort_unstable();

@@ -23,32 +23,20 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::cmp::min;
-#[allow(dead_code)]
 impl Solution {
 	pub fn nth_ugly_number(n: i32) -> i32 {
-		let mut ugly_nums = vec![1];
-		let (mut ind_2, mut ind_3, mut ind_5) = (0, 0, 0);
-		for _ in 0..(n - 1) {
-			let next_2 = ugly_nums[ind_2] * 2;
-			let next_3 = ugly_nums[ind_3] * 3;
-			let next_5 = ugly_nums[ind_5] * 5;
-			let next_ugly_num = min(next_2, min(next_3, next_5));
-			ugly_nums.push(next_ugly_num);
-
-			// can't increase in branch, or some dupe will be add to the answer
-			if next_ugly_num == next_2 {
-				ind_2 += 1;
-			}
-			if next_ugly_num == next_3 {
-				ind_3 += 1;
-			}
-			if next_ugly_num == next_5 {
-				ind_5 += 1;
+		let mut nums = vec![1];
+		let mut idx = [0; 3];
+		for _ in 1..n {
+			let next = [nums[idx[0]] * 2, nums[idx[1]] * 3, nums[idx[2]] * 5];
+			let ugly = next[0].min(next[1]).min(next[2]);
+			for (&n, i) in next.iter().zip(&mut idx) {
+				if n == ugly {
+					*i += 1;
+				}
 			}
 		}
-		//dbg!(&ugly_nums);
-		ugly_nums.pop().unwrap()
+		nums.pop().unwrap()
 	}
 }
 

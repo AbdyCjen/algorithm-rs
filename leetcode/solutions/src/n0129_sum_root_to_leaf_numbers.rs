@@ -60,19 +60,17 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
 	pub fn sum_numbers(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		return root.map(|r| sum_numbers_inner(r, 0)).unwrap_or(0);
-
-		fn sum_numbers_inner(root: Rc<RefCell<TreeNode>>, path: i32) -> i32 {
-			let mut root = root.borrow_mut();
-			let path = path * 10 + root.val;
-			match (root.left.take(), root.right.take()) {
-				(Some(l), Some(r)) => sum_numbers_inner(l, path) + sum_numbers_inner(r, path),
-				(Some(o), _) | (_, Some(o)) => sum_numbers_inner(o, path),
-				_ => path,
-			}
+		root.map(|r| Self::solve(r, 0)).unwrap_or(0)
+	}
+	fn solve(root: Rc<RefCell<TreeNode>>, path: i32) -> i32 {
+		let mut root = root.borrow_mut();
+		let path = path * 10 + root.val;
+		match (root.left.take(), root.right.take()) {
+			(Some(l), Some(r)) => Self::solve(l, path) + Self::solve(r, path),
+			(Some(o), _) | (_, Some(o)) => Self::solve(o, path),
+			_ => path,
 		}
 	}
 }

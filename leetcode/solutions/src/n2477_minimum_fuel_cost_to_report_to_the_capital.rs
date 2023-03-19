@@ -89,7 +89,13 @@ mod tests {
 
 	#[test]
 	fn test_2477() {
-		assert_eq!(Solution::minimum_fuel_cost(matrix![[0,1],[0,2],[0,3]], 5), 3);
-		assert_eq!(Solution::minimum_fuel_cost(matrix![[3,1],[3,2],[1,0],[0,4],[0,5],[4,6]], 2), 7);
+		assert_eq!(
+			Solution::minimum_fuel_cost(matrix![[0, 1], [0, 2], [0, 3]], 5),
+			3
+		);
+		assert_eq!(
+			Solution::minimum_fuel_cost(matrix![[3, 1], [3, 2], [1, 0], [0, 4], [0, 5], [4, 6]], 2),
+			7
+		);
 	}
 }

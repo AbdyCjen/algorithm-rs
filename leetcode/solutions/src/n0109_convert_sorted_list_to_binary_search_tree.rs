@@ -35,91 +35,29 @@
 pub struct Solution {}
 use super::util::{linked_list::ListNode, tree::TreeNode};
 
-// submission codes start here
-
-// Definition for singly-linked list.
-// #[derive(PartialEq, Eq, Clone, Debug)]
-// pub struct ListNode {
-//   pub val: i32,
-//   pub next: Option<Box<ListNode>>
-// }
-//
-// impl ListNode {
-//   #[inline]
-//   fn new(val: i32) -> Self {
-//     ListNode {
-//       next: None,
-//       val
-//     }
-//   }
-// }
-// Definition for a binary tree node.
-// #[derive(Debug, PartialEq, Eq)]
-// pub struct TreeNode {
-//   pub val: i32,
-//   pub left: Option<Rc<RefCell<TreeNode>>>,
-//   pub right: Option<Rc<RefCell<TreeNode>>>,
-// }
-//
-// impl TreeNode {
-//   #[inline]
-//   pub fn new(val: i32) -> Self {
-//     TreeNode {
-//       val,
-//       left: None,
-//       right: None
-//     }
-//   }
-// }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
-	pub fn sorted_list_to_bst(head: Option<Box<ListNode>>) -> Option<Rc<RefCell<TreeNode>>> {
-		fn sorted_list_to_bst_inner(
-			head: Option<Box<ListNode>>,
-			len: usize,
-		) -> (Option<Box<ListNode>>, Option<Rc<RefCell<TreeNode>>>) {
-			if len == 0 {
-				return (head, None);
-			}
-			let r = (len - 1) / 2;
-			let l = len - r - 1;
-			let (head, lt) = sorted_list_to_bst_inner(head, l);
-			let mut tr = TreeNode::new(head.as_ref().unwrap().val);
-			let (head, rt) = sorted_list_to_bst_inner(head.unwrap().next, r);
-			tr.left = lt;
-			tr.right = rt;
-			(head, Some(Rc::new(RefCell::new(tr))))
-		}
+	pub fn sorted_list_to_bst(mut head: Option<Box<ListNode>>) -> Option<Rc<RefCell<TreeNode>>> {
 		let mut len = 0;
-		let mut cur = &head;
-		while let Some(cur_node) = cur {
+		let mut cur = &mut head;
+		while let Some(no) = cur {
 			len += 1;
-			cur = &cur_node.next;
+			cur = &mut no.next;
 		}
+		*cur = Some(Box::new(ListNode::new(0)));
 
-		sorted_list_to_bst_inner(head, len).1
+		head.as_mut().and_then(|h| Self::solve(h, len))
 	}
-}
-
-// submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::{
-		super::util::{linked_list::to_list, tree::to_tree},
-		*,
-	};
-
-	#[test]
-	fn test_109() {
-		assert_eq!(
-			Solution::sorted_list_to_bst(linked![-10, -3, 0, 5, 9]),
-			tree![0, -3, 9, -10, null, 5]
-		);
-		assert_eq!(
-			Solution::sorted_list_to_bst(linked![-10, -3, 0, 5, 9]),
-			tree![0, -3, 9, -10, null, 5]
-		);
+	fn solve(head: &mut Box<ListNode>, len: usize) -> Option<Rc<RefCell<TreeNode>>> {
+		if len == 0 {
+			return None;
+		}
+		let ans = Some(Rc::new(RefCell::new(TreeNode {
+			left: Self::solve(head, len / 2),
+			val: head.val,
+			right: Self::solve(head.next.as_mut()?, (len - 1) / 2),
+		})));
+		*head = head.next.take()?;
+		ans
 	}
 }

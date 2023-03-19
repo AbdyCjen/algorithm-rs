@@ -58,6 +58,7 @@
 // }
 use super::util::linked_list::ListNode;
 pub struct Solution {}
+
 use std::cmp::{Ord, Ordering, PartialOrd};
 impl PartialOrd for ListNode {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
@@ -67,22 +68,45 @@ impl Ord for ListNode {
 	fn cmp(&self, other: &Self) -> Ordering { other.val.cmp(&self.val) }
 }
 
-use std::collections::BinaryHeap;
-#[allow(dead_code)]
 impl Solution {
-	pub fn merge_k_lists(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
+	pub fn merge_k_lists_01(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
 		let mut dummy = ListNode::new(-1);
-		let mut cur_ptr = &mut dummy;
+		let mut cur = &mut dummy;
 
-		let mut bh: BinaryHeap<_> = lists.into_iter().flatten().collect();
-		while let Some(next_no) = bh.pop() {
-			cur_ptr.next = Some(next_no);
-			cur_ptr = cur_ptr.next.as_mut()?;
-			if let Some(no) = cur_ptr.next.take() {
+		let mut bh: std::collections::BinaryHeap<_> = lists.into_iter().flatten().collect();
+		while let Some(no) = bh.pop() {
+			cur = cur.next.insert(no);
+			if let Some(no) = cur.next.take() {
 				bh.push(no);
 			}
 		}
 		dummy.next
+	}
+
+	pub fn merge_k_lists(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
+		let mut dq = std::collections::VecDeque::from(lists);
+		loop {
+			match (dq.pop_back(), dq.pop_back()) {
+				(Some(l), Some(r)) => dq.push_front(Self::merge_list((l, r))),
+				(l, _) => break l.flatten(),
+			}
+		}
+	}
+
+	fn merge_list(mut lr: (Option<Box<ListNode>>, Option<Box<ListNode>>)) -> Option<Box<ListNode>> {
+		let mut list = None;
+		let mut cur = &mut list;
+		while let (Some(mut l), Some(mut r)) = lr {
+			if l.val < r.val {
+				lr = (l.next.take(), Some(r));
+				cur = &mut cur.insert(l).next;
+			} else {
+				lr = (Some(l), r.next.take());
+				cur = &mut cur.insert(r).next;
+			}
+		}
+		*cur = lr.0.or(lr.1);
+		list
 	}
 }
 

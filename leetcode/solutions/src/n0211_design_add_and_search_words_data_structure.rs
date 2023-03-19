@@ -40,17 +40,12 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 struct WordDictionary {
 	end: bool,
 	next: Vec<Self>,
 	c: u8,
 }
 
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
 impl WordDictionary {
 	fn new() -> Self {
 		Self {
@@ -68,17 +63,18 @@ impl WordDictionary {
 		}
 	}
 
-	fn add_word(mut self: &mut Self, word: String) {
+	fn add_word(&mut self, word: String) {
+		let mut cur = self;
 		for c in word.into_bytes() {
-			self = match self.next.binary_search_by(|nc| nc.c.cmp(&c)) {
-				Ok(i) => &mut self.next[i],
+			cur = match cur.next.binary_search_by(|nc| nc.c.cmp(&c)) {
+				Ok(i) => &mut cur.next[i],
 				Err(i) => {
-					self.next.insert(i, Self::new_with(c));
-					&mut self.next[i]
+					cur.next.insert(i, Self::new_with(c));
+					&mut cur.next[i]
 				}
 			};
 		}
-		self.end = true;
+		cur.end = true;
 	}
 
 	fn search(&self, word: String) -> bool { self.search_inner(word.as_bytes()) }
