@@ -66,55 +66,50 @@ pub struct Solution {}
 // submission codes start here
 
 use std::collections::HashMap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn is_scramble(s1: String, s2: String) -> bool {
-		fn scramble<'a>(
-			s1: &'a [u8],
-			s2: &'a [u8],
-			memo: &mut HashMap<(&'a [u8], &'a [u8]), bool>,
-		) -> bool {
-			if s1 == s2 {
-				return true;
-			} else if let Some(val) = memo.get(&(s1, s2)) {
-				return *val;
-			}
-
-			//滚动判断子串是否有相同的字母集合, 有概率
-			let mut acc_test1 = {
-				let (mut sum, mut sum_2) = (0, 0);
-				move |a: u8, b: u8| -> bool {
-					let (a, b) = (a as i32, b as i32);
-					sum += a - b;
-					sum_2 += a * a - b * b;
-					sum == 0 && sum_2 == 0
-				}
-			};
-			let mut acc_test2 = acc_test1;
-			// 实际上直接比较s1, s2 的字母集合(alphs[26])的方式也能提供大概的功能
-
-			let n = s1.len();
-			for i in 0..(n - 1) {
-				let i = i + 1;
-				if acc_test1(s1[i - 1], s2[n - i])
-					&& scramble(&s1[..i], &s2[n - i..], memo)
-					&& scramble(&s1[i..], &s2[..n - i], memo)
-					|| acc_test2(s1[i - 1], s2[i - 1])
-						&& scramble(&s1[..i], &s2[..i], memo)
-						&& scramble(&s1[i..], &s2[i..], memo)
-				{
-					memo.insert((s1, s2), true);
-					return true;
-				}
-			}
-
-			memo.insert((s1, s2), false);
-			false
+		Self::solve(s1.as_bytes(), s2.as_bytes(), &mut Default::default())
+	}
+	fn solve<'a>(
+		s1: &'a [u8],
+		s2: &'a [u8],
+		memo: &mut HashMap<(&'a [u8], &'a [u8]), bool>,
+	) -> bool {
+		if s1 == s2 {
+			return true;
+		} else if let Some(&val) = memo.get(&(s1, s2)) {
+			return val;
 		}
 
-		let mut memo = std::collections::HashMap::new();
-		let (s1, s2) = (s1.into_bytes(), s2.into_bytes());
-		scramble(&s1, &s2, &mut memo)
+		//滚动判断子串是否有相同的字母集合, 必要不充分, 仅剪枝
+		let mut acc_test1 = {
+			let mut s = (0, 0);
+			move |a: u8, b: u8| -> bool {
+				let (a, b) = (a as i32, b as i32);
+				s.0 += a - b;
+				s.1 += a * a - b * b;
+				s == (0, 0)
+			}
+		};
+		// copy counter
+		let mut acc_test2 = acc_test1;
+
+		let n = s1.len();
+		for i in 1..n {
+			if acc_test1(s1[i - 1], s2[n - i])
+				&& Self::solve(&s1[..i], &s2[n - i..], memo)
+				&& Self::solve(&s1[i..], &s2[..n - i], memo)
+				|| acc_test2(s1[i - 1], s2[i - 1])
+					&& Self::solve(&s1[..i], &s2[..i], memo)
+					&& Self::solve(&s1[i..], &s2[i..], memo)
+			{
+				memo.insert((s1, s2), true);
+				return true;
+			}
+		}
+
+		memo.insert((s1, s2), false);
+		false
 	}
 }
 

@@ -58,14 +58,9 @@ impl Solution {
 			union(&mut set, r[0], r[1]);
 		}
 		roads
-			.into_iter()
-			.filter_map(|r| {
-				if find(&mut set, r[0]) == find(&mut set, 1) {
-					Some(r[2])
-				} else {
-					None
-				}
-			})
+			.iter()
+			.filter(|r| find(&mut set, r[0]) == find(&mut set, 1))
+			.map(|r| r[2])
 			.min()
 			.unwrap()
 	}

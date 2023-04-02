@@ -29,9 +29,14 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn search(nums: Vec<i32>, target: i32) -> i32 {
+		match nums.binary_search(&target) {
+			Ok(i) => i as i32,
+			_ => -1,
+		}
+	}
+	pub fn search_1(nums: Vec<i32>, target: i32) -> i32 {
 		let (mut i, mut j) = (0_isize, nums.len() as isize - 1);
 		while i <= j {
 			let mid = (i + j) as usize / 2;

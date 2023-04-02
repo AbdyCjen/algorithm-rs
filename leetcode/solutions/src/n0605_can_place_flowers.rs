@@ -21,31 +21,21 @@
  */
 pub struct Solution {}
 
-// submission codes start here
-
-#[allow(dead_code)]
 impl Solution {
 	pub fn can_place_flowers(flowerbed: Vec<i32>, mut n: i32) -> bool {
-		let mut flowerbed = flowerbed.into_iter().peekable();
-		while let (Some(o), _n @ 1..=std::i32::MAX) = (flowerbed.next(), n) {
-			match o {
-				0 => {
-					if 0 == flowerbed.peek().copied().unwrap_or(0) {
-						flowerbed.next();
-						n -= 1;
-					}
+		let mut flowerbed = flowerbed.as_slice();
+		while let ([cur, rest @ ..], 1..=i32::MAX) = (flowerbed, n) {
+			match (cur, rest) {
+				(0, [0, rest @ ..]) | (0, rest @ []) => {
+					n -= 1;
+					flowerbed = rest;
 				}
-				1 => {
-					flowerbed.next();
-				}
-				_ => unreachable!(),
+				(1, [_, rest @ ..]) | (_, rest) => flowerbed = rest,
 			}
 		}
 		n == 0
 	}
 }
-
-// submission codes end
 
 #[cfg(test)]
 mod tests {
@@ -55,6 +45,7 @@ mod tests {
 	fn test_605() {
 		assert!(Solution::can_place_flowers(vec![1, 0, 0, 0, 1], 1));
 		assert!(!Solution::can_place_flowers(vec![1, 0, 0, 0, 1], 2));
+		assert!(Solution::can_place_flowers(vec![0], 1));
 		assert!(!Solution::can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2));
 		assert!(!Solution::can_place_flowers(vec![0, 1, 0], 1));
 	}

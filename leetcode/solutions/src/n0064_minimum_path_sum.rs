@@ -23,27 +23,21 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
-		if grid.is_empty() {
-			return 0;
+	pub fn min_path_sum(mut grid: Vec<Vec<i32>>) -> i32 {
+		let (m, n) = (grid.len(), grid[0].len());
+		for j in 1..n {
+			grid[0][j] += grid[0][j - 1];
 		}
-		let (rl, cl) = (grid.len(), grid[0].len());
-		let mut st = vec![vec![0_i32; cl]; rl];
-		st[0][0] = grid[0][0];
-		for i in 1..cl {
-			st[0][i] = st[0][i - 1] + grid[0][i];
+		for i in 1..m {
+			grid[i][0] += grid[i - 1][0];
 		}
-		for i in 1..rl {
-			st[i][0] = st[i - 1][0] + grid[i][0];
-		}
-		for i in 1..rl {
-			for j in 1..cl {
-				st[i][j] = std::cmp::min(st[i - 1][j], st[i][j - 1]) + grid[i][j];
+		for i in 1..m {
+			for j in 1..n {
+				grid[i][j] += grid[i - 1][j].min(grid[i][j - 1]);
 			}
 		}
-		st[rl - 1][cl - 1]
+		grid[m - 1][n - 1]
 	}
 }
 
