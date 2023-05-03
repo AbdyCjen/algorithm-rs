@@ -30,9 +30,17 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn add_digits(mut num: i32) -> i32 {
+	pub fn add_digits(n: i32) -> i32 {
+		match n {
+			0 => 0,
+			n => match n % 9 {
+				0 => 9,
+				n => n,
+			},
+		}
+	}
+	pub fn add_digits_1(mut num: i32) -> i32 {
 		while num >= 10 {
 			let mut n = 0;
 			while num > 0 {

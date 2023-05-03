@@ -30,32 +30,64 @@ pub struct Solution {}
 
 // submission codes start here
 
-// 纯丢人题解, 快过7%的提交,TODO: 重写
 use std::collections::BTreeMap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
-		let mut res = Vec::new();
-		if nums.is_empty() {
-			return res;
+		if k == 1 {
+			return nums;
 		}
-		let mut bmap = BTreeMap::new();
+		let mut prv = 0;
+		let len = nums.len();
+		let mut to_left = vec![0; len];
+		for ((&n, m), i) in nums.iter().zip(&mut to_left).zip(0..) {
+			if i % k == 0 {
+				prv = n;
+			} else {
+				prv = prv.max(n);
+			}
+			*m = prv;
+		}
+		let mut to_right = nums;
+		let mut prv = i32::MIN;
+		for (m, i) in to_right.iter_mut().zip(0..len as i32).rev() {
+			if i % k == 0 {
+				prv = *m;
+			} else {
+				prv = prv.max(*m);
+			}
+			*m = prv;
+		}
+
+		let mut ans = vec![0; len + 1 - k as usize];
+		for (m, i) in ans.iter_mut().zip(0..) {
+			*m = to_right[i].max(to_left[i + k as usize - 1]);
+		}
+		ans
+	}
+	pub fn max_sliding_window1(nums: Vec<i32>, k: i32) -> Vec<i32> {
+		if k == 1 {
+			return nums;
+		}
+		let mut cnts = BTreeMap::new();
 
 		for &i in &nums[..std::cmp::min(k as usize, nums.len()) - 1] {
-			*bmap.entry(i).or_insert(0) += 1;
+			*cnts.entry(i).or_insert(0) += 1;
 		}
 
-		for (i, v) in nums.iter().take(nums.len() - k as usize + 1).enumerate() {
-			*bmap.entry(nums[i + k as usize - 1]).or_insert(0) += 1;
-			res.push(*bmap.iter().next_back().unwrap().0);
-
-			*bmap.get_mut(v).unwrap() -= 1;
-			if bmap[v] == 0 {
-				bmap.remove(v);
-			}
-		}
-
-		res
+		nums.iter()
+			.zip(&nums[k as usize - 1..])
+			.map(|(&tail, &head)| {
+				*cnts.entry(head).or_insert(0) += 1;
+				let v = *cnts.keys().next_back().unwrap();
+				if let std::collections::btree_map::Entry::Occupied(mut e) = cnts.entry(tail) {
+					*e.get_mut() -= 1;
+					if *e.get() == 0 {
+						e.remove_entry();
+					}
+				}
+				v
+			})
+			.collect()
 	}
 }
 
@@ -67,10 +99,14 @@ mod tests {
 
 	#[test]
 	fn test_239() {
+		assert_eq!(Solution::max_sliding_window(vec![7, 2, 4], 2), [7, 4]);
 		assert_eq!(
 			Solution::max_sliding_window(vec![1, 3, -1, -3, 5, 3, 6, 7], 3),
 			vec![3, 3, 5, 5, 6, 7]
 		);
-		assert_eq!(Solution::max_sliding_window(vec![], 0), vec![]);
+		assert_eq!(
+			Solution::max_sliding_window(vec![1, 3, -1, -3, 5, 3, 6, 7], 1),
+			[1, 3, -1, -3, 5, 3, 6, 7]
+		);
 	}
 }

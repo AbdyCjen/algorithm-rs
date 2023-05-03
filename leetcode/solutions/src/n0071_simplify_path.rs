@@ -60,19 +60,14 @@ pub struct Solution {}
 // submission codes start here
 // ugly as shit;
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn simplify_path(path: String) -> String {
 		let mut st = Vec::new();
 		for s in path.split('/') {
 			match s {
 				"." | "/" | "" => {}
-				".." => {
-					st.pop();
-				}
-				_ => {
-					st.push(s);
-				}
+				".." => drop(st.pop()),
+				_ => st.push(s),
 			}
 		}
 		"/".to_owned() + &st.join("/")

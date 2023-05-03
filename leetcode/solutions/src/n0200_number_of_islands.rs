@@ -31,9 +31,36 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::HashSet;
-#[allow(dead_code)]
 impl Solution {
+	pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
+		fn dfs(grid: &mut [Vec<char>], i: usize, j: usize) {
+			grid[i][j] = '0';
+
+			if i > 0 && grid[i - 1][j] == '1' {
+				dfs(grid, i - 1, j);
+			}
+			if i + 1 < grid.len() && grid[i + 1][j] == '1' {
+				dfs(grid, i + 1, j);
+			}
+			if j > 0 && grid[i][j - 1] == '1' {
+				dfs(grid, i, j - 1);
+			}
+			if j + 1 < grid[0].len() && grid[i][j + 1] == '1' {
+				dfs(grid, i, j + 1);
+			}
+		}
+		let mut ans = 0;
+		let (m, n) = (grid.len(), grid[0].len());
+		for i in 0..m {
+			for j in 0..n {
+				if grid[i][j] == '1' {
+					ans += 1;
+					dfs(&mut grid, i, j);
+				}
+			}
+		}
+		ans
+	}
 	fn find(set_slc: &mut [usize], i: usize) -> usize {
 		if set_slc[i] != i {
 			set_slc[i] = Self::find(set_slc, set_slc[i]);
@@ -46,7 +73,7 @@ impl Solution {
 			set_slc[a] = b;
 		}
 	}
-	pub fn num_islands(grid: Vec<Vec<char>>) -> i32 {
+	pub fn num_islands_1(grid: Vec<Vec<char>>) -> i32 {
 		if grid.is_empty() {
 			return 0;
 		}
@@ -69,7 +96,7 @@ impl Solution {
 				}
 			}
 		}
-		let mut sset = HashSet::<usize>::new();
+		let mut sset = std::collections::HashSet::new();
 		for i in 0..set_slc.len() {
 			if by_idx(i) == '1' {
 				sset.insert(Self::find(&mut set_slc, i));

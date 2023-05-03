@@ -30,19 +30,15 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::BinaryHeap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn last_stone_weight(stones: Vec<i32>) -> i32 {
-		let mut stones = BinaryHeap::from(stones);
+		let mut stones = std::collections::BinaryHeap::from(stones);
 		loop {
 			match (stones.pop(), stones.pop()) {
 				(None, _) => break 0,
 				(Some(n), None) => break n,
-				(Some(y), Some(x)) => match y - x {
-					0 => {}
-					n => stones.push(n),
-				},
+				(Some(y), Some(x)) if y != x => stones.push(y - x),
+				_ => {}
 			}
 		}
 	}

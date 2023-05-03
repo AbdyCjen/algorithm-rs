@@ -79,22 +79,19 @@ use super::util::tree::TreeNode;
 //     }
 //   }
 // }
-use std::{cell::RefCell, collections::VecDeque, rc::Rc};
-#[allow(dead_code)]
+use std::{cell::RefCell, rc::Rc};
 impl Solution {
 	pub fn width_of_binary_tree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		let mut dq = VecDeque::new();
-		dq.push_back((root.unwrap(), 1));
+		let mut dq = vec![(root.unwrap(), 1)];
 		let mut ans = 0_u64;
-		while !dq.is_empty() {
-			ans = ans.max(dq.back().unwrap().1 - dq.front().unwrap().1 + 1);
-			for (no, idx) in dq.split_off(0) {
-				let mut no = no.borrow_mut();
-				if let Some(l) = no.left.take() {
-					dq.push_back((l, idx * 2));
-				}
-				if let Some(r) = no.right.take() {
-					dq.push_back((r, idx * 2 + 1));
+		while let (Some(h), Some(t)) = (dq.first(), dq.last()) {
+			ans = ans.max(t.1 + 1 - h.1);
+			for (no, idx) in std::mem::take(&mut dq) {
+				let no = &mut *no.borrow_mut();
+				for (i, no) in (0..).zip([&mut no.left, &mut no.right]) {
+					if let Some(no) = no.take() {
+						dq.push((no, idx * 2 + i));
+					}
 				}
 			}
 		}

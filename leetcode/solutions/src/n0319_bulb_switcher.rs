@@ -37,7 +37,6 @@ pub struct Solution {}
 // 就是找完全平方数个数, 因为任意整数n, 其任一因数i 都有对应因数 j = n / i;
 // 当且仅当n 为完全平方数时, 存在整数i = n / i;
 // 即除完全平方数外，所有整数的因数个数都为偶数个
-#[allow(dead_code)]
 impl Solution {
 	pub fn bulb_switch(n: i32) -> i32 { (n as f64).sqrt() as i32 }
 }

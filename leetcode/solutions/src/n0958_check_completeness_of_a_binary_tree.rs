@@ -28,8 +28,7 @@ use super::util::tree::TreeNode;
 
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
-	// TODO: dfs solution
-	pub fn is_complete_tree(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+	pub fn is_complete_tree1(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
 		let mut dq = std::collections::VecDeque::new();
 		dq.push_back(root);
 		while let Some(Some(no)) = dq.pop_front() {

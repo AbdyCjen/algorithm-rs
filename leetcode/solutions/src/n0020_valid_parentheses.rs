@@ -48,12 +48,10 @@
  *
  *
  */
-#[allow(dead_code)]
 pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn is_valid(s: String) -> bool {
 		let mut st = Vec::new();
