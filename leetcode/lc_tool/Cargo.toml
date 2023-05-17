@@ -5,12 +5,12 @@ edition = "2021"
 description = "leetcode cli helper"
 
 [dependencies]
-ureq = { version = "2.6.1", features = ["json"] }
+ureq = { version = "2.6.1", features = ["json", "socks-proxy"] }
 anyhow = "1.0.68"
-serde_json = "1.0.91"
 serde = { version = "1.0.152", features = ["derive"] }
 clap = { version = "4.0.32", features = ["derive"] }
 rand = "0.8.5"
+once_cell = "1.17.1"
 
 [[bin]]
 name = "lc_tool"

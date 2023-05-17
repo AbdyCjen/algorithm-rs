@@ -1,5 +1,6 @@
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use ureq::{json, serde_json};
 const GRAPHQL_URL: &str = "https://leetcode.com/graphql";
 const QUESTION_LIST_OPERATION: &str = "allQuestionsRaw";
 const QUESTION_LIST_QUERY_STRING: &str = r#"
@@ -26,9 +27,20 @@ query questionData($titleSlug: String!) {
 }"#;
 const QUESTION_QUERY_OPERATION: &str = "questionData";
 
+static UREQ_AGENT: Lazy<ureq::Agent> = Lazy::new(|| {
+	if let Ok(url) = std::env::var("all_proxy") {
+		ureq::AgentBuilder::new()
+			.proxy(ureq::Proxy::new(url).unwrap())
+			.build()
+	} else {
+		ureq::Agent::new()
+	}
+});
+
 pub fn get_daily_id() -> anyhow::Result<u32> {
-	Ok(ureq::post(GRAPHQL_URL)
-		.send_json(&Query::daily_problem_query())?
+	Ok(UREQ_AGENT
+		.post(GRAPHQL_URL)
+		.send_json(Query::daily_problem_query())?
 		.into_json::<serde_json::Value>()?["data"]["activeDailyCodingChallengeQuestion"]["question"]
 		["frontendQuestionId"]
 		.as_str()
@@ -45,15 +57,17 @@ pub fn get_problem(id: u32) -> anyhow::Result<Problem> {
 
 	anyhow::ensure!(!problem.is_paid_only, "this problem is paid only");
 
-	let resp = ureq::post(GRAPHQL_URL)
-		.send_json(&Query::question_query(&problem.title_slug))?
+	let resp = UREQ_AGENT
+		.post(GRAPHQL_URL)
+		.send_json(Query::question_query(&problem.title_slug))?
 		.into_json::<ProblemDetailResp>()?;
 	Ok(resp.data.question.into())
 }
 
 fn get_problems() -> anyhow::Result<Vec<QuestListEntry>> {
-	Ok(ureq::post(GRAPHQL_URL)
-		.send_json(&Query::question_list_query())?
+	Ok(UREQ_AGENT
+		.post(GRAPHQL_URL)
+		.send_json(Query::question_list_query())?
 		.into_json::<QuestionListResp>()?
 		.data
 		.all_questions)
