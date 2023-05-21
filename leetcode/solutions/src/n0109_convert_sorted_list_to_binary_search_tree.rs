@@ -37,6 +37,7 @@ use super::util::{linked_list::ListNode, tree::TreeNode};
 
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
+	// TODO: neater solution
 	pub fn sorted_list_to_bst(mut head: Option<Box<ListNode>>) -> Option<Rc<RefCell<TreeNode>>> {
 		let mut len = 0;
 		let mut cur = &mut head;
@@ -46,16 +47,14 @@ impl Solution {
 		}
 		*cur = Some(Box::new(ListNode::new(0)));
 
-		head.as_mut().and_then(|h| Self::solve(h, len))
+		head.as_mut().and_then(|h| Self::solve1(h, len))
 	}
-	fn solve(head: &mut Box<ListNode>, len: usize) -> Option<Rc<RefCell<TreeNode>>> {
-		if len == 0 {
-			return None;
-		}
+	fn solve1(head: &mut Box<ListNode>, len: usize) -> Option<Rc<RefCell<TreeNode>>> {
+		len.checked_sub(1)?;
 		let ans = Some(Rc::new(RefCell::new(TreeNode {
-			left: Self::solve(head, len / 2),
+			left: Self::solve1(head, len / 2),
 			val: head.val,
-			right: Self::solve(head.next.as_mut()?, (len - 1) / 2),
+			right: Self::solve1(head.next.as_mut()?, (len - 1) / 2),
 		})));
 		*head = head.next.take()?;
 		ans

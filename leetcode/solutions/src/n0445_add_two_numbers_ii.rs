@@ -57,6 +57,41 @@ impl Solution {
 		l1: Option<Box<ListNode>>,
 		l2: Option<Box<ListNode>>,
 	) -> Option<Box<ListNode>> {
+		fn rev(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+			let mut list = None;
+			while let Some(mut no) = head {
+				head = std::mem::replace(&mut no.next, list);
+				list = Some(no);
+			}
+			list
+		}
+		let mut lr = (rev(l1), rev(l2));
+		let (mut no, mut flow) = (None, 0);
+		while let (Some(mut l1), Some(mut l2)) = lr {
+			lr = (std::mem::replace(&mut l1.next, no), l2.next.take());
+			l1.val += flow + l2.val;
+			flow = l1.val / 10;
+			l1.val %= 10;
+			no = Some(l1);
+		}
+		let mut l = lr.0.or(lr.1);
+		while let Some(mut ne) = l {
+			l = std::mem::replace(&mut ne.next, no);
+			ne.val += flow;
+			flow = ne.val / 10;
+			ne.val %= 10;
+			no = Some(ne);
+		}
+		if flow > 0 {
+			Some(Box::new(ListNode { val: 1, next: no }))
+		} else {
+			no
+		}
+	}
+	pub fn add_two_numbers1(
+		l1: Option<Box<ListNode>>,
+		l2: Option<Box<ListNode>>,
+	) -> Option<Box<ListNode>> {
 		fn reverse(mut lis: Option<Box<ListNode>>) -> (Option<Box<ListNode>>, i32) {
 			let (mut cnt, mut new_list) = (0, None);
 			while let Some(mut l) = lis {

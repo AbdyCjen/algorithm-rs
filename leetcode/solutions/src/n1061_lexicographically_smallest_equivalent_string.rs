@@ -50,33 +50,25 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn smallest_equivalent_string(s1: String, s2: String, base_str: String) -> String {
-		fn find(set: &mut [u8; 26], i: u8) -> u8 {
+		fn find(set: &mut [u8], i: u8) -> u8 {
 			if set[i as usize] != i {
 				set[i as usize] = find(set, set[i as usize]);
 			}
 			set[i as usize]
 		}
-		fn union(set: &mut [u8; 26], c1: u8, c2: u8) {
+		fn union(set: &mut [u8], c1: u8, c2: u8) {
 			let (c1, c2) = (find(set, c1), find(set, c2));
-			if c1 < c2 {
-				set[c2 as usize] = c1;
-			} else {
-				set[c1 as usize] = c2;
-			}
+			let (c1, c2) = (c1.min(c2), c1.max(c2));
+			set[c2 as usize] = c1;
 		}
-		let mut set = [0_u8; 26];
-		for (c, i) in set.iter_mut().zip(0..) {
-			*c = i;
-		}
+		let mut set: Vec<u8> = (0..26).collect();
 		for (c1, c2) in s1.bytes().zip(s2.bytes()) {
 			union(&mut set, c1 - b'a', c2 - b'a');
 		}
-		let ans = base_str
+		base_str
 			.bytes()
-			.map(|c| find(&mut set, c - b'a') + b'a')
-			.collect::<Vec<_>>();
-
-		String::from_utf8(ans).unwrap()
+			.map(|c| (find(&mut set, c - b'a') + b'a') as char)
+			.collect::<String>()
 	}
 }
 

@@ -59,17 +59,10 @@ use super::util::linked_list::ListNode;
 //     }
 //   }
 // }
-#[allow(dead_code)]
 impl Solution {
 	pub fn middle_node(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-		let mut cnt_bf_mid = 0;
-		let mut o: &Option<Box<ListNode>> = &head;
-		while let Some(oo) = o {
-			o = &oo.next;
-			cnt_bf_mid += 1;
-		}
-		cnt_bf_mid /= 2;
-		for _ in 0..cnt_bf_mid {
+		let len = std::iter::successors(head.as_ref(), |no| no.next.as_ref()).count() as i32;
+		for _ in 0..len / 2 {
 			head = head?.next.take();
 		}
 		head

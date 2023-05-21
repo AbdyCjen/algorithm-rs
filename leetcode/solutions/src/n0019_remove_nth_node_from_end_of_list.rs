@@ -49,22 +49,13 @@ use super::util::linked_list::ListNode;
 //     }
 //   }
 // }
-#[allow(dead_code)]
 impl Solution {
 	pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
-		let mut dummy = ListNode::new(0);
-		dummy.next = head;
-		let mut cnt = 0;
-		let mut cur = Some(&dummy);
-		while let Some(no) = cur {
-			cnt += 1;
-			cur = no.next.as_deref();
-		}
-
-		let n = cnt - n - 1;
+		let mut dummy = ListNode { next: head, val: 0 };
+		let cnt = std::iter::successors(Some(&dummy), |no| no.next.as_deref()).count() as i32;
 
 		let mut cur = &mut dummy;
-		for _ in 0..n {
+		for _ in 0..cnt - n - 1 {
 			cur = cur.next.as_deref_mut().unwrap();
 		}
 

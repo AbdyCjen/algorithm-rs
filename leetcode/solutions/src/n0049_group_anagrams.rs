@@ -28,6 +28,20 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+		let view = |s: &[u8]| -> [u16; 26] {
+			let mut cnt: [u16; 26] = [0; 26];
+			for &c in s {
+				cnt[(c - b'a') as usize] += 1;
+			}
+			cnt
+		};
+		let mut m = std::collections::HashMap::new();
+		for s in strs {
+			m.entry(view(s.as_bytes())).or_insert_with(Vec::new).push(s);
+		}
+		m.into_values().collect()
+	}
+	pub fn group_anagrams1(strs: Vec<String>) -> Vec<Vec<String>> {
 		let mut m = std::collections::HashMap::new();
 		for s in strs.into_iter() {
 			let mut k = s.clone().into_bytes();

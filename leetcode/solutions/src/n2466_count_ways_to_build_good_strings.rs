@@ -38,24 +38,21 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn count_good_strings(low: i32, high: i32, zero: i32, one: i32) -> i32 {
-		let (zero, one) = (zero as usize, one as usize);
 		let mut dp = vec![0; high as usize + 1];
-		let mo = 1e9 as i32 + 7;
+		const MO: i32 = 1e9 as i32 + 7;
 		dp[0] = 1;
 		for i in 1..dp.len() {
-			if i >= zero {
-				dp[i] += dp[i - zero];
+			if let Some(prv) = i.checked_sub(zero as usize) {
+				dp[i] += dp[prv];
 			}
-			if i >= one {
-				dp[i] += dp[i - one];
+			if let Some(prv) = i.checked_sub(one as usize) {
+				dp[i] += dp[prv];
 			}
-			dp[i] %= mo;
+			dp[i] %= MO;
 		}
-		let mut ans = 0;
-		for &i in &dp[low as usize..=high as usize] {
-			ans = (ans + i) % mo;
-		}
-		ans
+		dp[low as usize..=high as usize]
+			.iter()
+			.fold(0, |ans, &n| (ans + n) % MO)
 	}
 }
 
