@@ -80,20 +80,3 @@ impl SummaryRanges {
 		self.intvs.iter().map(|&(s, e)| vec![s, e]).collect()
 	}
 }
-
-/**
- * Your SummaryRanges object will be instantiated and called as such:
- * let obj = SummaryRanges::new();
- * obj.add_num(value);
- * let ret_2: Vec<Vec<i32>> = obj.get_intervals();
- */
-
-// submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_352() {}
-}

@@ -49,11 +49,3 @@ impl Solution {
 		spells
 	}
 }
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_2300() {}
-}

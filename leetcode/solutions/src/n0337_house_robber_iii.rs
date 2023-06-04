@@ -50,11 +50,10 @@ use super::util::tree::TreeNode;
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
 	pub fn rob(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		let root = match &root {
-			None => return 0,
-			Some(root) => root.borrow(),
-		};
-		Self::solve(&root).0
+		match &root {
+			None => 0,
+			Some(root) => Self::solve(&root.borrow()).0,
+		}
 	}
 
 	fn solve(root: &TreeNode) -> (i32, i32) {

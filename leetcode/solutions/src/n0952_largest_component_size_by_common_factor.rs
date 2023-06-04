@@ -63,12 +63,10 @@ impl Solution {
 		let primes = Self::primes(1e5_f32.sqrt() as i32);
 		let mut set = (0..(nums.iter().copied().max().unwrap() + 1)).collect::<Vec<_>>();
 		let set = set.as_mut_slice();
-		let mut cnts = vec![0; set.len()];
 
 		for &n in &nums {
-			let lim = (n as f32).sqrt() as i32;
 			let mut nn = n;
-			for p in primes.iter().copied().take_while(|p| *p <= lim) {
+			for p in primes.iter().copied().take_while(|&p| p * p <= n) {
 				while nn % p == 0 {
 					nn /= p;
 					Self::union(set, n, p);
@@ -78,13 +76,15 @@ impl Solution {
 				Self::union(set, n, nn);
 			}
 		}
-		let mut ans = 0;
-		for i in nums {
-			let j = Self::find(set, i as _);
-			cnts[j as usize] += 1;
-			ans = ans.max(cnts[j as usize]);
-		}
-		ans
+		let mut cnts = vec![0; set.len()];
+		nums.into_iter()
+			.map(|i| {
+				let j = Self::find(set, i as _);
+				cnts[j as usize] += 1;
+				cnts[j as usize]
+			})
+			.max()
+			.unwrap_or(0)
 	}
 }
 
