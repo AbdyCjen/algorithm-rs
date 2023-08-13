@@ -48,39 +48,34 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn total_cost(costs: Vec<i32>, k: i32, cand: i32) -> i64 {
-		use std::{cmp::Reverse, collections::BinaryHeap};
+		use std::collections::BinaryHeap;
 		let cand = cand as usize;
-		let mut it = costs.into_iter().enumerate().map(|(j, i)| Reverse((i, j)));
-
-		let mut head: BinaryHeap<_> = it.by_ref().take(cand).collect();
-		let mut tail: BinaryHeap<_> = it.by_ref().rev().take(cand).collect();
-		(0..k)
+		let mut it = costs.into_iter().map(|i| -i);
+		let mut head: BinaryHeap<i32> = it.by_ref().take(cand).collect();
+		let mut tail: BinaryHeap<i32> = it.by_ref().rev().take(cand).collect();
+		-(0..k)
 			.map(|_| {
-				if let (Some(h), Some(t)) = (head.peek(), tail.peek()) {
-					let (h, t) = (h.0, t.0);
-					if h < t {
+				if let (Some(&h), Some(&t)) = (head.peek(), tail.peek()) {
+					if h >= t {
 						head.pop();
 						if let Some(i) = it.next() {
-							head.push(i);
+							head.push(i)
 						}
-						h.0 as i64
+						h as i64
 					} else {
 						tail.pop();
-						if let Some(j) = it.next_back() {
-							tail.push(j);
+						if let Some(i) = it.next_back() {
+							tail.push(i);
 						}
-						t.0 as i64
+						t as i64
 					}
-				} else if let Some(t) = head.pop().or_else(|| tail.pop()) {
-					t.0 .0 as i64
 				} else {
-					0
+					head.pop().or(tail.pop()).unwrap_or(0) as i64
 				}
 			})
-			.sum()
+			.sum::<i64>()
 	}
 }
 

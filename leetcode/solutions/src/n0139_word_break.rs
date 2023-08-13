@@ -34,61 +34,57 @@
  */
 pub struct Solution {}
 
-struct TrieNode {
-	c: u8,
-	next: Vec<Self>,
+struct Trie {
 	end: bool,
+	child: Vec<Self>,
+	c: u8,
 }
-
-impl TrieNode {
+impl Trie {
 	fn new(c: u8) -> Self {
 		Self {
-			c,
-			next: Vec::new(),
 			end: false,
+			child: Vec::new(),
+			c,
 		}
 	}
-
-	fn insert(&mut self, s: &[u8]) {
+	fn insert(&mut self, s: &str) {
 		let mut cur = self;
-		for &c in s {
-			cur = match cur.next.binary_search_by(|t| t.c.cmp(&c)) {
-				Ok(i) => &mut cur.next[i],
+		for c in s.bytes() {
+			cur = match cur.child.binary_search_by_key(&c, |t| t.c) {
+				Ok(i) => &mut cur.child[i],
 				Err(i) => {
-					cur.next.insert(i, Self::new(c));
-					&mut cur.next[i]
+					cur.child.insert(i, Self::new(c));
+					&mut cur.child[i]
 				}
-			}
+			};
 		}
 		cur.end = true;
 	}
-
-	fn split(&self, s: &[u8], idx: usize, cache: &mut [Option<bool>]) -> bool {
-		if let Some(ans) = cache[idx] {
+	fn trav(&self, mut s: &[u8], cache: &mut [Option<bool>]) -> bool {
+		let len = s.len();
+		if let Some(ans) = cache[len] {
 			return ans;
 		}
 		let mut cur = self;
-		for (i, &c) in s.iter().enumerate() {
-			match cur.next.binary_search_by(|t| t.c.cmp(&c)) {
-				Ok(j) => {
-					cur = &cur.next[j];
-					if cur.end {
-						let tmp = self.split(&s[i + 1..], idx + i + 1, cache);
-						if *cache[idx + i + 1].insert(tmp) {
-							return true;
-						}
-					}
-				}
-				_ => return false,
+		while let [c, rest @ ..] = s {
+			if cur.end && self.trav(s, cache) {
+				return true;
 			}
+			cur = match cur.child.binary_search_by_key(c, |t| t.c) {
+				Ok(i) => &cur.child[i],
+				_ => {
+					cache[len] = Some(false);
+					return false;
+				}
+			};
+			s = rest;
 		}
+		cache[len] = Some(cur.end);
 		cur.end
 	}
 }
-
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn word_break(s: String, word_dict: Vec<String>) -> bool {
 		let mut cache = vec![None; s.as_bytes().len()];
@@ -111,14 +107,12 @@ impl Solution {
 		}
 		false
 	}
-	pub fn word_break_01(s: String, word_dict: Vec<String>) -> bool {
-		let mut tr = TrieNode::new(b'a');
-		for s in word_dict {
-			tr.insert(s.as_bytes());
+	pub fn word_break1(s: String, word_dict: Vec<String>) -> bool {
+		let mut trie = Trie::new(0);
+		for w in word_dict {
+			trie.insert(&w);
 		}
-
-		let s = s.into_bytes();
-		tr.split(&s, 0, &mut vec![None; s.len() + 1])
+		trie.trav(s.as_bytes(), &mut vec![None; s.len() + 1])
 	}
 }
 

@@ -48,33 +48,25 @@ use super::util::linked_list::ListNode;
 // }
 impl Solution {
 	pub fn reverse_between(
-		head: Option<Box<ListNode>>,
+		mut head: Option<Box<ListNode>>,
 		left: i32,
 		right: i32,
 	) -> Option<Box<ListNode>> {
-		let mut dummy = ListNode::new(0);
-		dummy.next = head;
-		let mut p = &mut dummy;
-		for _ in 0..left - 1 {
-			p = p.next.as_deref_mut().unwrap();
+		let mut cur = &mut head;
+		for _ in 1..left {
+			cur = &mut cur.as_mut().unwrap().next;
 		}
-
-		let mut rev_head = None;
-		let mut to_rev = p.next.take();
+		let mut rev = cur.take();
+		let mut cur_rev = &mut rev;
 		for _ in left..=right {
-			let mut to_rev_head = to_rev.unwrap();
-			to_rev = to_rev_head.next.take();
-			to_rev_head.next = rev_head;
-			rev_head = Some(to_rev_head);
+			cur_rev = &mut cur_rev.as_mut().unwrap().next;
 		}
-		//append to_rev to rev_head
-		let mut cur = &mut rev_head;
-		while let Some(cur_ptr) = cur {
-			cur = &mut cur_ptr.next;
+		*cur = cur_rev.take();
+		while let Some(mut no) = rev {
+			rev = std::mem::replace(&mut no.next, cur.take());
+			*cur = Some(no);
 		}
-		*cur = to_rev;
-		p.next = rev_head;
-		dummy.next.take()
+		head
 	}
 }
 

@@ -21,47 +21,25 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn subsets_with_dup(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
-		fn subsets_inner(nums: &[i32], st: Vec<i32>, ans: &mut Vec<Vec<i32>>, mut prev: i32) {
-			ans.push(st.clone());
-
-			for (i, &v) in nums.iter().enumerate() {
-				if i != 0 && prev == v {
-					continue;
+		let mut ans = Vec::new();
+		nums.sort_unstable();
+		Self::solve(vec![], &nums, &mut ans, i32::MAX);
+		ans
+	}
+	fn solve(mut st: Vec<i32>, nums: &[i32], ans: &mut Vec<Vec<i32>>, prv: i32) {
+		match nums {
+			[] => ans.push(st),
+			[n, rest @ ..] => {
+				if prv != *n {
+					Self::solve(st.clone(), rest, ans, prv);
 				}
-				let mut st = st.clone();
-				st.push(v);
-				subsets_inner(&nums[i + 1..], st, ans, v);
-				prev = v;
+				st.push(*n);
+				Self::solve(st, rest, ans, *n);
 			}
 		}
-		nums.sort_unstable();
-		let mut ans = Vec::new();
-		subsets_inner(&nums, vec![], &mut ans, -11);
-		ans
 	}
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_90() {
-		assert_eq!(
-			Solution::subsets_with_dup(vec![1, 2, 2]),
-			vec![
-				vec![],
-				vec![1],
-				vec![1, 2],
-				vec![1, 2, 2],
-				vec![2],
-				vec![2, 2]
-			]
-		);
-	}
-}

@@ -13,7 +13,6 @@ use super::util::linked_list::ListNode;
 
 // submission codes start here
 
-#[allow(dead_code)]
 // Definition for singly-linked list.
 // #[derive(PartialEq, Eq, Clone, Debug)]
 // pub struct ListNode {

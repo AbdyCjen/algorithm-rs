@@ -49,23 +49,19 @@ impl Solution {
 	pub fn min_falling_path_sum_1(matrix: Vec<Vec<i32>>) -> i32 {
 		let n = matrix.len();
 		let mut dp = (vec![0; n], vec![0; n]);
-		for (i, row) in matrix.into_iter().enumerate().rev() {
-			let (cur, prv) = if i % 2 == 0 {
-				(&mut dp.0, &dp.1)
-			} else {
-				(&mut dp.1, &dp.0)
-			};
-			for (j, ((num, c), min)) in row.into_iter().zip(cur).zip(prv).enumerate() {
+		for row in matrix {
+			for (j, ((num, c), min)) in row.into_iter().zip(&mut dp.0).zip(&dp.1).enumerate() {
 				let mut min = *min;
 				if j > 0 {
-					min = min.min(prv[j - 1]);
+					min = min.min(dp.1[j - 1]);
 				}
-				if let Some(&n) = prv.get(j + 1) {
+				if let Some(&n) = dp.1.get(j + 1) {
 					min = min.min(n);
 				}
 
 				*c = num + min;
 			}
+			dp = (dp.1, dp.0);
 		}
 		dp.0.into_iter().min().unwrap()
 	}

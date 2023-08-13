@@ -34,32 +34,27 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn max_dot_product(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
-		fn max_dot_product_inner(
-			i: usize,
-			j: usize,
-			nums1: &[i32],
-			nums2: &[i32],
-			mat: &mut [Vec<i32>],
-		) -> i32 {
-			if i >= nums1.len() || j >= nums2.len() {
-				return std::i32::MIN;
-			} else if mat[i][j] >= 0 {
-				return mat[i][j];
-			}
+		Self::solve(
+			&nums1,
+			&nums2,
+			&mut vec![vec![i32::MIN; nums2.len() + 1]; nums1.len() + 1],
+		)
+	}
 
-			let cur = (nums1[i] * nums2[j]
-				+ max_dot_product_inner(i + 1, j + 1, nums1, nums2, mat).max(0))
-			.max(max_dot_product_inner(i + 1, j, nums1, nums2, mat))
-			.max(max_dot_product_inner(i, j + 1, nums1, nums2, mat));
-			mat[i][j] = cur;
-			cur
+	fn solve(nums1: &[i32], nums2: &[i32], cache: &mut [Vec<i32>]) -> i32 {
+		if cache[nums1.len()][nums2.len()] != i32::MIN {
+			return cache[nums1.len()][nums2.len()];
 		}
-
-		let mut mat = vec![vec![-1; nums2.len()]; nums1.len()];
-		max_dot_product_inner(0, 0, &nums1, &nums2, &mut mat)
+		let ans = match (nums1, nums2) {
+			([a, rest1 @ ..], [b, rest2 @ ..]) => (a * b + 0.max(Self::solve(rest1, rest2, cache)))
+				.max(Self::solve(nums1, rest2, cache))
+				.max(Self::solve(rest1, nums2, cache)),
+			_ => i32::MIN,
+		};
+		cache[nums1.len()][nums2.len()] = ans;
+		ans
 	}
 }
 
@@ -70,7 +65,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn test_1569() {
+	fn test_1458() {
 		assert_eq!(
 			Solution::max_dot_product(vec![2, 1, -2, 5], vec![3, 0, -6]),
 			18

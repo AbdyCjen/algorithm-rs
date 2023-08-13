@@ -64,71 +64,52 @@ use super::util::tree::TreeNode;
 //     }
 //   }
 // }
-use std::{cell::RefCell, cmp::Ordering::*, rc::Rc};
-#[allow(dead_code)]
+use std::{cell::RefCell, rc::Rc};
 impl Solution {
+	fn distance(root: &TreeNode, k: u32, ans: &mut Vec<i32>) {
+		match k.checked_sub(1) {
+			None => ans.push(root.val),
+			Some(k) => {
+				for &ch in [root.left.as_ref(), root.right.as_ref()].iter().flatten() {
+					Self::distance(&ch.borrow(), k, ans);
+				}
+			}
+		}
+	}
 	pub fn distance_k(
 		root: Option<Rc<RefCell<TreeNode>>>,
 		p: Option<Rc<RefCell<TreeNode>>>,
 		k: i32,
 	) -> Vec<i32> {
-		let mut nodes = Vec::new();
-		if let (Some(root), Some(p)) = (root, p) {
-			let (root, p) = (root.borrow(), p.borrow());
-			distance(&p, k, &mut nodes);
-			find(&root, &p, k, &mut nodes);
-		}
-		return nodes;
-
-		fn distance(root: &TreeNode, k: i32, res: &mut Vec<i32>) {
-			if k > 0 {
-				if let Some(l) = root.left.as_ref() {
-					distance(&l.borrow(), k - 1, res)
-				}
-				if let Some(r) = root.right.as_ref() {
-					distance(&r.borrow(), k - 1, res);
-				}
-			} else {
-				res.push(root.val);
-			}
-		}
-
-		fn find(root: &TreeNode, p: &TreeNode, k: i32, res: &mut Vec<i32>) -> Option<i32> {
-			if root.val == p.val {
-				return Some(1);
-			}
-
-			if let Some(dl) = root
-				.left
-				.as_ref()
-				.and_then(|o| find(&o.borrow(), p, k, res))
-			{
-				match dl.cmp(&k) {
-					Equal => res.push(root.val),
-					Less => {
-						if let Some(r) = root.right.as_ref() {
-							distance(&r.borrow(), k - dl - 1, res);
+		let mut ans = Vec::new();
+		Self::solve(&root, p.as_ref().unwrap().borrow().val, k as u32, &mut ans);
+		ans
+	}
+	fn solve(
+		root: &Option<Rc<RefCell<TreeNode>>>,
+		tar: i32,
+		k: u32,
+		ans: &mut Vec<i32>,
+	) -> Option<u32> {
+		let root = root.as_ref()?.borrow();
+		if root.val == tar {
+			Self::distance(&root, k, ans);
+			Some(k - 1)
+		} else {
+			for (l, r) in [(&root.left, &root.right), (&root.right, &root.left)] {
+				if let Some(k) = Self::solve(l, tar, k, ans) {
+					match k.checked_sub(1) {
+						None => ans.push(root.val),
+						Some(k) => {
+							if let Some(r) = r {
+								Self::distance(&r.borrow(), k, ans)
+							}
 						}
-					}
-					_ => {}
+					};
+					return k.checked_sub(1);
 				}
-				Some(dl + 1)
-			} else {
-				let dr = root
-					.right
-					.as_ref()
-					.and_then(|o| find(&o.borrow(), p, k, res))?;
-				match dr.cmp(&k) {
-					Equal => res.push(root.val),
-					Less => {
-						if let Some(l) = root.left.as_ref() {
-							distance(&l.borrow(), k - dr - 1, res);
-						}
-					}
-					_ => {}
-				}
-				Some(dr + 1)
 			}
+			None
 		}
 	}
 }

@@ -44,7 +44,6 @@ pub struct Solution {}
 // submission codes start here
 
 // return the maximum window size that sums up to (nums.sum() - x)
-#[allow(dead_code)]
 impl Solution {
 	pub fn min_operations(nums: Vec<i32>, x: i32) -> i32 {
 		let total: i32 = nums.iter().sum();

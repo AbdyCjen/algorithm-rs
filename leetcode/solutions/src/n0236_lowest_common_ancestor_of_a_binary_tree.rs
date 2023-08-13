@@ -61,24 +61,30 @@ impl Solution {
 		p: Option<Rc<RefCell<TreeNode>>>,
 		q: Option<Rc<RefCell<TreeNode>>>,
 	) -> Option<Rc<RefCell<TreeNode>>> {
-		let p = p.unwrap();
-		let q = q.unwrap();
-		let p_b = p.borrow_mut();
-		if p == q {
-			drop(root);
-		}
-		drop(p_b);
-		None
+		Self::lca(root, p.unwrap().borrow().val, q.unwrap().borrow().val)
 	}
-	pub fn lowest_common_ancestor_1(
+	fn lca(root: Option<Rc<RefCell<TreeNode>>>, p: i32, q: i32) -> Option<Rc<RefCell<TreeNode>>> {
+		let root = root?;
+		let val = root.borrow().val;
+		if val == p || val == q {
+			return Some(root);
+		}
+		let (l, r) = (root.borrow().left.clone(), root.borrow().right.clone());
+		match (Self::lca(l, p, q), Self::lca(r, p, q)) {
+			(Some(_), Some(_)) => Some(root),
+			(no @ Some(_), _) | (_, no @ Some(_)) => no,
+			_ => None,
+		}
+	}
+	pub fn lowest_common_ancestor1(
 		root: Option<Rc<RefCell<TreeNode>>>,
 		p: Option<Rc<RefCell<TreeNode>>>,
 		q: Option<Rc<RefCell<TreeNode>>>,
 	) -> Option<Rc<RefCell<TreeNode>>> {
-		Self::lca(&root, p.unwrap().borrow().val, q.unwrap().borrow().val).err()
+		Self::lca1(&root, p.unwrap().borrow().val, q.unwrap().borrow().val).err()
 	}
 
-	fn lca(
+	fn lca1(
 		root_opt: &Option<Rc<RefCell<TreeNode>>>,
 		p: i32,
 		q: i32,
@@ -86,22 +92,21 @@ impl Solution {
 		match root_opt {
 			Some(root) => {
 				let r = root.borrow();
-				//dbg!((r.val, p, q));
 				if r.val == p || r.val == q {
-					if let Ok(Some(_)) = Self::lca(&r.left, q, p) {
+					if let Ok(Some(_)) = Self::lca1(&r.left, q, p) {
 						Err(root.clone())
-					} else if let Ok(Some(_)) = Self::lca(&r.right, q, p) {
-						Err(root.clone())
-					} else {
-						Ok(Some(()))
-					}
-				} else if Self::lca(&r.left, p, q)?.is_some() {
-					if Self::lca(&r.right, q, p)?.is_some() {
+					} else if let Ok(Some(_)) = Self::lca1(&r.right, q, p) {
 						Err(root.clone())
 					} else {
 						Ok(Some(()))
 					}
-				} else if Self::lca(&r.right, p, q)?.is_some() {
+				} else if Self::lca1(&r.left, p, q)?.is_some() {
+					if Self::lca1(&r.right, q, p)?.is_some() {
+						Err(root.clone())
+					} else {
+						Ok(Some(()))
+					}
+				} else if Self::lca1(&r.right, p, q)?.is_some() {
 					Ok(Some(()))
 				} else {
 					Ok(None)

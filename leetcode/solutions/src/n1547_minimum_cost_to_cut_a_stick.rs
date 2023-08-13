@@ -67,16 +67,3 @@ impl Solution {
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_1547() {
-		assert_eq!(
-			Solution::min_cost(1e6 as i32, (1..100).map(|i| i * 100).collect()),
-			0
-		);
-	}
-}

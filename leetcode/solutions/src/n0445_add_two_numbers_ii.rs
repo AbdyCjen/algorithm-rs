@@ -34,105 +34,36 @@ pub struct Solution {}
 use super::util::linked_list::ListNode;
 
 // submission codes start here
-
-#[allow(dead_code)]
-// Definition for singly-linked list.
-// #[derive(PartialEq, Eq, Clone, Debug)]
-// pub struct ListNode {
-//   pub val: i32,
-//   pub next: Option<Box<ListNode>>
-// }
-//
-// impl ListNode {
-//   #[inline]
-//   fn new(val: i32) -> Self {
-//     ListNode {
-//       next: None,
-//       val
-//     }
-//   }
-// }
 impl Solution {
 	pub fn add_two_numbers(
 		l1: Option<Box<ListNode>>,
 		l2: Option<Box<ListNode>>,
 	) -> Option<Box<ListNode>> {
-		fn rev(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-			let mut list = None;
-			while let Some(mut no) = head {
-				head = std::mem::replace(&mut no.next, list);
-				list = Some(no);
+		fn rev(mut lis: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+			let mut no = None;
+			while let Some(mut l) = lis {
+				lis = std::mem::replace(&mut l.next, no);
+				no = Some(l);
 			}
-			list
+			no
 		}
 		let mut lr = (rev(l1), rev(l2));
 		let (mut no, mut flow) = (None, 0);
-		while let (Some(mut l1), Some(mut l2)) = lr {
-			lr = (std::mem::replace(&mut l1.next, no), l2.next.take());
-			l1.val += flow + l2.val;
-			flow = l1.val / 10;
-			l1.val %= 10;
-			no = Some(l1);
-		}
-		let mut l = lr.0.or(lr.1);
-		while let Some(mut ne) = l {
-			l = std::mem::replace(&mut ne.next, no);
-			ne.val += flow;
-			flow = ne.val / 10;
-			ne.val %= 10;
-			no = Some(ne);
+		while let (Some(mut l), mut r) | (mut r, Some(mut l)) = lr {
+			if let Some(rr) = r {
+				l.val += rr.val;
+				r = rr.next;
+			}
+			lr = (std::mem::replace(&mut l.next, no), r);
+			l.val += flow;
+			flow = l.val / 10;
+			l.val %= 10;
+			no = Some(l);
 		}
 		if flow > 0 {
-			Some(Box::new(ListNode { val: 1, next: no }))
-		} else {
-			no
+			no = Some(Box::new(ListNode { val: 1, next: no }));
 		}
-	}
-	pub fn add_two_numbers1(
-		l1: Option<Box<ListNode>>,
-		l2: Option<Box<ListNode>>,
-	) -> Option<Box<ListNode>> {
-		fn reverse(mut lis: Option<Box<ListNode>>) -> (Option<Box<ListNode>>, i32) {
-			let (mut cnt, mut new_list) = (0, None);
-			while let Some(mut l) = lis {
-				lis = std::mem::replace(&mut l.next, new_list);
-				new_list = Some(l);
-				cnt += 1;
-			}
-			(new_list, cnt)
-		}
-
-		let (mut l1, c1) = reverse(l1);
-		let (mut l2, c2) = reverse(l2);
-		if c2 > c1 {
-			std::mem::swap(&mut l1, &mut l2);
-		}
-
-		let mut cur_ptr = l1.as_deref_mut();
-		let mut flow = 0;
-		while let Some(cur) = cur_ptr {
-			cur.val += flow;
-			if let Some(lis) = l2 {
-				cur.val += lis.val;
-				flow = cur.val / 10;
-				cur.val %= 10;
-				l2 = lis.next;
-			} else {
-				flow = cur.val / 10;
-				cur.val %= 10;
-			}
-			cur_ptr = cur.next.as_deref_mut();
-		}
-		let (l1, _) = reverse(l1);
-
-		if flow > 0 {
-			Some(Box::new(ListNode {
-				val: flow,
-				next: l1,
-			}))
-		} else {
-			l1
-		}
+		no
 	}
 }
 

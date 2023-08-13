@@ -43,18 +43,17 @@ pub struct Solution {}
 impl Solution {
 	pub fn summary_ranges(mut nums: Vec<i32>) -> Vec<String> {
 		nums.push(i32::MIN);
-		let mut start = 0;
-		let mut ans = vec![];
-		for (i, w) in nums.windows(2).enumerate() {
-			if w[1] != w[0].saturating_add(1) {
-				if nums[start] == w[0] {
-					ans.push(w[0].to_string());
+		let mut start = nums[0];
+		nums.windows(2)
+			.filter(|w| w[0].saturating_add(1) != w[1])
+			.map(|w| {
+				let s = std::mem::replace(&mut start, w[1]);
+				if s == w[0] {
+					s.to_string()
 				} else {
-					ans.push(format!("{}->{}", nums[start], w[0]));
+					format!("{}->{}", s, w[0])
 				}
-				start = i + 1;
-			}
-		}
-		ans
+			})
+			.collect()
 	}
 }

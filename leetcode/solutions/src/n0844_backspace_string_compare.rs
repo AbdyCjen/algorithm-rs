@@ -62,36 +62,23 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn backspace_compare(s: String, t: String) -> bool {
-		fn filter_bs() -> impl FnMut(&u8) -> bool {
-			let mut bs_cnt = 0;
-			move |c| match (c, bs_cnt) {
-				(&b'#', _) => {
-					bs_cnt += 1;
-					false
+		Self::solve(s.into_bytes()) == Self::solve(t.into_bytes())
+	}
+	fn solve(mut s: Vec<u8>) -> Vec<u8> {
+		let mut i = 0_usize;
+		for j in 0..s.len() {
+			match s[j] {
+				b'#' => i = i.saturating_sub(1),
+				c => {
+					s[i] = c;
+					i += 1;
 				}
-				(_, __x @ 1..=std::i32::MAX) => {
-					bs_cnt -= 1;
-					false
-				}
-				_ => true,
 			}
 		}
-		let mut s = s.bytes().rev().filter(filter_bs());
-		let mut t = t.bytes().rev().filter(filter_bs());
-		loop {
-			match (s.next(), t.next()) {
-				(Some(c1), Some(c2)) => {
-					if c1 != c2 {
-						break false;
-					}
-				}
-				(None, None) => break true,
-				_ => break false,
-			}
-		}
+		s.truncate(i);
+		s
 	}
 }
 

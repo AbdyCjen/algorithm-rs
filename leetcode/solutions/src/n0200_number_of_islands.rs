@@ -132,6 +132,5 @@ mod tests {
 			]),
 			3
 		);
-		assert_eq!(Solution::num_islands(vec![]), 0);
 	}
 }

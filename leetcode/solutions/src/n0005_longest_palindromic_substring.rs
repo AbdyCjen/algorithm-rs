@@ -42,10 +42,8 @@ impl Solution {
 				ans = &s[l..r];
 			}
 
-			if let Some(l) = l.checked_sub(1) {
-				if Self::palindrome(&s[l..r]) {
-					ans = &s[l..r];
-				}
+			if l > 0 && Self::palindrome(&s[l - 1..r]) {
+				ans = &s[l - 1..r];
 			}
 		}
 

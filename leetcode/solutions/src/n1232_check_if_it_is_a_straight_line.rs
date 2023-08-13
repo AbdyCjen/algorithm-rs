@@ -29,18 +29,14 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn check_straight_line(points: Vec<Vec<i32>>) -> bool {
-		if points.len() <= 2 {
-			return true;
+		match &points[..] {
+			[p1, p2, points @ ..] => points
+				.iter()
+				.all(|p| (p[1] - p1[1]) * (p[0] - p2[0]) == (p[1] - p2[1]) * (p[0] - p1[0])),
+			_ => true,
 		}
-		let (x1, y1) = (points[0][0], points[0][1]);
-		let (x2, y2) = (points[1][0], points[1][1]);
-		points
-			.into_iter()
-			.skip(2)
-			.all(|p| (p[1] - y1) * (p[0] - x2) == (p[1] - y2) * (p[0] - x1))
 	}
 }
 
@@ -52,26 +48,26 @@ mod tests {
 
 	#[test]
 	fn test_1349() {
-		assert!(Solution::check_straight_line(vec![
-			vec![1, 2],
-			vec![2, 3],
-			vec![3, 4],
-			vec![4, 5],
-			vec![5, 6],
-			vec![6, 7]
+		assert!(Solution::check_straight_line(matrix![
+			[1, 2],
+			[2, 3],
+			[3, 4],
+			[4, 5],
+			[5, 6],
+			[6, 7]
 		]));
-		assert!(!Solution::check_straight_line(vec![
-			vec![1, 1],
-			vec![2, 2],
-			vec![3, 4],
-			vec![4, 5],
-			vec![5, 6],
-			vec![7, 7]
+		assert!(!Solution::check_straight_line(matrix![
+			[1, 1],
+			[2, 2],
+			[3, 4],
+			[4, 5],
+			[5, 6],
+			[7, 7]
 		]));
-		assert!(Solution::check_straight_line(vec![
-			vec![1, 1],
-			vec![1, 1],
-			vec![1, 1]
+		assert!(Solution::check_straight_line(matrix![
+			[1, 1],
+			[1, 1],
+			[1, 1]
 		]));
 	}
 }

@@ -35,6 +35,7 @@ impl Solution {
 					*i += 1;
 				}
 			}
+			nums.push(ugly);
 		}
 		nums.pop().unwrap()
 	}

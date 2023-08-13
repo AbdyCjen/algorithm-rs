@@ -39,49 +39,27 @@
  *
  */
 // submission codes start here
-
-struct LRUEntry {
-	key: i32,
-	val: i32,
-	next: *mut LRUEntry,
-	prev: *mut LRUEntry,
+type ListEntry = (i32, i32, usize, usize);
+struct LRUCache1 {
+	map: std::collections::HashMap<i32, usize>,
+	cap: usize,
+	list: Vec<ListEntry>, // (k,v, prev,next)
 }
-use std::collections::HashMap;
-struct LRUCache {
-	map: HashMap<i32, Box<LRUEntry>>,
-	cap: i32,
-	head: Box<LRUEntry>,
-}
-
-/**
- * `&self` means the method takes an immutable reference.
- * If you need a mutable reference, change it to `&mut self` instead.
- */
-#[allow(dead_code)]
-impl LRUCache {
+impl LRUCache1 {
 	fn new(cap: i32) -> Self {
-		unsafe {
-			use std::mem::MaybeUninit;
-			let mut cache = LRUCache {
-				cap,
-				map: HashMap::with_capacity((cap + 1) as usize),
-				head: Box::new(MaybeUninit::zeroed().assume_init()), //is this safe?
-			};
-			cache.head.next = cache.head.as_mut();
-			cache.head.prev = cache.head.as_mut();
-			cache
+		Self {
+			map: Default::default(),
+			cap: cap as usize + 1,
+			list: vec![(0, 0, 0, 0)],
 		}
 	}
 
 	fn get(&mut self, key: i32) -> i32 {
-		match self.map.get_mut(&key) {
-			Some(e) => unsafe {
-				Self::detach(e);
-				let val = e.val;
-				let e = e.as_mut() as *mut LRUEntry;
-				self.append(e);
-				val
-			},
+		match self.map.get(&key) {
+			Some(&e) => {
+				self.update(e);
+				self.list[e].1
+			}
 			None => -1,
 		}
 	}
@@ -89,49 +67,97 @@ impl LRUCache {
 	fn put(&mut self, key: i32, val: i32) {
 		use std::collections::hash_map::Entry;
 		match self.map.entry(key) {
-			Entry::Vacant(o) => {
-				let e = o.insert(Box::new(LRUEntry {
-					key,
-					val,
-					prev: std::ptr::null_mut(),
-					next: std::ptr::null_mut(),
-				}));
-				let e = e.as_mut() as *mut LRUEntry;
+			Entry::Vacant(ent) => {
+				let e = if self.list.len() == self.cap {
+					let avail = self.list[0].3;
+					Self::detach(&mut self.list, avail);
+					ent.insert(avail);
+					self.map.remove(&self.list[avail].0.clone());
+					self.list[avail] = (key, val, 0, 0);
+					avail
+				} else {
+					ent.insert(self.list.len());
+					self.list.push((key, val, 0, 0));
+					self.list.len() - 1
+				};
+				self.append(e);
+			}
+			Entry::Occupied(e) => {
+				let e = *e.get();
+				self.list[e].1 = val;
+				self.update(e);
+			}
+		}
+	}
+	fn detach(list: &mut [ListEntry], e: usize) {
+		let (_, _, prv, next) = list[e];
+		list[prv].3 = next;
+		list[next].2 = prv;
+	}
+	fn update(&mut self, e: usize) {
+		let list = &mut self.list;
+		Self::detach(list, e);
+		self.append(e);
+	}
+	fn append(&mut self, e: usize) {
+		let list = &mut self.list;
+		list[e].3 = 0;
+		list[e].2 = list[0].2;
+		let prv = list[e].2;
+		list[prv].3 = e;
+		list[0].2 = e;
+	}
+}
 
-				unsafe {
-					self.append(e);
-					if self.map.len() > self.cap as usize {
-						let to_rem = (*self.head.next).key;
-						let mut e = self.map.remove(&to_rem).unwrap();
-						Self::detach(e.as_mut());
+struct LRUCache {
+	map: std::collections::HashMap<i32, (i32, i32)>, // (val, cnt)
+	cap: i32,
+	visited: std::collections::VecDeque<i32>,
+}
+
+impl LRUCache {
+	fn new(cap: i32) -> Self {
+		Self {
+			cap,
+			map: std::collections::HashMap::with_capacity(cap as usize),
+			visited: Default::default(),
+		}
+	}
+
+	fn get(&mut self, key: i32) -> i32 {
+		match self.map.get_mut(&key) {
+			Some((val, cnt)) => {
+				*cnt += 1;
+				self.visited.push_back(key);
+				*val
+			}
+			_ => -1,
+		}
+	}
+
+	fn put(&mut self, key: i32, val: i32) {
+		use std::collections::hash_map::Entry;
+		match self.map.entry(key) {
+			Entry::Vacant(ent) => {
+				ent.insert((val, 1));
+				while self.map.len() as i32 > self.cap {
+					let del = self.visited.pop_front().unwrap();
+					let cnt = self.map.get_mut(&del).unwrap();
+					cnt.1 -= 1;
+					if cnt.1 == 0 {
+						self.map.remove(&del);
 					}
 				}
 			}
 			Entry::Occupied(mut e) => {
-				let e = e.get_mut();
-				unsafe {
-					Self::detach(e);
-					e.val = val;
-					let e = e.as_mut() as *mut LRUEntry;
-					self.append(e);
-				}
+				let (v, cnt) = e.get_mut();
+				*v = val;
+				*cnt += 1;
 			}
 		}
-	}
-
-	unsafe fn detach(e: &LRUEntry) {
-		(*e.prev).next = e.next;
-		(*e.next).prev = e.prev;
-	}
-
-	unsafe fn append(&mut self, e: *mut LRUEntry) {
-		(*e).prev = self.head.prev;
-		self.head.prev = e;
-		(*e).next = self.head.as_mut();
-		(*(*e).prev).next = e;
+		self.visited.push_back(key);
 	}
 }
-
 /**
  * Your LRUCache object will be instantiated and called as such:
  * let obj = LRUCache::new(capacity);
@@ -158,5 +184,15 @@ mod tests {
 		assert_eq!(obj.get(1), -1);
 		assert_eq!(obj.get(3), 3);
 		assert_eq!(obj.get(4), 4);
+
+		let mut obj = LRUCache::new(2);
+		obj.put(2, 1);
+		obj.put(3, 2);
+		assert_eq!(obj.get(3), 2);
+		assert_eq!(obj.get(2), 1);
+		obj.put(4, 3);
+		assert_eq!(obj.get(2), 1);
+		assert_eq!(obj.get(3), -1);
+		assert_eq!(obj.get(4), 3);
 	}
 }

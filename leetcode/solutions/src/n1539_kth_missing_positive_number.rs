@@ -34,7 +34,6 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	//TODO: binary search
 	pub fn find_kth_positive(arr: Vec<i32>, k: i32) -> i32 {
 		for (&n, i) in arr.iter().zip(1..) {
 			if n - i >= k {
@@ -55,5 +54,6 @@ mod tests {
 	fn test_1539() {
 		assert_eq!(Solution::find_kth_positive(vec![2, 3, 4, 7, 11], 5), 9);
 		assert_eq!(Solution::find_kth_positive(vec![1, 2, 3, 4], 2), 6);
+		assert_eq!(Solution::find_kth_positive(vec![1, 2], 1), 3);
 	}
 }

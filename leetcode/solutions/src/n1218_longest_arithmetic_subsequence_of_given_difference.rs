@@ -32,7 +32,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn longest_subsequence(arr: Vec<i32>, diff: i32) -> i32 {
 		use std::collections::HashMap;

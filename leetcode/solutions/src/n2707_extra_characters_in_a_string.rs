@@ -46,11 +46,11 @@ impl Solution {
 			return 0;
 		}
 		let mut ans = i32::MAX;
-		for i in 0..s.len() {
-			if dict.contains(&s[..=i]) {
-				ans = ans.min(Self::solve(&s[i + 1..], dict, cache));
+		for i in 1..=s.len() {
+			if dict.contains(&s[..i]) {
+				ans = ans.min(Self::solve(&s[i..], dict, cache));
 			} else {
-				ans = ans.min(Self::solve(&s[i + 1..], dict, cache) + 1 + i as i32);
+				ans = ans.min(Self::solve(&s[i..], dict, cache) + i as i32);
 			}
 		}
 		cache[s.len()] = ans;

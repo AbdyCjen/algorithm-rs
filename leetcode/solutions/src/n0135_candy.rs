@@ -34,20 +34,17 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn candy(ratings: Vec<i32>) -> i32 {
 		let mut prv = ratings[0];
 		let mut cur = 1;
 		let mut candies = vec![0; ratings.len()];
-
-		for (candy, &i) in candies.iter_mut().zip(&ratings) {
+		for (&i, candy) in ratings.iter().zip(&mut candies) {
 			cur = if prv < i { cur + 1 } else { 1 };
 			*candy = cur;
 			prv = i;
 		}
-
-		for (candy, &i) in candies.iter_mut().zip(&ratings).rev() {
+		for (&i, candy) in ratings.iter().zip(&mut candies).rev() {
 			cur = if prv < i { cur + 1 } else { 1 };
 			*candy = cur.max(*candy);
 			prv = i;

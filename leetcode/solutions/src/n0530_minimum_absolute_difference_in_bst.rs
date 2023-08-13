@@ -46,11 +46,24 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
-	// 中序遍历找最小间隔, 初始pre怎么办
-	// 因为拷贝rc迭代反而比递归慢, 晚点改成递归的吧
 	pub fn get_minimum_difference(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+		Self::solve(&root, root.as_ref().unwrap().borrow().val - 200_000).1
+	}
+	fn solve(root: &Option<Rc<RefCell<TreeNode>>>, prv: i32) -> (i32, i32) {
+		match root {
+			Some(root) => {
+				let root = root.borrow();
+				let (prv, mut ans) = Self::solve(&root.left, prv);
+				ans = ans.min(root.val - prv);
+				let (prv, can) = Self::solve(&root.right, root.val);
+				(prv, can.min(ans))
+			}
+			_ => (prv, i32::MAX),
+		}
+	}
+
+	pub fn get_minimum_difference1(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
 		let mut st = Vec::new();
 		let mut o = root;
 		while let Some(lo) = o.take() {

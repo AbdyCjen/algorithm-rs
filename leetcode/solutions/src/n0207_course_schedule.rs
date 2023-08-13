@@ -42,11 +42,10 @@ impl Solution {
 			neigs[pre[0] as usize].0.push(pre[1]);
 			neigs[pre[1] as usize].1 += 1;
 		}
-		let mut st: Vec<i32> = neigs
-			.iter()
-			.zip(0..)
-			.filter(|v| v.0 .1 == 0)
-			.map(|(_, i)| i)
+		let mut st: Vec<i32> = (0..)
+			.zip(&neigs)
+			.filter(|v| v.1 .1 == 0)
+			.map(|(i, _)| i)
 			.collect();
 		while let Some(cur) = st.pop() {
 			for nei in std::mem::take(&mut neigs[cur as usize].0) {

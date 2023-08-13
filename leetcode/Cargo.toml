@@ -4,7 +4,8 @@ members = [
     "lc_tool",
     "solutions",
 ]
-default-members = ["lc_tool"]
+default-members = ["solutions"]
+resolver = "2"
 
 # enable if thin binary is needed
 #[profile.release]
@@ -12,5 +13,8 @@ default-members = ["lc_tool"]
 #lto = "thin"
 #panic = 'abort'
 
+[workspace.dependencies]
+rand = "0.8"
+
 [profile.dev]
-incremental = false
+incremental = true

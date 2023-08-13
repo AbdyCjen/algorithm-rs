@@ -30,41 +30,31 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::BTreeMap;
 impl Solution {
 	pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
-		if k == 1 {
-			return nums;
-		}
-		let mut prv = 0;
-		let len = nums.len();
-		let mut to_left = vec![0; len];
-		for ((&n, m), i) in nums.iter().zip(&mut to_left).zip(0..) {
-			if i % k == 0 {
-				prv = n;
-			} else {
-				prv = prv.max(n);
+		let k = k as usize;
+		let mut dq = std::collections::VecDeque::new();
+		for i in &nums[..k - 1] {
+			while !dq.is_empty() && dq.back() < Some(i) {
+				dq.pop_back();
 			}
-			*m = prv;
+			dq.push_back(*i);
 		}
-		let mut to_right = nums;
-		let mut prv = i32::MIN;
-		for (m, i) in to_right.iter_mut().zip(0..len as i32).rev() {
-			if i % k == 0 {
-				prv = *m;
-			} else {
-				prv = prv.max(*m);
+		let mut ans = Vec::with_capacity(nums.len());
+		for (h, t) in nums.iter().zip(&nums[k - 1..]) {
+			while !dq.is_empty() && dq.back() < Some(t) {
+				dq.pop_back();
 			}
-			*m = prv;
-		}
-
-		let mut ans = vec![0; len + 1 - k as usize];
-		for (m, i) in ans.iter_mut().zip(0..) {
-			*m = to_right[i].max(to_left[i + k as usize - 1]);
+			dq.push_back(*t);
+			ans.push(*dq.front().unwrap());
+			if dq.front() == Some(h) {
+				dq.pop_front();
+			}
 		}
 		ans
 	}
 	pub fn max_sliding_window1(nums: Vec<i32>, k: i32) -> Vec<i32> {
+		use std::collections::BTreeMap;
 		if k == 1 {
 			return nums;
 		}

@@ -41,27 +41,23 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn compress(chars: &mut Vec<char>) -> i32 {
-		let (mut i, mut j, mut cnt) = (0, 1, 1);
-		while j < chars.len() {
-			chars[i] = chars[j];
-			while chars[i] == chars[j] {
-				j += 1;
+		let (mut cnt, mut prv) = (0, 0 as char);
+		for c in std::mem::take(chars) {
+			if c == prv {
 				cnt += 1;
-			}
-
-			if cnt == 1 {
-				i += 1;
 			} else {
-				i += 1;
-				for c in cnt.to_string().chars() {
-					chars[i] = c;
-					i += 1;
+				if cnt > 1 {
+					chars.extend(cnt.to_string().chars());
 				}
+				prv = c;
+				chars.push(c);
 				cnt = 1;
 			}
 		}
-		chars.truncate(i);
-		i as i32
+		if cnt > 1 {
+			chars.extend(cnt.to_string().chars());
+		}
+		chars.len() as i32
 	}
 }
 
@@ -75,6 +71,9 @@ mod tests {
 	fn test_443() {
 		let mut v = vec!['a'; 1000];
 		Solution::compress(&mut v);
-		assert_eq!(v[..5], ['a', '1', '0', '0', '0']);
+		assert!(v.iter().copied().eq("a1000".chars()));
+		let mut v = vec!['a', 'a', 'b', 'b', 'c', 'c', 'c'];
+		assert_eq!(Solution::compress(&mut v), 6);
+		assert!(v.iter().copied().eq("a2b2c3".chars()));
 	}
 }

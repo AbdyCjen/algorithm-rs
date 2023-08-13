@@ -33,25 +33,18 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn min_sub_array_len(target: i32, nums: Vec<i32>) -> i32 {
-		let mut s = 0;
-		let mut i = 0;
-		let mut ans = nums.len() + 1;
-		for (j, n) in nums.iter().enumerate() {
+		let (mut i, mut s, mut ans) = (0_u32, 0, u32::MAX);
+		for (j, &n) in (0..).zip(&nums) {
 			s += n;
 			while s >= target {
 				ans = ans.min(j - i + 1);
-				s -= nums[i];
+				s -= nums[i as usize];
 				i += 1;
 			}
 		}
-		if ans > nums.len() {
-			0
-		} else {
-			ans as i32
-		}
+		ans.wrapping_add(1).saturating_sub(1) as i32
 	}
 }
 

@@ -71,55 +71,52 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn full_justify(words: Vec<String>, max_width: i32) -> Vec<String> {
-		let mut res = Vec::new();
-		let mut cache = Vec::new();
+		let mut ans = Vec::new();
+		let mut buf = Vec::new();
 		let mut wlen = 0;
-		for word in words.into_iter() {
-			if wlen + cache.len() + word.len() > max_width as usize {
-				res.push(Solution::line_compact(&mut cache, wlen, max_width));
-				wlen = word.len();
-			} else {
-				wlen += word.len();
+		for w in words {
+			if wlen + buf.len() + w.len() > max_width as usize {
+				ans.push(Solution::line_compact(&mut buf, wlen, max_width));
+				wlen = 0;
 			}
-			cache.push(word);
+			wlen += w.len();
+			buf.push(w);
 		}
-		res.push(Solution::last_line_compact(&mut cache, wlen, max_width));
-		res
+		ans.push(Solution::last_line_compact(&mut buf, max_width));
+		ans
 	}
 
-	fn line_compact(cache: &mut Vec<String>, wlen: usize, max_width: i32) -> String {
+	fn line_compact(buf: &mut Vec<String>, wlen: usize, max_width: i32) -> String {
 		let spcs = max_width as usize - wlen;
-		let avg_spc = spcs / std::cmp::max(1, cache.len() - 1);
-		let ext_spc = spcs - avg_spc * std::cmp::max(1, cache.len() - 1);
-		let mut res = String::new();
-		for (i, word) in cache.iter().enumerate() {
-			res.push_str(word);
-			if i < cache.len() - 1 || cache.len() == 1 {
-				res.push_str(&" ".repeat(avg_spc));
-				if i < ext_spc {
-					res.push(' ');
+		let avg_spc = spcs / 1.max(buf.len() - 1);
+		let ext_spc = spcs - avg_spc * 1.max(buf.len() - 1);
+		let mut ans = String::new();
+		let len = buf.len();
+		for (i, word) in (0..).zip(buf.drain(0..)) {
+			ans.push_str(&word);
+			if i < len - 1 || len == 1 {
+				for _ in 0..(avg_spc + (i < ext_spc) as usize) {
+					ans.push(' ');
 				}
 			}
 		}
-		cache.clear();
-		res
+		ans
 	}
 
-	fn last_line_compact(cache: &mut [String], wlen: usize, max_width: i32) -> String {
-		let spcs = max_width as usize - wlen;
-		let last_spc = spcs - cache.len() + 1;
-		let mut res = String::new();
-		for (i, word) in cache.iter().enumerate() {
-			res.push_str(word);
-			if i < cache.len() - 1 {
-				res.push(' ');
+	fn last_line_compact(buf: &mut [String], max_width: i32) -> String {
+		let mut ans = String::new();
+		for w in buf {
+			ans.push_str(w);
+			if ans.len() < max_width as usize {
+				ans.push(' ');
 			}
 		}
-		res.push_str(&" ".repeat(last_spc));
-		res
+		while ans.len() < max_width as usize {
+			ans.push(' ');
+		}
+		ans
 	}
 }
 

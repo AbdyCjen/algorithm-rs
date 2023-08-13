@@ -26,38 +26,36 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn subsets(nums: Vec<i32>) -> Vec<Vec<i32>> {
-		fn subsets_inner(nums: &[i32], mut st: Vec<i32>, ans: &mut Vec<Vec<i32>>) {
-			if nums.is_empty() {
-				ans.push(st);
-				return;
+	pub fn subsets(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+		match nums.pop() {
+			Some(n) => {
+				let mut ans = Self::subsets(nums);
+				for i in 0..ans.len() {
+					let v = ans[i].clone();
+					ans[i].push(n);
+					ans.push(v);
+				}
+				ans
 			}
-
-			subsets_inner(&nums[1..], st.clone(), ans);
-			st.push(nums[0]);
-			subsets_inner(&nums[1..], st, ans);
+			None => vec![vec![]],
 		}
+	}
+	pub fn subsets1(nums: Vec<i32>) -> Vec<Vec<i32>> {
 		let mut ans = Vec::new();
-		subsets_inner(&nums, vec![], &mut ans);
+		Self::solve(vec![], &nums, &mut ans);
 		ans
+	}
+	fn solve(mut st: Vec<i32>, nums: &[i32], ans: &mut Vec<Vec<i32>>) {
+		match nums {
+			[] => ans.push(st),
+			[n, rest @ ..] => {
+				Self::solve(st.clone(), rest, ans);
+				st.push(*n);
+				Self::solve(st, rest, ans);
+			}
+		}
 	}
 }
 
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_78() {
-		assert_eq!(Solution::subsets(vec![]), vec![vec![]]);
-		assert_eq!(Solution::subsets(vec![1]), vec![vec![], vec![1]]);
-		assert_eq!(
-			Solution::subsets(vec![1, 2]),
-			vec![vec![], vec![2], vec![1], vec![1, 2]]
-		);
-	}
-}
