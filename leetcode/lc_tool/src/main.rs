@@ -7,25 +7,30 @@ use std::{fs, io::Write, path::Path};
 #[command(author, version, about)]
 enum Command {
 	Random,
-	Pick(ProbelmId),
+	Pick(ProbelmIds),
 	Daily,
 }
 
 #[derive(Args)]
-struct ProbelmId {
-	id: u32,
+struct ProbelmIds {
+	ids: Vec<u32>,
 }
 
 /// main() helps to generate the submission template .rs
 fn main() -> anyhow::Result<()> {
 	let cmd = Command::parse();
 	let solved_ids = get_solved_ids()?;
-	let id = match cmd {
-		Command::Daily => problem::get_daily_id()?,
-		Command::Pick(p) => p.id,
-		Command::Random => generate_random_id(&solved_ids),
+	let ids = match cmd {
+		Command::Daily => vec![problem::get_daily_id()?],
+		Command::Pick(p) => p.ids,
+		Command::Random => vec![generate_random_id(&solved_ids)],
 	};
+	ids.into_iter()
+		.map(|id| fetch(id, &solved_ids))
+		.collect::<Result<_, _>>()
+}
 
+fn fetch(id: u32, solved_ids: &[u32]) -> anyhow::Result<()> {
 	anyhow::ensure!(
 		!solved_ids.contains(&id),
 		"problem-{id} is already solved/initialized"
