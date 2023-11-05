@@ -3,6 +3,7 @@
 members = [
     "lc_tool",
     "solutions",
+    "weekly",
 ]
 default-members = ["solutions"]
 resolver = "2"
