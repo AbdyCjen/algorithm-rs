@@ -90,7 +90,6 @@ mod tests {
 		assert_eq!(Solution::smallest_distance_pair(vec![1, 3, 1], 1), 0);
 		assert_eq!(Solution::smallest_distance_pair(vec![1, 1, 1], 2), 0);
 		assert_eq!(Solution::smallest_distance_pair(vec![1, 6, 1], 3), 5);
-		//dbg!(foo(&[0, 0, 0, 0, 1, 1, 1, 2, 2, 2,], 1));
 		assert_eq!(
 			Solution::smallest_distance_pair(vec![2, 2, 0, 1, 1, 0, 0, 1, 2, 0], 2),
 			0

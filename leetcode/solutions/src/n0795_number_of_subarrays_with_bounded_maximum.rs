@@ -64,7 +64,6 @@ impl Solution {
 		while let Some(i) = mono_stk.pop() {
 			to_l[i] = i as i32;
 		}
-		//dbg!(&nums, &to_l, &to_r);
 
 		let rng = left..=right;
 		nums.into_iter()

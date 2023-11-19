@@ -61,7 +61,6 @@ mod tests {
 	fn test_162() {
 		fn test_peak(arr: Vec<i32>) {
 			let a = Solution::find_peak_element(arr.clone()) as usize;
-			// dbg!(&arr,a);
 			assert!(
 				arr[a]
 					>= arr[..a]

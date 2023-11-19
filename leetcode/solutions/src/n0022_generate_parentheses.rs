@@ -57,7 +57,6 @@ mod tests {
 			Solution::generate_parenthesis(3),
 			vec!["((()))", "(()())", "(())()", "()(())", "()()()"]
 		);
-		dbg!(Solution::generate_parenthesis(3));
 		assert_eq!(Solution::generate_parenthesis(1), vec!["()"]);
 	}
 }

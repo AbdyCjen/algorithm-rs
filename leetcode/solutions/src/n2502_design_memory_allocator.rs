@@ -132,7 +132,6 @@ mod tests {
 		assert_eq!(all.allocate(3, 4), 3);
 		assert_eq!(all.allocate(1, 1), 1);
 		assert_eq!(all.allocate(1, 1), 6);
-		dbg!(&all.avail, &all.alloc);
 		assert_eq!(all.free(1), 3);
 		assert_eq!(all.allocate(10, 2), -1);
 		assert_eq!(all.free(7), 0);
