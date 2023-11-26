@@ -59,6 +59,7 @@ impl Solution {
 			if -t <= cur {
 				break;
 			}
+			a += 1;
 			cur += 1;
 		}
 		a

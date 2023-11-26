@@ -60,19 +60,4 @@ impl SeatManager {
 	fn unreserve(&mut self, seat_number: i32) { self.bh.push(-seat_number) }
 }
 
-/**
- * Your SeatManager object will be instantiated and called as such:
- * let obj = SeatManager::new(n);
- * let ret_1: i32 = obj.reserve();
- * obj.unreserve(seatNumber);
- */
-
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_1845() {}
-}

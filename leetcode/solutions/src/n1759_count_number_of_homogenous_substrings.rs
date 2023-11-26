@@ -52,7 +52,6 @@ pub struct Solution {}
 impl Solution {
 	pub fn count_homogenous(s: String) -> i32 {
 		const MO: i32 = 1e9 as i32 + 7;
-		let mut prv = (0, 0);
 		s.bytes()
 			.fold((0, 0, 1), |(a, prv, cnt), c| {
 				if c == prv {

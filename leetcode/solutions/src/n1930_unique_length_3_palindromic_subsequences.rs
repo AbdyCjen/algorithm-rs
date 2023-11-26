@@ -57,7 +57,7 @@ impl Solution {
 			if (vis & (1 << idx)) == 0 {
 				first[idx] = cnt;
 			}
-			vis |= (1 << (idx));
+			vis |= 1 << (idx);
 			cnt[idx] += 1;
 		}
 		let mut a = 0;

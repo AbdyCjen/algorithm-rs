@@ -79,19 +79,4 @@ impl Graph {
 	}
 }
 
-/**
- * Your Graph object will be instantiated and called as such:
- * let obj = Graph::new(n, edges);
- * obj.add_edge(edge);
- * let ret_2: i32 = obj.shortest_path(node1, node2);
- */
-
 // submission codes end
-
-#[cfg(test)]
-mod tests {
-	use super::*;
-
-	#[test]
-	fn test_2642() {}
-}
