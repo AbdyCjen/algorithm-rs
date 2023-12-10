@@ -51,7 +51,7 @@ impl Solution {
 		let mut st = vec![];
 		let (mut prv, mut prv_len, mut slc) = (0, 0, &s[0..0]);
 		for (i, w) in s.windows(2).enumerate() {
-			if matches!(w[0], b'2'..=b'9') && matches!(w[1], b'a'..=b'z') {
+			if matches!(w[0], b'2'..=b'9') && w[1].is_ascii_lowercase() {
 				let mut n = 1;
 				for c in &s[prv..=i] {
 					n *= (c - b'0') as usize;
@@ -59,7 +59,7 @@ impl Solution {
 				st.push((slc, prv_len + slc.len()));
 				prv_len = (prv_len + slc.len()) * n;
 				prv = i + 1;
-			} else if matches!(w[1], b'0'..=b'9') && matches!(w[0], b'a'..=b'z') {
+			} else if w[1].is_ascii_digit() && w[0].is_ascii_lowercase() {
 				slc = &s[prv..=i];
 				prv = i + 1;
 			}

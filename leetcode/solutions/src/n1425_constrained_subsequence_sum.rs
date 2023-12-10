@@ -45,7 +45,7 @@ impl Solution {
 					win.remove(&dp[(i - k - 1) as usize]);
 				}
 			}
-			let cur = win.keys().rev().next().copied().unwrap_or(0).max(0) + n;
+			let cur = win.keys().next_back().copied().unwrap_or(0).max(0) + n;
 			*win.entry(cur).or_insert(0) += 1;
 			dp.push(cur);
 		}

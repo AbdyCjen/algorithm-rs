@@ -41,13 +41,12 @@ use super::util::tree::TreeNode;
 //   }
 // }
 use std::{cell::RefCell, rc::Rc};
-#[allow(dead_code)]
 impl Solution {
 	pub fn right_side_view(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
 		root.map(|root| {
 			let mut root = root.borrow_mut();
 			let mut res = vec![root.val];
-			res.extend(Self::right_side_view(root.right.take()).into_iter());
+			res.extend(Self::right_side_view(root.right.take()));
 			res.extend(
 				Self::right_side_view(root.left.take())
 					.into_iter()
@@ -55,7 +54,7 @@ impl Solution {
 			);
 			res
 		})
-		.unwrap_or_else(Default::default)
+		.unwrap_or_default()
 	}
 }
 

@@ -50,7 +50,7 @@ impl Solution {
 		Self::solve("JFK".to_owned(), &mut ans, &mut map);
 		ans.into()
 	}
-	fn solve<'a>(cur: String, st: &mut VecDeque<String>, map: &mut HashMap<String, Vec<String>>) {
+	fn solve(cur: String, st: &mut VecDeque<String>, map: &mut HashMap<String, Vec<String>>) {
 		while let Some(next) = map.get_mut(&cur).and_then(|v| v.pop()) {
 			Self::solve(next, st, map);
 		}

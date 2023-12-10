@@ -71,7 +71,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn max_subarray_sum_circular(a: Vec<i32>) -> i32 {
 		let mut sum_max_pref = Vec::new();
@@ -98,7 +97,7 @@ impl Solution {
 		sum_max_pref
 			.into_iter()
 			.zip(sum_max_post.into_iter().skip(1))
-			.zip(a.into_iter())
+			.zip(a)
 			.map(|((a, b), n)| {
 				sum_no_cir = match sum_no_cir {
 					sum @ 1..=std::i32::MAX => sum + n,

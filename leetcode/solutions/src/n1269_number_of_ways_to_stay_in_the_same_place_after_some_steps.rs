@@ -42,10 +42,10 @@ impl Solution {
 	pub fn num_ways(steps: i32, arr_len: i32) -> i32 {
 		let len = arr_len.min(steps + 1) as usize;
 		const MO: i32 = 1e9 as i32 + 7;
-		let mut dp = vec![0; len as usize];
+		let mut dp = vec![0; len];
 		dp[0] = 1;
 		for _ in 0..steps {
-			for (i, n) in (0..).zip(std::mem::replace(&mut dp, vec![0; len as usize])) {
+			for (i, n) in (0..).zip(std::mem::replace(&mut dp, vec![0; len])) {
 				if i > 0 {
 					dp[i - 1] = (dp[i - 1] + n) % MO;
 				}

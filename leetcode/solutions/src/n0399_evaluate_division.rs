@@ -53,8 +53,8 @@ impl Solution {
 		let mut graph = HashMap::<&str, Vec<(&str, f64)>>::new();
 		for (eq, v) in equations.iter().zip(values) {
 			if let [d, dd] = &eq[..] {
-				graph.entry(d).or_insert_with(Vec::new).push((dd, v));
-				graph.entry(dd).or_insert_with(Vec::new).push((d, 1.0 / v));
+				graph.entry(d).or_default().push((dd, v));
+				graph.entry(dd).or_default().push((d, 1.0 / v));
 			}
 		}
 		queries

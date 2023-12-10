@@ -75,7 +75,7 @@ impl Tree {
 		}
 		self.nodes[p].0 = (self.nodes[p * 2].0 + self.nodes[p * 2 + 1].0)
 			+ (self.nodes[p].1 * (t - s + 1)) as i64;
-		return sum;
+		sum
 	}
 }
 

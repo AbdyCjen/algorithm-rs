@@ -54,7 +54,7 @@ impl Solution {
 				g * 25 + c + d,         // {l|t}ee
 				h * 26 + g * 2 + f,     // leet
 			];
-			ans.iter_mut().for_each(|a| *a = *a % MO);
+			ans.iter_mut().for_each(|a| *a %= MO);
 		}
 		ans[7] as i32
 	}

@@ -57,21 +57,21 @@ impl Solution {
 	pub fn find_mode(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
 		let mut ans = vec![];
 		let root = root.unwrap();
-		Self::find(&*root.borrow(), &mut ans);
+		Self::find(&root.borrow(), &mut ans);
 		let max = ans.iter().map(|v| v.0).max().unwrap();
 		ans.iter().filter(|v| v.0 == max).map(|v| v.1).collect()
 	}
 
 	fn find(root: &TreeNode, ans: &mut Vec<(i32, i32)>) {
 		if let Some(l) = &root.left {
-			Self::find(&*l.borrow(), ans);
+			Self::find(&l.borrow(), ans);
 		}
 		match ans.last_mut() {
 			Some(n) if n.1 == root.val => n.0 += 1,
 			_ => ans.push((1, root.val)),
 		}
 		if let Some(r) = &root.right {
-			Self::find(&*r.borrow(), ans);
+			Self::find(&r.borrow(), ans);
 		}
 	}
 }

@@ -84,15 +84,11 @@ impl Tree {
 
 		let m = s + (t - s) / 2;
 		let mut max = self.nodes[p].1;
-		if l <= m {
-			if self.nodes[p].2[0] > 0 {
-				max = max.max(self.get_max(l, r, s, m, self.nodes[p].2[0]));
-			}
+		if l <= m && self.nodes[p].2[0] > 0 {
+			max = max.max(self.get_max(l, r, s, m, self.nodes[p].2[0]));
 		}
-		if r > m {
-			if self.nodes[p].2[1] > 0 {
-				max = max.max(self.get_max(l, r, m + 1, t, self.nodes[p].2[1]));
-			}
+		if r > m && self.nodes[p].2[1] > 0 {
+			max = max.max(self.get_max(l, r, m + 1, t, self.nodes[p].2[1]));
 		}
 		max
 	}

@@ -61,7 +61,7 @@ impl Solution {
 					bh.pop();
 				}
 			}
-			if let None = bh.pop() {
+			if bh.pop().is_none() {
 				return i - 1;
 			}
 		}

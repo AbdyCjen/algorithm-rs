@@ -39,11 +39,13 @@ impl Solution {
 	pub fn distinct_prime_factors(nums: Vec<i32>) -> i32 {
 		let mut set = std::collections::HashSet::new();
 		for mut n in nums {
-			for i in 2..=n {
+			let mut i = 2;
+			while i < n {
 				while n % i == 0 {
 					set.insert(i);
 					n /= i;
 				}
+				i += 1;
 			}
 		}
 		set.len() as i32

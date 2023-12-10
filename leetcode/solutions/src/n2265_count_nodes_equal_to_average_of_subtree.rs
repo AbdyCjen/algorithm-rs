@@ -58,19 +58,19 @@ use super::util::tree::TreeNode;
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
 	pub fn average_of_subtree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		Self::solve(&*root.as_ref().unwrap().borrow()).2
+		Self::solve(&root.as_ref().unwrap().borrow()).2
 	}
 
 	fn solve(root: &TreeNode) -> (i32, i32, i32) {
 		let (s1, n1, a1) = root
 			.left
 			.as_ref()
-			.map(|l| Self::solve(&*l.borrow()))
+			.map(|l| Self::solve(&l.borrow()))
 			.unwrap_or((0, 0, 0));
 		let (s2, n2, a2) = root
 			.right
 			.as_ref()
-			.map(|l| Self::solve(&*l.borrow()))
+			.map(|l| Self::solve(&l.borrow()))
 			.unwrap_or((0, 0, 0));
 		(
 			s1 + s2 + root.val,

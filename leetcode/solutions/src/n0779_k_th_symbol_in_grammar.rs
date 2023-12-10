@@ -50,7 +50,7 @@ impl Solution {
 			if k < mid {
 				r = mid;
 			} else {
-				cur = cur ^ 1;
+				cur ^= 1;
 				l = mid;
 			}
 		}

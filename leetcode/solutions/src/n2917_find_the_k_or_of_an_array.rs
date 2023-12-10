@@ -47,9 +47,9 @@ impl Solution {
 	pub fn find_k_or(nums: Vec<i32>, k: i32) -> i32 {
 		let mut cnt = [0; 32];
 		for n in nums {
-			for i in 0..32 {
+			for (i, c) in (0..).zip(&mut cnt) {
 				if n & (1 << i) > 0 {
-					cnt[i] += 1;
+					*c += 1;
 				}
 			}
 		}
