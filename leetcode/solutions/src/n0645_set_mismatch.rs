@@ -22,7 +22,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn find_error_nums(mut nums: Vec<i32>) -> Vec<i32> {
 		for i in 0..nums.len() {
@@ -36,15 +35,11 @@ impl Solution {
 				}
 			}
 		}
-
-		for (i, j) in nums.into_iter().enumerate() {
-			let i = i as i32;
-			if i + 1 != j {
-				return vec![j, i + 1];
-			}
-		}
-
-		unreachable!()
+		(1..)
+			.zip(nums)
+			.find(|(i, n)| i != n)
+			.map(|(i, n)| vec![i, n])
+			.unwrap()
 	}
 }
 
@@ -56,8 +51,8 @@ mod tests {
 
 	#[test]
 	fn test_645() {
-		assert_eq!(Solution::find_error_nums(vec![1, 2, 2, 4]), vec![2, 3]);
-		assert_eq!(Solution::find_error_nums(vec![1, 1]), vec![1, 2]);
-		assert_eq!(Solution::find_error_nums(vec![2, 3, 2]), vec![2, 1]);
+		assert_eq!(Solution::find_error_nums(vec![1, 2, 2, 4]), vec![3, 2]);
+		assert_eq!(Solution::find_error_nums(vec![1, 1]), vec![2, 1]);
+		assert_eq!(Solution::find_error_nums(vec![2, 3, 2]), vec![1, 2]);
 	}
 }

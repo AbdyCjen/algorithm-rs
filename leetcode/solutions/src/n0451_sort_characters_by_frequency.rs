@@ -38,6 +38,15 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn frequency_sort(s: String) -> String {
+		let mut cnts = [0; 128];
+		for c in s.bytes() {
+			cnts[c as usize] += 1;
+		}
+		let mut ans = s.into_bytes();
+		ans.sort_unstable_by_key(|&c| (-cnts[c as usize], c));
+		String::from_utf8(ans).unwrap()
+	}
+	pub fn frequency_sort1(s: String) -> String {
 		let mut cnt = std::collections::HashMap::new();
 		for c in s.into_bytes() {
 			*cnt.entry(c).or_insert(0) += 1;

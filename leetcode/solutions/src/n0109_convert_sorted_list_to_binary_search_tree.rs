@@ -37,26 +37,20 @@ use super::util::{linked_list::ListNode, tree::TreeNode};
 
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
-	// TODO: neater solution
 	pub fn sorted_list_to_bst(mut head: Option<Box<ListNode>>) -> Option<Rc<RefCell<TreeNode>>> {
-		let mut len = 0;
-		let mut cur = &mut head;
-		while let Some(no) = cur {
-			len += 1;
-			cur = &mut no.next;
-		}
-		*cur = Some(Box::new(ListNode::new(0)));
-
-		head.as_mut().and_then(|h| Self::solve1(h, len))
+		let len = std::iter::successors(head.as_ref(), |no| no.next.as_ref()).count() as u32;
+		Self::solve(&mut head, len)
 	}
-	fn solve1(head: &mut Box<ListNode>, len: usize) -> Option<Rc<RefCell<TreeNode>>> {
+	fn solve(head: &mut Option<Box<ListNode>>, len: u32) -> Option<Rc<RefCell<TreeNode>>> {
 		len.checked_sub(1)?;
-		let ans = Some(Rc::new(RefCell::new(TreeNode {
-			left: Self::solve1(head, len / 2),
-			val: head.val,
-			right: Self::solve1(head.next.as_mut()?, (len - 1) / 2),
-		})));
-		*head = head.next.take()?;
-		ans
+		Some(Rc::new(RefCell::new(TreeNode {
+			left: Self::solve(head, len / 2),
+			val: {
+				let ListNode { val, next } = *head.take()?;
+				*head = next;
+				val
+			},
+			right: Self::solve(head, (len - 1) / 2),
+		})))
 	}
 }

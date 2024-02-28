@@ -59,7 +59,7 @@
 use super::util::linked_list::ListNode;
 pub struct Solution {}
 
-use std::cmp::{Ord, Ordering, PartialOrd};
+use std::cmp::Ordering;
 impl PartialOrd for ListNode {
 	fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
 }
@@ -70,17 +70,17 @@ impl Ord for ListNode {
 
 impl Solution {
 	pub fn merge_k_lists_01(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
-		let mut dummy = ListNode::new(-1);
-		let mut cur = &mut dummy;
+		let mut head = None;
+		let mut cur = &mut head;
 
 		let mut bh: std::collections::BinaryHeap<_> = lists.into_iter().flatten().collect();
 		while let Some(no) = bh.pop() {
-			cur = cur.next.insert(no);
-			if let Some(no) = cur.next.take() {
+			cur = &mut cur.insert(no).next;
+			if let Some(no) = cur.take() {
 				bh.push(no);
 			}
 		}
-		dummy.next
+		head
 	}
 
 	pub fn merge_k_lists(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {

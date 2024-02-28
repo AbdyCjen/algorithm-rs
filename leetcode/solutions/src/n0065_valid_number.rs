@@ -56,8 +56,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::iter::Iterator;
-#[allow(dead_code)]
 impl Solution {
 	pub fn is_number(s: String) -> bool {
 		let mut it = s.bytes().peekable();

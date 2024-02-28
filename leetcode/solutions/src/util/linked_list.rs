@@ -1,4 +1,6 @@
-#[derive(PartialEq, Eq, Debug)]
+use std::fmt::Debug;
+
+#[derive(PartialEq, Eq)]
 pub struct ListNode {
 	pub val: i32,
 	pub next: Option<Box<ListNode>>,
@@ -18,6 +20,19 @@ pub fn to_list(vec: Vec<i32>) -> Option<Box<ListNode>> {
 		current = Some(Box::new(node));
 	}
 	current
+}
+
+impl Debug for ListNode {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		let mut cur = self;
+		write!(f, "[{}", self.val)?;
+		while let Some(next) = &cur.next {
+			write!(f, ", {}", next.val)?;
+			cur = next;
+		}
+		write!(f, "]")?;
+		Ok(())
+	}
 }
 
 #[macro_export]

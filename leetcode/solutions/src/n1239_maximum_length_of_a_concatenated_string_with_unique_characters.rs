@@ -34,24 +34,29 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn max_length(arr: Vec<String>) -> i32 {
-		use std::collections::BTreeSet;
-		let mut dp = vec![BTreeSet::new()];
+		fn set(s: &[u8]) -> i32 {
+			let mut ans = 0;
+			for &c in s {
+				ans |= 1 << (c - b'a');
+			}
+			ans
+		}
+		let mut dp = vec![0];
 		for s in arr {
-			let set = s.bytes().collect::<BTreeSet<_>>();
-			if set.len() < s.as_bytes().len() {
+			let set = set(s.as_bytes());
+			if set.count_ones() < s.len() as _ {
 				continue;
 			}
-			for mut s in dp.clone() {
-				if s.is_disjoint(&set) {
-					s.extend(set.iter().copied());
-					dp.push(s);
+			for i in 0..dp.len() {
+				let s = dp[i];
+				if s & set == 0 {
+					dp.push(s | set);
 				}
 			}
 		}
-		dp.into_iter().map(|s| s.len()).max().unwrap() as i32
+		dp.iter().map(|s| s.count_ones()).max().unwrap() as i32
 	}
 }
 
@@ -65,9 +70,7 @@ mod tests {
 	fn test_1239() {
 		assert_eq!(Solution::max_length(vec_string!["un", "iq", "ue"]), 4);
 		assert_eq!(
-			Solution::max_length(vec_string![
-				"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"
-			]),
+			Solution::max_length(('a'..='p').map(|c| c.to_string()).collect()),
 			16
 		);
 		assert_eq!(

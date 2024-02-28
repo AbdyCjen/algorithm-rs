@@ -76,26 +76,17 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn find_judge(n: i32, trust: Vec<Vec<i32>>) -> i32 {
-		if n == 1 {
-			return 1;
+		let mut cnts = vec![0; n as usize + 1];
+		cnts[0] = -1;
+		for tr in &trust {
+			cnts[tr[1] as usize] += 1;
 		}
-		let mut trusts = vec![0; n as usize + 1];
-		let mut trusted = vec![0; n as usize + 1];
-		for t in trust {
-			trusts[t[0] as usize] += 1;
-			trusted[t[1] as usize] += 1;
+		match cnts.iter().position(|v| *v == n - 1) {
+			Some(n) if trust.iter().all(|v| v[0] != n as i32) => n as i32,
+			_ => -1,
 		}
-
-		trusts
-			.into_iter()
-			.zip(trusted)
-			.zip(0..)
-			.filter_map(|((t, td), i)| if t == 0 && td == n - 1 { Some(i) } else { None })
-			.next()
-			.unwrap_or(-1)
 	}
 }
 
@@ -107,6 +98,7 @@ mod tests {
 
 	#[test]
 	fn test_997() {
+		assert_eq!(Solution::find_judge(1, vec![]), 1);
 		assert_eq!(Solution::find_judge(2, matrix![[1, 2]]), 2);
 		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3]]), 3);
 		assert_eq!(Solution::find_judge(3, matrix![[1, 3], [2, 3], [3, 1]]), -1);

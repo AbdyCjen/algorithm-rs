@@ -51,21 +51,17 @@ impl Solution {
 	pub fn find_winners(matches: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
 		let mut cnt = std::collections::BTreeMap::new();
 		for mat in matches {
-			cnt.entry(mat[0]).or_insert((0, 0)).0 += 1;
-			cnt.entry(mat[1]).or_insert((0, 0)).1 += 1;
+			cnt.entry(mat[0]).or_insert(0);
+			*cnt.entry(mat[1]).or_insert(0) += 1;
 		}
-
-		let all_win = cnt
-			.iter()
-			.filter(|(_, (_, lose))| *lose == 0)
-			.map(|(i, _)| *i)
-			.collect();
-		let one_lose = cnt
-			.iter()
-			.filter(|(_, (_, lose))| *lose == 1)
-			.map(|(i, _)| *i)
-			.collect();
-
+		let (mut all_win, mut one_lose) = (vec![], vec![]);
+		for (i, c) in cnt {
+			match c {
+				0 => all_win.push(i),
+				1 => one_lose.push(i),
+				_ => {}
+			}
+		}
 		vec![all_win, one_lose]
 	}
 }

@@ -20,7 +20,7 @@
  * - The set [0,2], after closing, the active branch is [1].
  * - The set [0,1,2], after closing, there are no active branches.
  * It can be proven, that there are only 5 possible sets of closing branches.
- * 
+ *
  * <strong class="example">Example 2:
  * <img alt="" src="https://assets.leetcode.com/uploads/2023/11/08/example22.png" style="width: 221px; height: 241px;" />
  * Input: n = 3, maxDistance = 5, roads = [[0,1,20],[0,1,10],[1,2,2],[0,2,2]]
@@ -34,19 +34,19 @@
  * - The set [0,2], after closing, the active branch is [1].
  * - The set [0,1,2], after closing, there are no active branches.
  * It can be proven, that there are only 7 possible sets of closing branches.
- * 
+ *
  * <strong class="example">Example 3:
- * 
+ *
  * Input: n = 1, maxDistance = 10, roads = []
  * Output: 2
  * Explanation: The possible sets of closing branches are:
  * - The set [], after closing, the active branch is [0].
  * - The set [0], after closing, there are no active branches.
  * It can be proven, that there are only 2 possible sets of closing branches.
- * 
+ *
  *  
  * Constraints:
- * 
+ *
  *     1 <= n <= 10
  *     1 <= maxDistance <= 10^5
  *     0 <= roads.length <= 1000
@@ -55,7 +55,7 @@
  *     ui != vi
  *     1 <= wi <= 1000
  *     All branches are reachable from each other by traveling some roads.
- * 
+ *
  */
 pub struct Solution {}
 

@@ -20,9 +20,14 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn range_bitwise_and(m: i32, n: i32) -> i32 {
+	pub fn range_bitwise_and(m: i32, mut n: i32) -> i32 {
+		while n > m {
+			n &= n - 1;
+		}
+		m & n
+	}
+	pub fn range_bitwise_and1(m: i32, n: i32) -> i32 {
 		let mut res = 0;
 		for i in (0..31).rev() {
 			if (1 << i) & n > 0 {

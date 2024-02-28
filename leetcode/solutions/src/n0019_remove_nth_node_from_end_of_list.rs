@@ -50,18 +50,14 @@ use super::util::linked_list::ListNode;
 //   }
 // }
 impl Solution {
-	pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
-		let mut dummy = ListNode { next: head, val: 0 };
-		let cnt = std::iter::successors(Some(&dummy), |no| no.next.as_deref()).count() as i32;
-
-		let mut cur = &mut dummy;
-		for _ in 0..cnt - n - 1 {
-			cur = cur.next.as_deref_mut().unwrap();
+	pub fn remove_nth_from_end(mut head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
+		let cnt = std::iter::successors(head.as_ref(), |no| no.next.as_ref()).count() as i32;
+		let mut cur = &mut head;
+		for _ in 0..cnt - n {
+			cur = &mut cur.as_mut().unwrap().next;
 		}
-
-		cur.next = cur.next.take().unwrap().next;
-
-		dummy.next
+		*cur = cur.take().unwrap().next;
+		head
 	}
 }
 

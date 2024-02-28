@@ -40,8 +40,8 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::BTreeSet;
 #[allow(dead_code)]
+//FIXME: finish this
 impl Solution {
 	pub fn remove_kdigits(num: String, k: i32) -> String { String::new() }
 }

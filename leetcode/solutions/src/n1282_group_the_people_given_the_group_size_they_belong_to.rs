@@ -35,7 +35,7 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn group_the_people(group_sizes: Vec<i32>) -> Vec<Vec<i32>> {
-		let mut groups = std::collections::HashMap::new();
+		let mut groups = std::collections::BTreeMap::new();
 		for (i, g) in (0..).zip(group_sizes) {
 			groups.entry(g).or_insert_with(Vec::new).push(i);
 		}
@@ -67,7 +67,7 @@ mod tests {
 		);
 		assert_eq!(
 			Solution::group_the_people(vec![2, 2, 1, 1, 1, 1, 1, 1]),
-			matrix![[0, 1], [2], [3], [4], [5], [6], [7]]
+			matrix![[2], [3], [4], [5], [6], [7], [0, 1]]
 		);
 	}
 }

@@ -27,24 +27,22 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn k_inverse_pairs(n: i32, k: i32) -> i32 {
-		let (n, k) = (n as usize, k as usize);
-		return k_inverse_pairs_inner(n, k, &mut vec![vec![-1; k + 1]; n + 1]);
-
-		fn k_inverse_pairs_inner(n: usize, k: usize, cache: &mut Vec<Vec<i32>>) -> i32 {
-			if n == 0 {
-				return 0;
-			} else if k == 0 {
-				return 1;
-			} else if cache[n][k] >= 0 {
-				return cache[n][k];
+		Self::solve(n, k, &mut vec![vec![-1; k as usize + 1]; n as usize + 1])
+	}
+	// FIXME: better complexity
+	fn solve(n: i32, k: i32, cache: &mut Vec<Vec<i32>>) -> i32 {
+		match (n, k) {
+			(0, _) => 0,
+			(_, 0) => 1,
+			_ if cache[n as usize][k as usize] >= 0 => cache[n as usize][k as usize],
+			(n, k) => {
+				cache[n as usize][k as usize] = (0..n.min(k + 1)).fold(0, |acc, i| {
+					(acc + Self::solve(n - 1, k - i, cache)) % (1e9 + 7.0) as i32
+				});
+				cache[n as usize][k as usize]
 			}
-			cache[n][k] = (0..n.min(k + 1)).fold(0, |acc, i| {
-				(acc + k_inverse_pairs_inner(n - 1, k - i, cache)) % (1e9 + 7.0) as i32
-			});
-			cache[n][k]
 		}
 	}
 }

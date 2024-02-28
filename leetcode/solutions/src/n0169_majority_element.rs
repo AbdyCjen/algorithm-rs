@@ -23,12 +23,10 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn majority_element(nums: Vec<i32>) -> i32 { Self::candidate(&mut nums.into_iter()) }
-	fn candidate<I: Iterator<Item = i32>>(nums: &mut I) -> i32 {
+	pub fn majority_element(nums: Vec<i32>) -> i32 { Self::candidate(nums.into_iter()) }
+	fn candidate(mut nums: impl Iterator<Item = i32>) -> i32 {
 		let (mut cnt, tar) = (1, nums.next().unwrap());
-
 		while cnt > 0 {
 			match nums.next() {
 				Some(o) if o == tar => cnt += 1,

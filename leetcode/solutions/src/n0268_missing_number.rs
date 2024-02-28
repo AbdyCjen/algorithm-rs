@@ -41,9 +41,15 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn missing_number(mut nums: Vec<i32>) -> i32 {
+	pub fn missing_number(nums: Vec<i32>) -> i32 {
+		let mut vis = vec![false; nums.len() + 1];
+		for i in nums {
+			vis[i as usize] = true;
+		}
+		vis.into_iter().position(|v| !v).unwrap() as i32
+	}
+	pub fn missing_number1(mut nums: Vec<i32>) -> i32 {
 		for i in 0..nums.len() {
 			while nums[i] != i as i32 && nums[i] < nums.len() as i32 {
 				let j = nums[i] as usize;

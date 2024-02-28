@@ -31,17 +31,12 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn unique_occurrences(arr: Vec<i32>) -> bool {
-		let mut cnt = std::collections::HashMap::new();
+		use std::collections::*;
+		let mut cnt = HashMap::new();
 		for i in arr {
 			*cnt.entry(i).or_insert(0) += 1;
 		}
-		let mut set = std::collections::HashSet::new();
-		for c in cnt.into_values() {
-			if !set.insert(c) {
-				return false;
-			}
-		}
-		true
+		cnt.len() == cnt.into_values().collect::<HashSet<_>>().len()
 	}
 }
 

@@ -10,12 +10,11 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn daily_temperatures(temps: Vec<i32>) -> Vec<i32> {
 		let mut ans = vec![0; temps.len()];
 		let mut st = vec![];
-		for (i, t) in temps.into_iter().enumerate() {
+		for (i, t) in (0..).zip(temps) {
 			while let Some(&(ii, tt)) = st.last() {
 				if tt < t {
 					ans[ii] = (i - ii) as i32;

@@ -48,40 +48,35 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	pub fn find_cheapest_price(n: i32, flights: Vec<Vec<i32>>, src: i32, dst: i32, k: i32) -> i32 {
-		let mut fli = vec![vec![]; n as usize];
-		for f in flights {
-			fli[f[0] as usize].push((f[1], f[2]));
+	pub fn find_cheapest_price(n: i32, flis: Vec<Vec<i32>>, src: i32, dst: i32, mut k: i32) -> i32 {
+		let mut fli = vec![vec![i32::MAX; n as usize]; n as usize];
+		for f in flis {
+			let e = &mut fli[f[0] as usize][f[1] as usize];
+			*e = f[2].min(*e);
 		}
-		Self::solve(&fli, src, dst, k + 1, &mut std::collections::HashMap::new()).unwrap_or(-1)
-	}
-
-	fn solve(
-		flights: &[Vec<(i32, i32)>],
-		cur: i32,
-		dst: i32,
-		k: i32,
-		cache: &mut std::collections::HashMap<(i32, i32), Option<i32>>,
-	) -> Option<i32> {
-		if cur == dst {
-			return Some(0);
-		} else if k == 0 {
-			return None;
-		} else if let Some(ans) = cache.get(&(cur, k)) {
-			return *ans;
-		}
-
-		let mut ans = None;
-		let mut min = i32::MAX;
-		for &(d, p) in &flights[cur as usize] {
-			if let Some(v) = Self::solve(flights, d, dst, k - 1, cache) {
-				min = min.min(v + p);
-				ans = Some(min);
+		let fli: Vec<Vec<_>> = fli
+			.into_iter()
+			.map(|nei| (0..).zip(nei).filter(|v| v.1 != i32::MAX).collect())
+			.collect();
+		let mut dis = vec![i32::MAX; n as usize];
+		dis[src as usize] = 0;
+		use std::iter::FromIterator;
+		let mut st = std::collections::HashMap::<i32, i32>::from_iter([(src, 0)]);
+		while !st.is_empty() && k >= 0 {
+			for (cur, amt) in std::mem::take(&mut st) {
+				for &(to, pr) in &fli[cur as usize] {
+					if pr < i32::MAX && dis[to as usize] > amt + pr {
+						dis[to as usize] = amt + pr;
+						st.insert(to, amt + pr);
+					}
+				}
 			}
+			k -= 1;
 		}
-		cache.insert((cur, k), ans);
-
-		ans
+		match dis[dst as usize] {
+			i32::MAX => -1,
+			n => n,
+		}
 	}
 }
 

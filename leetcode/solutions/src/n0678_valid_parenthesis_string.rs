@@ -43,7 +43,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn check_valid_string(s: String) -> bool { Self::unmatch_count(s).is_some() }
 	fn unmatch_count(s: String) -> Option<()> {

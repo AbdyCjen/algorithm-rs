@@ -29,42 +29,41 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	// 按照大于还是小于平均值, 将数组分为两个部分
-	// 枚举 两个部分元素对平均值的差的 绝对值组合 之和
-	// 然后判断交集存在性
 	pub fn split_array_same_average(nums: Vec<i32>) -> bool {
-		use std::collections::BTreeSet;
 		let sum = nums.iter().sum::<i32>();
-		let n = nums.len();
-		if n < 2 {
+		let len = nums.len() as i32;
+		if len < 2 {
 			return false;
 		}
-		let (mut neg, mut pos) = (vec![], vec![]);
+		use std::collections::*;
+		let (mut lower, mut upper) = (vec![], vec![]);
 		for i in nums {
-			match (i * n as i32) - sum {
+			match i * len - sum {
 				0 => return true,
-				i if i < 0 => neg.push(-i),
-				i => pos.push(i),
+				i @ 1.. => upper.push(i),
+				i => lower.push(-i),
 			}
 		}
-
-		fn perm(nums: &[i32]) -> BTreeSet<i32> {
-			let mut sums = BTreeSet::new();
-
-			for &i in nums {
-				let sums_old = sums.clone();
-				sums.insert(i);
-				for j in sums_old {
-					sums.insert(i + j);
-				}
-			}
-
-			// 去掉全集
-			sums.remove(&nums.iter().sum::<i32>());
-			sums
+		let mut low_sum = HashSet::new();
+		let low_s = lower.iter().sum::<i32>();
+		for n in lower {
+			low_sum.extend(low_sum.iter().map(|i| i + n).chain([n]).collect::<Vec<_>>());
 		}
+		low_sum.remove(&low_s);
 
-		perm(&neg).intersection(&perm(&pos)).next().is_some()
+		let mut upper_sum = HashSet::new();
+		for n in upper {
+			let new_sum = upper_sum
+				.iter()
+				.map(|i| i + n)
+				.chain([n])
+				.collect::<Vec<_>>();
+			if new_sum.iter().any(|i| low_sum.contains(i)) {
+				return true;
+			}
+			upper_sum.extend(new_sum);
+		}
+		false
 	}
 
 	pub fn split_array_same_average_01(nums: Vec<i32>) -> bool {

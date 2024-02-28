@@ -71,9 +71,9 @@ impl Solution {
 				}
 				if !visited[cur] {
 					visited[cur] = true;
-					for next in cur + 1..=(cur + 6).min(size) {
-						if board[next] > 0 {
-							st.push(board[next] as usize);
+					for (next, &b) in (cur + 1..).zip(&board[cur + 1..]).take(6) {
+						if b > 0 {
+							st.push(b as usize);
 						} else {
 							st.push(next);
 						}

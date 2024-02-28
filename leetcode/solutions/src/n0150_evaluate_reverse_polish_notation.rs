@@ -48,9 +48,27 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn eval_rpn(tokens: Vec<String>) -> i32 {
+		let cal = |r: i32, l: i32, op: &str| -> i32 {
+			match op {
+				"+" => l + r,
+				"-" => l - r,
+				"*" => l * r,
+				_ => l / r,
+			}
+		};
+		let mut st = vec![];
+		for tok in tokens {
+			let cur = match tok.as_str() {
+				"+" | "-" | "*" | "/" => cal(st.pop().unwrap(), st.pop().unwrap(), &tok),
+				tok => tok.parse::<i32>().unwrap(),
+			};
+			st.push(cur);
+		}
+		st.pop().unwrap()
+	}
+	pub fn eval_rpn2(tokens: Vec<String>) -> i32 {
 		let mut st = vec![];
 		for tok in tokens {
 			let new = match tok.as_str() {

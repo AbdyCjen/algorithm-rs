@@ -33,11 +33,8 @@ pub struct Solution {}
 impl Solution {
 	pub fn halves_are_alike(s: String) -> bool {
 		fn count_vowels(s: &[u8]) -> usize {
-			s.iter()
-				.filter(|c| {
-					[b'a', b'e', b'i', b'o', b'u', b'A', b'E', b'I', b'O', b'U'].contains(c)
-				})
-				.count()
+			const VOWELS: &[u8] = &[b'a', b'e', b'i', b'o', b'u', b'A', b'E', b'I', b'O', b'U'];
+			s.iter().filter(|c| VOWELS.contains(c)).count()
 		}
 		let s = s.into_bytes();
 		count_vowels(&s[..s.len() / 2]) == count_vowels(&s[s.len() / 2..])

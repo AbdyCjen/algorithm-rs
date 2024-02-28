@@ -49,31 +49,63 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::HashMap;
-#[allow(dead_code)]
 impl Solution {
-	pub fn find_min_height_trees(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
-		let mut gr = vec![vec![]; n as usize];
-		let mut dg: Vec<_> = vec![0; n as usize];
-		for edge in edges {
-			let (p1, p2) = (edge[0] as usize, edge[1] as usize);
-			gr[p1].push(p2);
-			gr[p2].push(p2);
-			dg[p1] += 1;
-			dg[p2] += 1;
+	pub fn find_min_height_trees(mut n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
+		let mut deg = vec![0; n as usize];
+		let mut nei = vec![vec![]; n as usize];
+		for e in edges {
+			deg[e[0] as usize] += 1;
+			deg[e[1] as usize] += 1;
+			nei[e[0] as usize].push(e[1]);
+			nei[e[1] as usize].push(e[0]);
 		}
+		let mut que: Vec<_> = (0..).zip(&deg).filter(|v| *v.1 <= 1).map(|v| v.0).collect();
 		while n > 2 {
-			let mut st: Vec<_> = dg
-				.iter_mut()
-				.enumerate()
-				.filter_map(|(i, d)| if *d == 1 { Some(i) } else { None })
-				.collect();
-			for o in st {
-				dg.remove(o);
-				for i in gr[o].iter() {}
+			n -= que.len() as i32;
+			for i in std::mem::take(&mut que) {
+				for &ne in &nei[i as usize] {
+					deg[ne as usize] -= 1;
+					if deg[ne as usize] == 1 {
+						que.push(ne);
+					}
+				}
 			}
 		}
-		vec![]
+		que
+	}
+	pub fn find_min_height_trees1(n: i32, edges: Vec<Vec<i32>>) -> Vec<i32> {
+		let mut neis = vec![vec![]; n as usize];
+		for edge in edges {
+			let (p1, p2) = (edge[0], edge[1]);
+			neis[p1 as usize].push((p2, -1));
+			neis[p2 as usize].push((p1, -1));
+		}
+		neis.push((0..n).map(|i| (i, -1)).collect());
+
+		let mut ans = (n, vec![]);
+		for i in 0..n {
+			let h = Self::dfs(i, n, &mut neis);
+			match h - ans.0 {
+				..=-1 => ans = (h, vec![i]),
+				0 => ans.1.push(i),
+				_ => {}
+			}
+		}
+		ans.1
+	}
+
+	fn dfs(i: i32, prv: i32, neis: &mut [Vec<(i32, i32)>]) -> i32 {
+		let mut d = 1;
+		for j in 0..neis[i as usize].len() {
+			let jj = neis[i as usize][j].0;
+			if jj != prv {
+				if neis[i as usize][j].1 < 0 {
+					neis[i as usize][j].1 = Self::dfs(jj, i, neis);
+				}
+				d = d.max(neis[i as usize][j].1 + 1);
+			}
+		}
+		d
 	}
 }
 

@@ -22,10 +22,55 @@ pub struct Solution {}
 
 // submission codes start here
 
-// 太丑了
-#[allow(dead_code)]
 impl Solution {
 	pub fn min_window(s: String, t: String) -> String {
+		let mut cnts = [0; 128];
+		for c in t.into_bytes() {
+			cnts[c as usize] += 1;
+		}
+		let mut cnt = cnts.iter().filter(|c| **c > 0).count();
+		let mut ans = None::<&'_ str>;
+		let mut i = 0;
+		for (j, c) in (0..).zip(s.bytes()) {
+			cnts[c as usize] -= 1;
+			cnt -= (cnts[c as usize] == 0) as usize;
+			while cnt == 0 {
+				if ans.map(str::len).unwrap_or(usize::MAX) > (j - i + 1) {
+					ans = Some(&s[i..=j]);
+				}
+				cnts[s.as_bytes()[i] as usize] += 1;
+				cnt += (cnts[s.as_bytes()[i] as usize] == 1) as usize;
+				i += 1;
+			}
+		}
+		ans.map(ToOwned::to_owned).unwrap_or_default()
+	}
+	pub fn min_window2(s: String, t: String) -> String {
+		let mut cnts = [0; 52];
+		let idx = |c: u8| -> usize {
+			match c {
+				b'a'..=b'z' => (c - b'a') as usize,
+				_ => (c - b'A') as usize + 26,
+			}
+		};
+		for c in t.into_bytes() {
+			cnts[idx(c)] += 1;
+		}
+		let mut ans = None::<&'_ str>;
+		let mut i = 0;
+		for (j, c) in (0..).zip(s.bytes()) {
+			cnts[idx(c)] -= 1;
+			while cnts.iter().all(|c| *c <= 0) {
+				if ans.map(str::len).unwrap_or(usize::MAX) > (j - i + 1) {
+					ans = Some(&s[i..=j]);
+				}
+				cnts[idx(s.as_bytes()[i])] += 1;
+				i += 1;
+			}
+		}
+		ans.map(ToOwned::to_owned).unwrap_or_default()
+	}
+	pub fn min_window1(s: String, t: String) -> String {
 		if s.is_empty() || s.len() < t.len() {
 			return Default::default();
 		}

@@ -47,6 +47,31 @@ impl Solution {
 			.zip(profit)
 			.collect::<Vec<_>>();
 		jobs.sort_unstable();
+		Self::solve(&jobs, &mut vec![-1; jobs.len() + 1])
+	}
+	fn solve(jobs: &[((i32, i32), i32)], cache: &mut [i32]) -> i32 {
+		if cache[jobs.len()] >= 0 {
+			return cache[jobs.len()];
+		}
+		match jobs {
+			[job] => job.1,
+			[] => 0,
+			[((_, end), profit), rest @ ..] => {
+				let mut ans = Self::solve(rest, cache);
+				let next = rest.partition_point(|v| v.0 .0 < *end);
+				ans = ans.max(profit + Self::solve(&rest[next..], cache));
+				cache[jobs.len()] = ans;
+				ans
+			}
+		}
+	}
+	pub fn job_scheduling1(start_time: Vec<i32>, end_time: Vec<i32>, profit: Vec<i32>) -> i32 {
+		let mut jobs = start_time
+			.into_iter()
+			.zip(end_time)
+			.zip(profit)
+			.collect::<Vec<_>>();
+		jobs.sort_unstable();
 		let mut max_profit = std::collections::BinaryHeap::<(i32, i32)>::new();
 		let mut profit_sofar = 0;
 		for ((start, end), profit) in jobs {

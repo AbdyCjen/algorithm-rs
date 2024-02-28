@@ -44,21 +44,16 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::BinaryHeap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn furthest_building(heights: Vec<i32>, mut bricks: i32, ladders: i32) -> i32 {
-		let mut pq = BinaryHeap::new();
-		let ladders = ladders as usize;
-		for i in 0..(heights.len() - 1) {
-			let height_diff = heights[i + 1] - heights[i];
+		let mut pq = std::collections::BinaryHeap::new();
+		for (i, w) in (0..).zip(heights.windows(2)) {
+			let height_diff = w[1] - w[0];
 			if height_diff > 0 {
-				pq.push(std::cmp::Reverse(height_diff));
+				pq.push(-height_diff);
 			}
-
-			if pq.len() > ladders {
-				let std::cmp::Reverse(o) = pq.pop().unwrap();
-				bricks -= o;
+			if pq.len() as i32 > ladders {
+				bricks += pq.pop().unwrap();
 			}
 			if bricks < 0 {
 				return i as i32;

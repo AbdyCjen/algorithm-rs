@@ -31,35 +31,25 @@ pub struct Solution {}
 
 // submission codes start here
 
+//use std::collections::*;
 impl Solution {
 	pub fn largest_divisible_subset(mut nums: Vec<i32>) -> Vec<i32> {
 		nums.sort_unstable();
-		let mut cache = vec![(0, -1); nums.len()];
-		let mut next = Self::solve(&nums, 1, &mut cache);
-		let mut ans = vec![next.0];
-		while next.1 > 0 {
-			let idx = nums.binary_search(&next.0).unwrap();
-			next = cache[idx];
-			ans.push(next.0);
-		}
-		ans
-	}
-	fn solve(nums: &[i32], n: i32, cache: &mut [(i32, i32)]) -> (i32, i32) {
-		match nums {
-			[] => (n, 0),
-			[i, rest @ ..] => {
-				let mut ans = Self::solve(rest, n, cache);
-				if *i % n == 0 {
-					if cache[0].1 < 0 {
-						cache[0] = Self::solve(rest, *i, &mut cache[1..]);
-					}
-					if cache[0].1 + 1 > ans.1 {
-						ans = (*i, cache[0].1 + 1);
-					}
+		let mut dp = (0..).map(|i| (1, i)).take(nums.len()).collect::<Vec<_>>();
+		for (i, &n) in (0..).zip(&nums) {
+			for (j, &m) in (0..).zip(&nums[..i]) {
+				if n % m == 0 {
+					dp[i] = dp[i].max((dp[j].0 + 1, j));
 				}
-				ans
 			}
 		}
+		let mut head = dp.iter().map(|v| v.0).zip(0..).max().unwrap();
+		let mut ans = vec![];
+		for _ in 0..head.0 {
+			ans.push(nums[head.1]);
+			head.1 = dp[head.1].1;
+		}
+		ans
 	}
 }
 
@@ -71,6 +61,10 @@ mod tests {
 
 	#[test]
 	fn test_368() {
-		assert_eq!(Solution::largest_divisible_subset(vec![1, 2, 3]), [1, 2]);
+		assert_eq!(Solution::largest_divisible_subset(vec![2, 4, 6]), [6, 2]);
+		assert_eq!(
+			Solution::largest_divisible_subset(vec![1, 2, 4, 8]),
+			[8, 4, 2, 1]
+		);
 	}
 }

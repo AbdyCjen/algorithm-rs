@@ -37,7 +37,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-// TODO: better complextiy
 impl Solution {
 	pub fn longest_arith_seq_length(nums: Vec<i32>) -> i32 {
 		use std::collections::HashMap;

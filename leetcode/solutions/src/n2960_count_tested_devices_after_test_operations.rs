@@ -3,7 +3,7 @@
  *
  * You are given a 0-indexed integer array batteryPercentages having length n, denoting the battery percentages of n 0-indexed devices.
  * Your task is to test each device i in order from 0 to n - 1, by performing the following test operations:
- * 
+ *
  *     If batteryPercentages[i] is greater than 0:
  *     
  *         Increment the count of tested devices.
@@ -12,11 +12,11 @@
  *     
  *     
  *     Otherwise, move to the next device without performing any test.
- * 
+ *
  * Return an integer denoting the number of devices that will be tested after performing the test operations in order.
  *  
  * <strong class="example">Example 1:
- * 
+ *
  * Input: batteryPercentages = [1,1,2,1,3]
  * Output: 3
  * Explanation: Performing the test operations in order starting from device 0:
@@ -26,9 +26,9 @@
  * At device 3, batteryPercentages[3] == 0, so we move to the next device without testing.
  * At device 4, batteryPercentages[4] > 0, so there are now 3 tested devices, and batteryPercentages stays the same.
  * So, the answer is 3.
- * 
+ *
  * <strong class="example">Example 2:
- * 
+ *
  * Input: batteryPercentages = [0,1,2]
  * Output: 2
  * Explanation: Performing the test operations in order starting from device 0:
@@ -36,20 +36,20 @@
  * At device 1, batteryPercentages[1] > 0, so there is now 1 tested device, and batteryPercentages becomes [0,1,1].
  * At device 2, batteryPercentages[2] > 0, so there are now 2 tested devices, and batteryPercentages stays the same.
  * So, the answer is 2.
- * 
+ *
  *  
  * Constraints:
- * 
- *     1 <= n == batteryPercentages.length <= 100 
+ *
+ *     1 <= n == batteryPercentages.length <= 100
  *     0 <= batteryPercentages[i] <= 100
- * 
+ *
  */
 pub struct Solution {}
 
 // submission codes start here
 
 impl Solution {
-    pub fn count_tested_devices(nums: Vec<i32>) -> i32 {
+	pub fn count_tested_devices(nums: Vec<i32>) -> i32 {
 		let mut cnt = 0;
 		for n in nums {
 			if n > cnt {

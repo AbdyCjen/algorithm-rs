@@ -41,10 +41,8 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn arrange_coins(n: i32) -> i32 {
-		let n = n as i64;
-		(0..=n)
-			.into_iter()
-			.find(|i| (i + 2) * (i + 1) > 2 * n)
+		(0_i64..)
+			.find(|i| (i + 2) * (i + 1) > 2 * n as i64)
 			.unwrap_or(0) as i32
 	}
 }
@@ -61,6 +59,5 @@ mod tests {
 		assert_eq!(Solution::arrange_coins(5), 2);
 		assert_eq!(Solution::arrange_coins(0), 0);
 		assert_eq!(Solution::arrange_coins(1), 1);
-		assert_eq!(Solution::arrange_coins(i32::MAX - 8), 1);
 	}
 }

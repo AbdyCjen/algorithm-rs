@@ -124,7 +124,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn test_994() {
+	fn test_957() {
 		assert_eq!(
 			Solution::prison_after_n_days(vec![1, 0, 0, 1, 0, 0, 1, 0], 1000000000),
 			vec![0, 0, 1, 1, 1, 1, 1, 0]

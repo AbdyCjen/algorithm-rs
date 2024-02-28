@@ -26,7 +26,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::HashMap;
 impl Solution {
 	//bfs
 	pub fn num_squares(n: i32) -> i32 {
@@ -34,59 +33,25 @@ impl Solution {
 			.map(|i| i * i)
 			.take_while(|&sq| sq <= n)
 			.collect::<Vec<_>>();
-
 		let mut dq = vec![n];
 		let mut visited = vec![false; n as usize + 1];
-		let mut i = 0;
-		while !dq.is_empty() {
-			for o in std::mem::take(&mut dq) {
-				match sqs.binary_search(&o) {
-					Ok(_) => return i + 1,
-					Err(j) => {
-						for sq in &sqs[..j] {
-							let next = o - sq;
-							if !visited[next as usize] {
-								visited[next as usize] = true;
-								dq.push(next);
-							}
+		let mut i = 1;
+		'outer: loop {
+			for no in std::mem::take(&mut dq) {
+				for &sq in &sqs {
+					match no - sq {
+						0 => break 'outer i,
+						i32::MIN..=0 => break,
+						no @ 1.. if !visited[no as usize] => {
+							visited[no as usize] = true;
+							dq.push(no);
 						}
+						_ => {}
 					}
 				}
 			}
 			i += 1;
 		}
-		unreachable!()
-	}
-	pub fn num_squares_01(n: i32) -> i32 {
-		Self::solve(
-			n,
-			&(1..)
-				.map(|i| i * i)
-				.take_while(|&sq| sq <= n)
-				.collect::<Vec<_>>(),
-			&mut HashMap::new(),
-		)
-	}
-
-	fn solve(n: i32, sqs: &[i32], cache: &mut HashMap<i32, i32>) -> i32 {
-		if let Some(ans) = cache.get(&n) {
-			return *ans;
-		} else if n < 4 {
-			return n;
-		}
-
-		let mut ans = i32::MAX;
-		match sqs.binary_search(&n) {
-			Ok(_) => return 1,
-			Err(i) => {
-				let sqs = &sqs[..i];
-				for sq in sqs {
-					ans = ans.min(n / sq + Self::solve(n % sq, sqs, cache));
-				}
-			}
-		}
-		cache.insert(n, ans);
-		ans
 	}
 }
 
