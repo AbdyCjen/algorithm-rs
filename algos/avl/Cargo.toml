@@ -1,8 +1,8 @@
 [package]
 name = "avl"
-version = "0.1.0"
-authors = ["ajen <a839290570@163.com>"]
-edition = "2018"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,8 +10,8 @@ edition = "2018"
 bst = { path = "../bst" ,features=["bst_derive"]}
 
 [dev-dependencies]
-rand = "0.7"
-criterion = "0.3.3"
+rand.workspace = true
+criterion.workspace = true
 bst_util = { path = "../bst_util", features=["bst_bench", "bst_test"], default-features = false }
 
 [[bench]]

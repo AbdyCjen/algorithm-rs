@@ -173,21 +173,10 @@ mod test {
 	}
 
 	fn check_sort(sort_fn: fn(&mut [i32])) {
-		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
-			it.next()
-				.map(|mut prev| {
-					it.all(move |mut o| {
-						std::mem::swap(&mut o, &mut prev);
-						o <= prev
-					})
-				})
-				.unwrap_or(true)
-		}
-
 		let mut nums: Vec<i32> = (1..10000).collect();
 		nums.extend(1..100);
 		nums.shuffle(&mut rand::thread_rng());
 		sort_fn(&mut nums);
-		assert!(is_sorted(nums.iter()));
+		assert!(nums.windows(2).all(|w| w[0] <= w[1]));
 	}
 }

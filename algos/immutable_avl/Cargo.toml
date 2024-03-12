@@ -1,15 +1,15 @@
 [package]
 name = "immutable_avl"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 
 [dev-dependencies]
-rand = "0.7"
-criterion = "0.3.3"
+rand.workspace = true
+criterion.workspace = true
 bst_util = { path = "../bst_util", features=["bst_bench", "bst_test"], default-features = false }
 
 [[bench]]

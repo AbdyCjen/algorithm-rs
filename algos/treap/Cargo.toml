@@ -1,14 +1,14 @@
 [package]
 name = "treap"
-version = "0.1.0"
-authors = ["ajen <ajen@yeahka.com>"]
-edition = "2018"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 bst = {path = "../bst", features = ["bst_derive"]}
-rand = "0.7.3"
+rand.workspace = true
 
 [dev-dependencies]
 bst_util = {path = "../bst_util", features = ["bst_test"]}

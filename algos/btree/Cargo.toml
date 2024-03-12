@@ -1,17 +1,17 @@
 [package]
 name = "btree"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-arrayvec = "0.7.2"
+arrayvec.workspace = true
 
 [dev-dependencies]
-rand = "0.8.5"
+rand.workspace = true
 bst_util = { path = "../bst_util", features=["bst_bench", "bst_test"] }
-criterion = "0.3.6"
+criterion.workspace = true
 
 [[bench]]
 name = "iter_bench"
