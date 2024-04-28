@@ -67,12 +67,12 @@ impl Solution {
 		let mut st = Vec::new();
 		let mut o = root;
 		while let Some(lo) = o.take() {
-			o = lo.borrow().left.clone();
+			o.clone_from(&lo.borrow().left);
 			st.push(lo);
 		}
 
-		let mut pre = std::i32::MIN / 2;
-		let mut res = std::i32::MAX;
+		let mut pre = i32::MIN / 2;
+		let mut res = i32::MAX;
 		while let Some(o) = st.pop() {
 			let o = o.borrow();
 			res = std::cmp::min(res, o.val - pre);
@@ -80,7 +80,7 @@ impl Solution {
 
 			let mut o = o.right.clone();
 			while let Some(lo) = o.take() {
-				o = lo.borrow().left.clone();
+				o.clone_from(&lo.borrow().left);
 				st.push(lo);
 			}
 		}

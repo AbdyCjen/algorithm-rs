@@ -83,7 +83,7 @@ impl Solution {
 			imap[c] = true;
 		}
 
-		let (mut i, mut start, mut minl) = (0, 0, std::usize::MAX);
+		let (mut i, mut start, mut minl) = (0, 0, usize::MAX);
 		for (j, &c) in s.iter().enumerate() {
 			let c = c as usize;
 			if imap[c] {

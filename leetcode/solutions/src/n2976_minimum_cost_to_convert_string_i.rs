@@ -54,8 +54,8 @@ impl Solution {
 		cost: Vec<i32>,
 	) -> i64 {
 		let mut nei = vec![vec![i64::MAX; 26]; 26];
-		for i in 0..26 {
-			nei[i][i] = 0;
+		for (i, ne) in (0..).zip(&mut nei) {
+			ne[i] = 0;
 		}
 		for ((f, t), c) in original.into_iter().zip(changed).zip(cost) {
 			let cost = &mut nei[(f as u8 - b'a') as usize][(t as u8 - b'a') as usize];

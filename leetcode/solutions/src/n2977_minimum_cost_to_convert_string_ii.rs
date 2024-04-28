@@ -98,7 +98,7 @@ impl Trie {
 			let idx = cur.child.binary_search_by_key(&c, |v| v.c).ok()?;
 			cur = &cur.child[idx];
 		}
-		cur.end.clone()
+		cur.end
 	}
 
 	fn next(&self, c: u8) -> Option<&Self> {
@@ -129,8 +129,8 @@ impl Solution {
 			max_len = max_len.max(s.len());
 		}
 		let mut graph = vec![vec![i64::MAX; len as usize]; len as usize];
-		for i in 0..graph.len() {
-			graph[i][i] = 0;
+		for (i, gr) in (0..).zip(&mut graph) {
+			gr[i] = 0;
 		}
 		for ((fs, ts), c) in original.iter().zip(&changed).zip(cost) {
 			let f = smap.get(fs.as_str()).unwrap() as usize;

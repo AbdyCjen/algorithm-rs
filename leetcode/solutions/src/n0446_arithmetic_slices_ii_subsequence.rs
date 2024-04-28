@@ -82,7 +82,7 @@ impl Solution {
 				}
 			}
 			cnts.push(cnt);
-			occurs.entry(n).or_insert_with(Vec::new).push(i);
+			occurs.entry(n).or_default().push(i);
 		}
 		ans
 	}

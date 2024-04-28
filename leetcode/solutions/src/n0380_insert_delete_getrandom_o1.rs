@@ -1,3 +1,4 @@
+#![cfg(feature = "rand")]
 /**
  * [380] Insert Delete GetRandom O(1)
  *

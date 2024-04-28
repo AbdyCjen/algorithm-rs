@@ -88,7 +88,7 @@ impl Solution {
 				return false;
 			}
 		}
-		cur[d as usize] = root.val;
+		cur[d] = root.val;
 		match (&root.left, &root.right) {
 			(Some(l), Some(r)) => {
 				Self::solve(&l.borrow(), d + 1, cur) && Self::solve(&r.borrow(), d + 1, cur)

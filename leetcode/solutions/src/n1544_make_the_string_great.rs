@@ -41,23 +41,17 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn make_good(s: String) -> String {
-		let mut i = 0_usize;
-		let mut s = s.into_bytes();
-		let abs_diff = |i: u8, j: u8| i.max(j) - i.min(j);
-		let d = b'a' - b'A';
-		for j in 0..s.len() {
-			if i >= 1 && abs_diff(s[i - 1], s[j]) == d {
-				i -= 1;
+		let mut ans = "".to_owned();
+		for c in s.bytes() {
+			if ans.bytes().last().map(|n| n.abs_diff(c)) == Some(32) {
+				ans.pop();
 			} else {
-				s[i] = s[j];
-				i += 1;
+				ans.push(c as char);
 			}
 		}
-		s.truncate(i);
-		String::from_utf8(s).unwrap()
+		ans
 	}
 }
 

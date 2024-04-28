@@ -59,8 +59,7 @@ impl Solution {
 		let mut rev: Option<Box<ListNode>> = None;
 		while let Some(mut no) = cur.take() {
 			s += no.val;
-			*cur = no.next.take();
-			no.next = rev;
+			*cur = std::mem::replace(&mut no.next, rev);
 			rev = Some(no);
 			let e = sum.entry(s).or_insert(0);
 			*e += 1;

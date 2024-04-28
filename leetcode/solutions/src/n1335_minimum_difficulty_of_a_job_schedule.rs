@@ -42,7 +42,7 @@ use std::collections::*;
 impl Solution {
 	pub fn min_difficulty(nums: Vec<i32>, d: i32) -> i32 {
 		if (nums.len() as i32) < d {
-			return -1;
+			-1
 		} else {
 			Self::solve(&nums, d, &mut HashMap::new())
 		}

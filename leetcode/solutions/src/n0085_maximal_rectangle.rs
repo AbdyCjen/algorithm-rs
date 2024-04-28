@@ -20,48 +20,26 @@
 pub struct Solution {}
 
 // submission codes start here
-/*
-  把每行扫成一个柱状图, 然后用84里的算法求解就好;
-*/
-
-#[allow(dead_code)]
 impl Solution {
-	pub fn maximal_rectangle(matrix: Vec<Vec<char>>) -> i32 {
-		if matrix.is_empty() {
-			return 0;
-		}
-		let mut max_area = 0;
-		let mut row_buf = vec![0_i32; matrix[0].len()];
-		for row in matrix.into_iter() {
-			for (&c, col) in row.iter().zip(row_buf.iter_mut()) {
-				*col = if c == '0' { 0 } else { *col + 1 };
-			}
-			max_area = max_area.max(Solution::largest_rectangle_area(&mut row_buf));
-		}
-		max_area
-	}
-
-	fn largest_rectangle_area(heights: &mut Vec<i32>) -> i32 {
-		if heights.is_empty() {
-			return 0;
-		}
-		let mut st = vec![(0, heights[0])];
-		let mut max_area: i32 = heights[0];
-		heights.push(0);
-		for (i, &h) in heights.iter().enumerate().skip(1) {
-			while let Some(&(_, th)) = st.last() {
-				if th < h {
-					break;
+	// FIXME: O(n) solution
+	pub fn maximal_rectangle(mat: Vec<Vec<char>>) -> i32 {
+		let mut cnts = vec![0; mat[0].len()];
+		let mut ans = 0;
+		for row in mat {
+			for (i, &c) in (0..).zip(&row) {
+				match c {
+					'0' => cnts[i] = 0,
+					_ => cnts[i] += 1,
 				}
-				st.pop();
-				max_area = match st.last() {
-					None => max_area.max(i as i32 * th),
-					Some(&(ni, _)) => max_area.max((i - ni - 1) as i32 * th),
+				let mut h = cnts[i];
+				ans = ans.max(h);
+				for (w, &c) in (0..i as i32).zip(&cnts[..i]).rev() {
+					h = h.min(c);
+					ans = ans.max(h * w);
 				}
 			}
-			st.push((i, h));
 		}
-		max_area
+		ans
 	}
 }
 

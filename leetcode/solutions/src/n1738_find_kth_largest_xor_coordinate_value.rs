@@ -1,3 +1,4 @@
+#![cfg(feature = "rand")]
 /**
  * [1860] Find Kth Largest XOR Coordinate Value
  *

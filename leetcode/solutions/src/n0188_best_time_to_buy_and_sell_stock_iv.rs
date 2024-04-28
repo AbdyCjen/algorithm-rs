@@ -33,8 +33,8 @@ impl Solution {
 		let mut cache = vec![0; prices.len()];
 
 		for _ in 0..usize::min(k as usize, prices.len() / 2 + 1) {
-			let mut max_pre_prof_price = std::i32::MIN;
-			let mut max_profit = std::i32::MIN;
+			let mut max_pre_prof_price = i32::MIN;
+			let mut max_profit = i32::MIN;
 			for (profit, &price) in cache.iter_mut().zip(prices.iter()) {
 				max_pre_prof_price = max_pre_prof_price.max(*profit - price);
 				max_profit = max_profit.max(price + max_pre_prof_price);

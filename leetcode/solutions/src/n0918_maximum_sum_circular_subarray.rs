@@ -74,18 +74,17 @@ pub struct Solution {}
 impl Solution {
 	pub fn max_subarray_sum_circular(a: Vec<i32>) -> i32 {
 		let mut sum_max_pref = Vec::new();
-		a.iter()
-			.fold((0, std::i32::MIN), |(mut sum, mut max_sum), &n| {
-				sum += n;
-				max_sum = std::cmp::max(sum, max_sum);
-				sum_max_pref.push(max_sum);
-				(sum, max_sum)
-			});
+		a.iter().fold((0, i32::MIN), |(mut sum, mut max_sum), &n| {
+			sum += n;
+			max_sum = std::cmp::max(sum, max_sum);
+			sum_max_pref.push(max_sum);
+			(sum, max_sum)
+		});
 
 		let mut sum_max_post = vec![0];
 		a.iter()
 			.rev()
-			.fold((0, std::i32::MIN), |(mut sum, mut max_sum), &n| {
+			.fold((0, i32::MIN), |(mut sum, mut max_sum), &n| {
 				sum += n;
 				max_sum = std::cmp::max(sum, max_sum);
 				sum_max_post.push(max_sum);
@@ -93,14 +92,14 @@ impl Solution {
 			});
 		sum_max_post.reverse();
 
-		let mut sum_no_cir = std::i32::MIN;
+		let mut sum_no_cir = i32::MIN;
 		sum_max_pref
 			.into_iter()
 			.zip(sum_max_post.into_iter().skip(1))
 			.zip(a)
 			.map(|((a, b), n)| {
 				sum_no_cir = match sum_no_cir {
-					sum @ 1..=std::i32::MAX => sum + n,
+					sum @ 1..=i32::MAX => sum + n,
 					_ => n,
 				};
 				std::cmp::max(a + b, sum_no_cir)

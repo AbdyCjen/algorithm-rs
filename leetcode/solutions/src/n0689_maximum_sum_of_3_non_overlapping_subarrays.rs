@@ -53,7 +53,7 @@ impl Solution {
 		}
 
 		let mut sum_trip = (0, 0, 0);
-		let mut max_sum = std::i32::MIN;
+		let mut max_sum = i32::MIN;
 		for i in k..n - k {
 			let cur_sum = sum(i) + left_most[i - 1] + right_most[i + k];
 			if cur_sum > max_sum {

@@ -37,7 +37,7 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn find132pattern(nums: Vec<i32>) -> bool {
-		let mut s2 = std::i32::MIN;
+		let mut s2 = i32::MIN;
 
 		let mut mono_stk = vec![];
 		for x in nums.into_iter().rev() {

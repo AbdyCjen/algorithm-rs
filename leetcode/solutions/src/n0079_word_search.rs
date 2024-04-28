@@ -37,33 +37,25 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	pub fn exist(mut board: Vec<Vec<char>>, word: String) -> bool {
-		for i in 0..board.len() {
-			for j in 0..board[0].len() {
-				if Self::solve(&mut board, word.as_bytes(), i as i32, j as i32) {
-					return true;
-				}
-			}
-		}
-		false
+	pub fn exist(mut mat: Vec<Vec<char>>, word: String) -> bool {
+		(0..mat.len())
+			.any(|i| (0..mat[0].len()).any(|j| Self::solve(&mut mat, word.as_bytes(), i, j)))
 	}
 
-	fn solve(mat: &mut [Vec<char>], word: &[u8], i: i32, j: i32) -> bool {
+	fn solve(mat: &mut [Vec<char>], word: &[u8], i: usize, j: usize) -> bool {
 		match word {
 			[c, rest @ ..] => {
-				if i >= 0
-					&& j >= 0 && i < mat.len() as _
-					&& j < mat[0].len() as _
-					&& mat[i as usize][j as usize] == *c as _
-				{
-					mat[i as usize][j as usize] = ' ';
-					for dir in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
-						let next = (i + dir.0, j + dir.1);
-						if Self::solve(mat, rest, next.0, next.1) {
-							return true;
-						}
+				if mat[i][j] == *c as char {
+					mat[i][j] = ' ';
+					if rest.is_empty()
+						|| i > 0 && Self::solve(mat, rest, i - 1, j)
+						|| i + 1 < mat.len() && Self::solve(mat, rest, i + 1, j)
+						|| j > 0 && Self::solve(mat, rest, i, j - 1)
+						|| j + 1 < mat[0].len() && Self::solve(mat, rest, i, j + 1)
+					{
+						return true;
 					}
-					mat[i as usize][j as usize] = *c as _;
+					mat[i][j] = *c as char;
 				}
 				false
 			}

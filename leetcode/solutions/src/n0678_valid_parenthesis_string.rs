@@ -44,24 +44,22 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	pub fn check_valid_string(s: String) -> bool { Self::unmatch_count(s).is_some() }
-	fn unmatch_count(s: String) -> Option<()> {
-		let (mut open_cnt, mut closed_cnt) = (vec![()], vec![()]);
-		for (c, cc) in s.bytes().zip(s.bytes().rev()) {
-			if c == b'(' || c == b'*' {
-				open_cnt.push(());
-			} else {
-				open_cnt.pop();
+	//TODO: illustration
+	pub fn check_valid_string(s: String) -> bool {
+		let (mut open, mut close) = (1, 1);
+		s.bytes().all(|c| {
+			match c {
+				b'(' | b'*' => open += 1,
+				_ => open -= 1,
 			}
-			if cc == b')' || cc == b'*' {
-				closed_cnt.push(());
-			} else {
-				closed_cnt.pop();
+			open > 0
+		}) && s.bytes().rev().all(|c| {
+			match c {
+				b')' | b'*' => close += 1,
+				_ => close -= 1,
 			}
-			open_cnt.first()?;
-			closed_cnt.first()?;
-		}
-		Some(())
+			close > 0
+		})
 	}
 }
 
@@ -73,12 +71,12 @@ mod tests {
 
 	#[test]
 	fn test_678() {
-		assert_eq!(Solution::check_valid_string("()".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("(*)".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("(*))".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("********".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("***".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("*((**".to_owned()), true);
-		assert_eq!(Solution::check_valid_string("*((*".to_owned()), false);
+		assert!(Solution::check_valid_string("()".to_owned()));
+		assert!(Solution::check_valid_string("(*)".to_owned()));
+		assert!(Solution::check_valid_string("(*))".to_owned()));
+		assert!(Solution::check_valid_string("********".to_owned()));
+		assert!(Solution::check_valid_string("***".to_owned()));
+		assert!(Solution::check_valid_string("*((**".to_owned()));
+		assert!(!Solution::check_valid_string("*((*".to_owned()));
 	}
 }

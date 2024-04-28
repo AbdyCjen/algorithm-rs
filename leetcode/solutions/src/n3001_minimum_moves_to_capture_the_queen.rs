@@ -64,29 +64,23 @@ impl Solution {
 	}
 
 	pub fn min_moves_to_capture_the_queen1(a: i32, b: i32, c: i32, d: i32, e: i32, f: i32) -> i32 {
-		if a == e {
-			if !(a == c && ((b..f).contains(&d) || (f..b).contains(&d))) {
-				return 1;
-			}
+		if a == e && !(a == c && ((b..f).contains(&d) || (f..b).contains(&d))) {
+			return 1;
 		}
-		if f == b {
-			if !(b == d && ((a..e).contains(&c) || (e..a).contains(&c))) {
-				return 1;
-			}
+		if f == b && !(b == d && ((a..e).contains(&c) || (e..a).contains(&c))) {
+			return 1;
 		}
-		if (e - c) == (f - d) {
-			if !((a - c == b - d)
+		if (e - c) == (f - d)
+			&& !((a - c == b - d)
 				&& ((0..f - d).contains(&(b - d)) || (f - d..=0).contains(&(b - d))))
-			{
-				return 1;
-			}
+		{
+			return 1;
 		}
-		if (e - c) == (d - f) {
-			if !((a - c == d - b)
+		if (e - c) == (d - f)
+			&& !((a - c == d - b)
 				&& ((0..f - d).contains(&(b - d)) || (f - d..=0).contains(&(b - d))))
-			{
-				return 1;
-			}
+		{
+			return 1;
 		}
 		2
 	}

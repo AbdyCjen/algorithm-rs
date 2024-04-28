@@ -6,8 +6,8 @@
  * Each day, whether the cell is occupied or vacant changes according to the following rules:
  *
  *
- * 	If a cell has two adjacent neighbors that are both occupied or both vacant, then the cell becomes occupied.
- * 	Otherwise, it becomes vacant.
+ * If a cell has two adjacent neighbors that are both occupied or both vacant, then the cell becomes occupied.
+ * Otherwise, it becomes vacant.
  *
  *
  * (Note that because the prison is a row, the first and the last cells in the row can't have two adjacent neighbors.)
@@ -56,9 +56,9 @@
  * Note:
  *
  * <ol>
- * 	cells.length == 8
- * 	cells[i] is in {0, 1}
- * 	1 <= N <= 10^9
+ * cells.length == 8
+ * cells[i] is in {0, 1}
+ * 1 <= N <= 10^9
  * </ol>
  * </div>
  * </div>
@@ -81,7 +81,7 @@ impl Solution {
 		let first_block = cur_block;
 
 		let mut mm = HashMap::<u8, _>::new();
-		while let None = mm.get(&cur_block) {
+		while !mm.contains_key(&cur_block) {
 			let mut next_block = 0;
 			for i in 1..7 {
 				let bit_ptr = 0b101 << (i - 1);

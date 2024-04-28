@@ -28,20 +28,19 @@ pub struct Solution {}
 
 // submission codes start here
 
-use std::collections::HashMap;
-#[allow(dead_code)]
 impl Solution {
 	pub fn find_max_length(nums: Vec<i32>) -> i32 {
+		use std::collections::HashMap;
 		let mut m: HashMap<_, _> = HashMap::new();
-		m.insert(0, -1);
-		let mut max_len = 0;
-		nums.iter().enumerate().fold(0, |mut acc, (i, n)| {
-			acc += if *n > 0 { 1 } else { -1 };
-			let e = m.entry(acc).or_insert(i as i32);
-			max_len = std::cmp::max(max_len, i as i32 - *e);
-			acc
-		});
-		max_len
+		m.insert(0, 0);
+		let mut ans = 0;
+		let mut acc = 0;
+		for (i, n) in (1..).zip(nums) {
+			acc += if n > 0 { 1 } else { -1 };
+			let e = m.entry(acc).or_insert(i);
+			ans = ans.max(i - *e);
+		}
+		ans
 	}
 }
 

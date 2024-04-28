@@ -1,3 +1,4 @@
+#![cfg(feature = "rand")]
 /**
  * [1206] Design Skiplist
  *

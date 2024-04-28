@@ -56,7 +56,7 @@ impl Solution {
 				bricks += pq.pop().unwrap();
 			}
 			if bricks < 0 {
-				return i as i32;
+				return i;
 			}
 		}
 		heights.len() as i32 - 1

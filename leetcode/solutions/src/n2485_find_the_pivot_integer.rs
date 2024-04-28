@@ -37,18 +37,8 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn pivot_integer(n: i32) -> i32 {
-		if n <= 1 {
-			return n;
-		}
 		let sn = (1 + n) * n / 2;
-		let mut s = 0;
-		for i in 1..n {
-			s += i;
-			if s * 2 == sn + i {
-				return i;
-			}
-		}
-		-1
+		(1..=n).rev().find(|i| i * i == sn).unwrap_or(-1)
 	}
 }
 
@@ -60,6 +50,7 @@ mod tests {
 
 	#[test]
 	fn test_2485() {
+		assert_eq!(Solution::pivot_integer(1), 1);
 		assert_eq!(Solution::pivot_integer(8), 6);
 	}
 }

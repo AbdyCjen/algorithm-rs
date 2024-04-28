@@ -38,24 +38,21 @@ pub struct Solution {}
 
 impl Solution {
 	pub fn valid_path(n: i32, edges: Vec<Vec<i32>>, source: i32, destination: i32) -> bool {
-		fn union(s: &mut [i32], a: i32, b: i32) {
-			let a = find(s, a);
-			let b = find(s, b);
-			if a != b {
-				s[a as usize] = b;
-			}
+		fn union(set: &mut [i32], a: i32, b: i32) {
+			let a = find(set, a);
+			set[a as usize] = find(set, b);
 		}
-		fn find(s: &mut [i32], a: i32) -> i32 {
-			if s[a as usize] != a {
-				s[a as usize] = find(s, s[a as usize]);
+		fn find(set: &mut [i32], a: i32) -> i32 {
+			if set[a as usize] != a {
+				set[a as usize] = find(set, set[a as usize]);
 			}
-			s[a as usize]
+			set[a as usize]
 		}
 		let mut set = (0..n).collect::<Vec<_>>();
 		for e in edges {
 			union(set.as_mut(), e[0], e[1]);
 		}
-		find(set.as_mut(), source) == find(set.as_mut(), destination)
+		find(&mut set, source) == find(&mut set, destination)
 	}
 }
 

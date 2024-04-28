@@ -54,14 +54,18 @@ impl Solution {
 		let mut new = dp.clone();
 		dp[0][n - 1] = grid[0][0] + grid[0][n - 1];
 		for (r, row) in (1..).zip(grid.into_iter().skip(1)) {
-			for i in 0..r.min(n) {
-				for j in (i + 1).max(n.saturating_sub(r))..n {
+			for (i, dr) in (0..).zip(&dp).take(r.min(n)) {
+				for (j, &d) in (0_usize..)
+					.zip(dr)
+					.take(n)
+					.skip((i + 1).max(n.saturating_sub(r)))
+				{
 					for ii in i.saturating_sub(1)..n.min(i + 2) {
 						for jj in j.saturating_sub(1)..n.min(j + 2) {
 							if ii == jj {
-								new[ii][jj] = new[ii][jj].max(dp[i][j] + row[ii]);
+								new[ii][jj] = new[ii][jj].max(d + row[ii]);
 							} else {
-								new[ii][jj] = new[ii][jj].max(dp[i][j] + row[ii] + row[jj]);
+								new[ii][jj] = new[ii][jj].max(d + row[ii] + row[jj]);
 							}
 						}
 					}

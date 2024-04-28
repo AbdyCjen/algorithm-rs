@@ -46,7 +46,7 @@ impl Solution {
 	pub fn max_profit_0(prices: Vec<i32>) -> i32 {
 		let mut pro_sum = 0;
 		let mut cur_pro = 0;
-		let mut cur_lo = std::i32::MAX - 1;
+		let mut cur_lo = i32::MAX - 1;
 		for &price in &prices {
 			if price - cur_lo > cur_pro {
 				cur_pro = price - cur_lo;

@@ -47,7 +47,7 @@ impl MinStack {
 
 	fn push(&mut self, x: i32) {
 		self.stk.push(x);
-		if x <= self.mono_stk.last().copied().unwrap_or(std::i32::MAX) {
+		if x <= self.mono_stk.last().copied().unwrap_or(i32::MAX) {
 			self.mono_stk.push(x)
 		}
 	}

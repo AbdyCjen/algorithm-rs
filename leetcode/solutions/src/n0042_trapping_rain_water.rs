@@ -26,9 +26,25 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn trap(height: Vec<i32>) -> i32 {
+		let mut st = vec![];
+		let mut max = 0;
+		for h in &height {
+			max = max.max(*h);
+			st.push(max);
+		}
+		max = 0;
+		st.iter()
+			.zip(height)
+			.rev()
+			.map(|(&lmax, h)| {
+				max = max.max(h);
+				(max.min(lmax) - h).max(0)
+			})
+			.sum()
+	}
+	pub fn trap1(height: Vec<i32>) -> i32 {
 		if height.len() < 3 {
 			return 0;
 		}

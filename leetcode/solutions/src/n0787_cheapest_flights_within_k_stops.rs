@@ -60,7 +60,6 @@ impl Solution {
 			.collect();
 		let mut dis = vec![i32::MAX; n as usize];
 		dis[src as usize] = 0;
-		use std::iter::FromIterator;
 		let mut st = std::collections::HashMap::<i32, i32>::from_iter([(src, 0)]);
 		while !st.is_empty() && k >= 0 {
 			for (cur, amt) in std::mem::take(&mut st) {

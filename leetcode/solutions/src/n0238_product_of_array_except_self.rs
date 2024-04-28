@@ -13,36 +13,25 @@
  * Could you solve it with constant space complexity? (The output array does not count as extra space for the purpose of space complexity analysis.)
  *
  */
-#[allow(dead_code)]
-
 pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
-	pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
-		let mut tmp = 1;
-		let prefix: Vec<_> = nums
-			.iter()
-			.map(|n| {
-				let tmpp = tmp;
-				tmp *= n;
-				tmpp
-			})
-			.collect();
-		tmp = 1;
-		let mut postfix: Vec<_> = nums
-			.iter()
-			.rev()
-			.map(|n| {
-				let tmpp = tmp;
-				tmp *= n;
-				tmpp
-			})
-			.collect();
-		postfix.reverse();
-		(0..nums.len()).map(|i| prefix[i] * postfix[i]).collect()
+	pub fn product_except_self(mut nums: Vec<i32>) -> Vec<i32> {
+		let mut sums = vec![1];
+		let mut cur = 1;
+		for &n in nums.iter().rev() {
+			cur *= n;
+			sums.push(cur);
+		}
+		let mut cur = 1;
+		for (n, m) in nums.iter_mut().zip(sums.iter().rev().skip(1)) {
+			let a = cur * m;
+			cur *= *n;
+			*n = a;
+		}
+		nums
 	}
 }
 

@@ -70,15 +70,15 @@ impl Solution {
 		ans
 	}
 	pub fn pseudo_palindromic_paths1(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		Self::solve(&*root.as_ref().unwrap().borrow(), 0)
+		Self::solve(&root.as_ref().unwrap().borrow(), 0)
 	}
 
 	fn solve(root: &TreeNode, vis: i32) -> i32 {
 		let vis = vis ^ (1 << root.val);
 		match (&root.left, &root.right) {
 			(None, None) => (vis.count_ones() <= 1) as i32,
-			(Some(l), Some(r)) => Self::solve(&*l.borrow(), vis) + Self::solve(&*r.borrow(), vis),
-			(Some(ch), _) | (_, Some(ch)) => Self::solve(&*ch.borrow(), vis),
+			(Some(l), Some(r)) => Self::solve(&l.borrow(), vis) + Self::solve(&r.borrow(), vis),
+			(Some(ch), _) | (_, Some(ch)) => Self::solve(&ch.borrow(), vis),
 		}
 	}
 }

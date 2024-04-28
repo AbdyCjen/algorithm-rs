@@ -26,9 +26,20 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn is_isomorphic(s: String, t: String) -> bool {
+		Self::can_map(&s, &t) && Self::can_map(&t, &s)
+	}
+	fn can_map(s: &str, t: &str) -> bool {
+		let mut map = [0; 128];
+		s.bytes().zip(t.bytes()).all(|(c1, c2)| {
+			if map[c1 as usize] == 0 {
+				map[c1 as usize] = c2;
+			}
+			map[c1 as usize] == c2
+		})
+	}
+	pub fn is_isomorphic1(s: String, t: String) -> bool {
 		fn gen_mapper() -> impl FnMut(u8) -> i8 {
 			let mut map = [-1_i8; 128];
 			let mut cur_max = 0_i8;

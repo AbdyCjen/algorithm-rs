@@ -23,10 +23,10 @@ pub struct Solution {}
 #[allow(dead_code)]
 impl Solution {
 	pub fn max_sub_array(nums: Vec<i32>) -> i32 {
-		let mut max_sum = std::i32::MIN;
+		let mut max_sum = i32::MIN;
 		nums.iter().fold(0, |acc, n| {
 			let acc = match acc {
-				acc @ 1..=std::i32::MAX => acc + n,
+				acc @ 1..=i32::MAX => acc + n,
 				_ => *n,
 			};
 			max_sum = std::cmp::max(acc, max_sum);

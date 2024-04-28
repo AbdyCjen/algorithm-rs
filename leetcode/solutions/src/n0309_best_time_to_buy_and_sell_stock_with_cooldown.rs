@@ -27,7 +27,7 @@ impl Solution {
 	pub fn max_profit(prices: Vec<i32>) -> i32 {
 		prices
 			.into_iter()
-			.fold((0, std::i32::MIN, 0), |(i, j, k), val| {
+			.fold((0, i32::MIN, 0), |(i, j, k), val| {
 				// (sell, possess, cd)
 				(i.max(j + val), j.max(k - val), i)
 			})

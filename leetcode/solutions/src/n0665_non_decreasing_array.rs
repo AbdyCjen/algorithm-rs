@@ -28,38 +28,17 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn check_possibility(nums: Vec<i32>) -> bool {
-		fn is_sorted<T: std::cmp::Ord, I: Iterator<Item = T>>(mut it: I) -> bool {
-			it.next()
-				.map(|mut prev| {
-					it.all(move |mut o| {
-						std::mem::swap(&mut o, &mut prev);
-						o <= prev
-					})
-				})
-				.unwrap_or(true)
-		}
-
-		if nums.len() <= 2 {
-			return true;
-		}
-
-		let mut prev = std::i32::MIN;
-		for (i, &v) in nums.iter().enumerate() {
-			if v < prev {
-				return (prev <= nums.get(i + 1).copied().unwrap_or(std::i32::MAX)
-					|| nums
-						.get(i.wrapping_sub(2))
-						.copied()
-						.unwrap_or(std::i32::MIN)
-						<= v) && is_sorted(nums[i..].iter());
+		match nums.windows(2).position(|w| w[0] > w[1]) {
+			None => true,
+			Some(0) => nums[1..].windows(2).all(|w| w[0] <= w[1]),
+			Some(i) if i + 2 >= nums.len() => true,
+			Some(i) => {
+				(nums[i - 1] <= nums[i + 1] || nums[i] <= nums[i + 2])
+					&& nums[i + 1..].windows(2).all(|w| w[0] <= w[1])
 			}
-			prev = v;
 		}
-
-		true
 	}
 }
 

@@ -2,7 +2,6 @@
 pub struct Solution {}
 
 // submission codes start here
-use std::iter::FromIterator;
 impl Solution {
 	pub fn string_shift(s: String, shift: Vec<Vec<i32>>) -> String {
 		let shift = shift.into_iter().fold(0_i32, |d, ds| match ds.as_slice() {

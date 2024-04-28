@@ -27,7 +27,6 @@ pub struct Solution {}
 
 // submission codes start here
 
-#[allow(dead_code)]
 impl Solution {
 	pub fn maximum_gap(nums: Vec<i32>) -> i32 {
 		if nums.len() <= 1 {
@@ -36,9 +35,8 @@ impl Solution {
 			return (nums[1] - nums[0]).abs();
 		}
 		let n = nums.len();
-		use std::i32::{MAX, MIN};
-		let mut maxs = vec![MIN; n];
-		let mut mins = vec![MAX; n];
+		let mut maxs = vec![i32::MIN; n];
+		let mut mins = vec![i32::MAX; n];
 		let max = *nums.iter().max().unwrap();
 		let min = *nums.iter().min().unwrap();
 		if max == min {
@@ -62,7 +60,7 @@ impl Solution {
 					*premax = cur_max;
 					Some(cur_min - premax_)
 				} else {
-					Some(MIN)
+					Some(i32::MIN)
 				}
 			})
 			.max()

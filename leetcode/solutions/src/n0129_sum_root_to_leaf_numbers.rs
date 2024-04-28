@@ -62,14 +62,13 @@ use super::util::tree::TreeNode;
 use std::{cell::RefCell, rc::Rc};
 impl Solution {
 	pub fn sum_numbers(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-		root.map(|r| Self::solve(r, 0)).unwrap_or(0)
+		root.map(|r| Self::solve(&r.borrow(), 0)).unwrap_or(0)
 	}
-	fn solve(root: Rc<RefCell<TreeNode>>, path: i32) -> i32 {
-		let mut root = root.borrow_mut();
+	fn solve(root: &TreeNode, path: i32) -> i32 {
 		let path = path * 10 + root.val;
-		match (root.left.take(), root.right.take()) {
-			(Some(l), Some(r)) => Self::solve(l, path) + Self::solve(r, path),
-			(Some(o), _) | (_, Some(o)) => Self::solve(o, path),
+		match (&root.left, &root.right) {
+			(Some(l), Some(r)) => Self::solve(&l.borrow(), path) + Self::solve(&r.borrow(), path),
+			(Some(o), _) | (_, Some(o)) => Self::solve(&o.borrow(), path),
 			_ => path,
 		}
 	}

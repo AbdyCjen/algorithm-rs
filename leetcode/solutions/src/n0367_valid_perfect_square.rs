@@ -35,7 +35,7 @@ impl Solution {
 			Ordering::Less => return false,
 			Ordering::Equal => return true,
 			_ => {
-				for i in 1..std::i32::MAX {
+				for i in 1..i32::MAX {
 					if num / i < i {
 						return false;
 					}
@@ -61,7 +61,7 @@ mod tests {
 		assert!(Solution::is_perfect_square(1));
 		assert!(Solution::is_perfect_square(0));
 		assert!(!Solution::is_perfect_square(-1));
-		assert!(!Solution::is_perfect_square(std::i32::MAX));
-		assert!(!Solution::is_perfect_square(std::i32::MAX - 1));
+		assert!(!Solution::is_perfect_square(i32::MAX));
+		assert!(!Solution::is_perfect_square(i32::MAX - 1));
 	}
 }

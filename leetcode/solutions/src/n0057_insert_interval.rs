@@ -32,17 +32,15 @@ pub struct Solution {}
 // submission codes start here
 
 impl Solution {
-	pub fn insert(intervals: Vec<Vec<i32>>, new: Vec<i32>) -> Vec<Vec<i32>> {
-		let mut new: [i32; 2] = [new[0], new[1]];
+	pub fn insert(intervals: Vec<Vec<i32>>, mut new: Vec<i32>) -> Vec<Vec<i32>> {
+		let start = intervals.partition_point(|intv| intv[1] < new[0]);
 		let mut intvs = intervals.into_iter().peekable();
-		let mut ans = vec![];
-		while let Some(intv) = intvs.next_if(|intv| intv[1] < new[0]) {
-			ans.push(intv);
-		}
+		let mut ans: Vec<_> = intvs.by_ref().take(start).collect();
 		while let Some(intv) = intvs.next_if(|intv| intv[0] <= new[1]) {
-			new = [new[0].min(intv[0]), new[1].max(intv[1])];
+			new[1] = new[1].max(intv[1]);
+			new[0] = new[0].min(intv[0]);
 		}
-		ans.push(new.to_vec());
+		ans.push(new);
 		ans.extend(intvs);
 		ans
 	}

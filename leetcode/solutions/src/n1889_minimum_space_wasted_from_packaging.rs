@@ -52,7 +52,7 @@ impl Solution {
 	pub fn min_wasted_space(mut packages: Vec<i32>, boxes: Vec<Vec<i32>>) -> i32 {
 		packages.sort_unstable();
 		let total_space: i64 = packages.iter().map(|&i| i as i64).sum();
-		let mut ans = std::i64::MAX;
+		let mut ans = i64::MAX;
 
 		for mut bs in boxes {
 			bs.sort_unstable();
@@ -82,7 +82,7 @@ impl Solution {
 			}
 		}
 
-		if ans != std::i64::MAX {
+		if ans != i64::MAX {
 			(ans % (1_000_000_000 + 7)) as i32
 		} else {
 			-1
